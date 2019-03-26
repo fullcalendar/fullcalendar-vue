@@ -7,7 +7,7 @@ import postcssImport from 'postcss-import'
 import replace from 'rollup-plugin-replace'
 
 export default {
-  input: 'demo/main.js', // Path relative to package.json
+  input: 'demo/src/main.js', // Path relative to package.json
   output: {
     dir: 'demo/built',
     format: 'iife'
