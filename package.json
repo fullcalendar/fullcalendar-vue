@@ -1,7 +1,7 @@
 {
   "name": "fullcalendar-vue",
   "private": true,
-  "version": "7.7.7",
+  "version": "1.0.0",
   "scripts": {
     "clean": "rm -rf dist demo/built",
     "watch": "rollup -c --watch",
