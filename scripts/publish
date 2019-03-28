@@ -20,9 +20,11 @@ then
     shift # remove this the first arg
     git push
     git push origin "$version_tag"
+    echo 'Will push to REAL NPM registry'
 else
     publish_args="$publish_args --registry http://localhost:4873"
+    echo 'Will push to test NPM registry'
 fi
 
 cd dist
-echo SIMULATE npm publish "$publish_args" "$@"
+npm publish $publish_args "$@"
