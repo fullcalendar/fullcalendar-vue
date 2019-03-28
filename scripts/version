@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# always immediately exit upon error
+set -e
+
+scripts_dir="`dirname $0`"
+
+if [[ -z "$@" ]]
+then
+    echo 'Must supply at least a version argument'
+    exit 1
+fi
+
+"$scripts_dir/require-clean-working-tree"
+"$scripts_dir/update-deps"
+
+if npm version "$@"
+then
+    echo 'Successfully built new version release'
+else
+    git reset --hard
+fi

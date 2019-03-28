@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# always immediately exit upon error
+set -e
+
+scripts_dir="`dirname $0`"
+
+"$scripts_dir/require-clean-working-tree"
+
+npm update
+
+if "$scripts_dir/require-clean-working-tree" 'package.json'
+then
+    echo 'No dependencies to update'
+else
+    git add package.json
+    git commit -m 'update dependencies'
+    echo 'Updated dependencies'
+fi
