@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# always immediately exit upon error
+set -e
+
+scripts_dir=`dirname $0`
+
+"$scripts_dir/require-clean-working-tree"
+
+if [[ "$1" == '--production' ]]
+then
+    shift
+
+    version_tag=`git tag -l --points-at`
+
+    git push
+    git push origin "$version_tag"
+
+    cd dist
+    npm publish --access public "$@"
+else
+    cd dist
+    npm publish --access public --registry http://localhost:4873 "$@"
+fi
