@@ -11,7 +11,7 @@ publish_args='--access public'
 
 if [[ ! "$version_num" ]]
 then
-    echo 'Must specify an exact version number'
+    echo 'You must supply a version argument'
     exit 1
 fi
 
@@ -30,17 +30,18 @@ fi
 
 version_tag="v$version_num"
 
-echo 'Checking out dist files'
-
+echo 'Checking out dist files...'
 rm -rf dist
 git checkout --quiet "$version_tag" -- dist
 git reset --quiet # unstage from checkout
 
+echo 'Publishing dist files...'
 cd dist
 npm publish $publish_args "$@"
 
 if [[ "$production_arg" == '--production' ]]
 then
+    echo 'Pushing to Github...'
     git push
     git push origin "$version_tag"
 fi
