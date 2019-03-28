@@ -1,33 +1,36 @@
-import vue from 'rollup-plugin-vue' // Handle .vue SFC files
-import buble from 'rollup-plugin-buble' // Transpile/polyfill with reasonable browser support
 import resolve from 'rollup-plugin-node-resolve'
+import buble from 'rollup-plugin-buble'
 
-// https://vuejs.org/v2/cookbook/packaging-sfc-for-npm.html
+/*
+Will generate a UMD by default but can be instructed to generate an ES module
+by using command line argument overrides.
 
-const UMD_GLOBALS = {
+Concept derived from:
+https://vuejs.org/v2/cookbook/packaging-sfc-for-npm.html
+*/
+
+const BROWSER_GLOBAL = 'FullCalendarVue'
+const EXTERNAL_BROWSER_GLOBALS = {
   '@fullcalendar/core': 'FullCalendar'
 }
 
 export default {
   input: 'src/main.js',
   output: {
+    format: 'umd',
     file: 'dist/main.umd.js',
-    name: 'FullCalendarVue', // for browser global
     exports: 'named',
-    globals: UMD_GLOBALS,
-    format: 'umd'
+    name: BROWSER_GLOBAL,
+    globals: EXTERNAL_BROWSER_GLOBALS
   },
-  external: Object.keys(UMD_GLOBALS),
+  external: Object.keys(EXTERNAL_BROWSER_GLOBALS),
   plugins: [
     resolve({
-      jail: 'src' // TODO: use this in core project
+      jail: 'src' // any files outside of here are considered external libs
     }),
-    vue({
-      compileTemplate: true // Explicitly convert template to render function
-    }),
-    buble({ // Transpile to ES5
+    buble({ // transpile to ES5
       transforms: {
-        dangerousForOf: true
+        dangerousForOf: true // allow for...in loops
       }
     })
   ]

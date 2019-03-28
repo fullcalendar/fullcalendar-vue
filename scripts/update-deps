@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
-# always immediately exit upon error
-set -e
+#
+# Called with no arguments. Will prompt for confirmation.
+# Installs latest versions of all dependencies and updates their version numbers in
+# package.json. Will then commit package.json if there are any changes.
+#
+
+set -e # always immediately exit upon error
 
 scripts_dir="`dirname $0`"
 
@@ -11,16 +16,16 @@ read -p "Do you want to update all depedencies and commit changes in package.jso
 
 if [[ "$yn" != "y" ]]
 then
-    exit
+  exit
 fi
 
-npm update
+npm update # will modify package.json, but not commit
 
 if "$scripts_dir/require-clean-working-tree" 'package.json'
 then
-    echo 'No dependencies to update'
+  echo 'No dependencies to update'
 else
-    git add package.json
-    git commit -m 'update dependencies'
-    echo 'Updated dependencies'
+  git add package.json
+  git commit -m 'update dependencies'
+  echo 'Updated dependencies'
 fi

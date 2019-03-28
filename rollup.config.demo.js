@@ -1,10 +1,10 @@
-import vue from 'rollup-plugin-vue' // Handle .vue SFC files
-import buble from 'rollup-plugin-buble' // Transpile/polyfill with reasonable browser support
-import commonjs from 'rollup-plugin-commonjs'
-import postcss from 'rollup-plugin-postcss'
 import resolve from 'rollup-plugin-node-resolve'
-import postcssImport from 'postcss-import'
 import replace from 'rollup-plugin-replace'
+import commonjs from 'rollup-plugin-commonjs'
+import vue from 'rollup-plugin-vue'
+import postcss from 'rollup-plugin-postcss'
+import postcssImport from 'postcss-import'
+import buble from 'rollup-plugin-buble'
 
 export default {
   input: 'demo/src/main.js', // Path relative to package.json
@@ -13,31 +13,29 @@ export default {
     format: 'iife'
   },
   plugins: [
-    resolve(),
-    replace({ // for https://github.com/rollup/rollup/issues/208
+    resolve(), // for knowing to include node_modules
+    replace({ // vue relies on some node-related globals (https://github.com/rollup/rollup/issues/208)
       'process.env.NODE_ENV': "'development'"
     }),
-    commonjs({ // needed for demo!!! for default export or something
+    commonjs({ // rollup has trouble with UMD. TODO: provide an .esm.js
       namedExports: {
-        'node_modules/@fullcalendar/core/main.js': [ 'Calendar' ] // ahhhhhh
+        'node_modules/@fullcalendar/core/main.js': [ 'Calendar' ]
       }
     }),
-    vue({
-      css: false, // DONT Dynamically inject css as a <style> tag
-      compileTemplate: true, // Explicitly convert template to render function
+    vue({ // handles .vue files
+      css: false, // output a normal CSS files. don't let JS inject a <style> tag
+      compileTemplate: true, // explicitly convert templates to render functions (needs vue-template-compiler)
     }),
     postcss({
-      extract: true,
-      plugins: [
-        postcssImport
-      ]
+      extract: true, // output a normal CSS files. don't let JS inject a <style> tag
+      plugins: [ postcssImport ] // for @import functionality
     }),
-    buble({ // Transpile to ES5
+    buble({ // transpile to ES5
       exclude: [
-        'node_modules/**'
+        'node_modules/**' // couldn't transpile some vue files
       ],
       transforms: {
-        dangerousForOf: true
+        dangerousForOf: true // allow for...in loops
       }
     })
   ]

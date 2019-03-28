@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Exits with an error code of there are any uncomitted changes. Derived from:
 # http://stackoverflow.com/questions/3878624/how-do-i-programmatically-determine-if-there-are-uncommited-changes
 
 # optional argument
