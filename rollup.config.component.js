@@ -15,7 +15,7 @@ const EXTERNAL_BROWSER_GLOBALS = {
 }
 
 export default {
-  input: 'src/main.js',
+  input: 'src/wrapper.js',
   output: {
     format: 'umd',
     file: 'dist/main.umd.js',
