@@ -31,15 +31,17 @@ fi
 
 version_tag="v$version_num"
 
-npm run clean
+echo 'Checking out dist files'
+
+rm -rf dist
 git checkout "$version_tag" -- dist
 git reset
 
 cd dist
 echo 'TEST!!!' npm publish $publish_args "$@"
 
-# if [[ "$production_arg" == '--production' ]]
-# then
-#     git push
-#     git push origin "$version_tag"
-# fi
+if [[ "$production_arg" == '--production' ]]
+then
+    echo 'TEST!!!' git push
+    echo 'TEST!!!' git push origin "$version_tag"
+fi
