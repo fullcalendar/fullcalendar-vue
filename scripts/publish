@@ -25,4 +25,4 @@ else
 fi
 
 cd dist
-npm publish "$publish_args" "$@"
+echo SIMULATE npm publish "$publish_args" "$@"
