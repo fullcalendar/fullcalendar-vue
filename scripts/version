@@ -14,11 +14,16 @@ fi
 "$scripts_dir/require-clean-working-tree"
 "$scripts_dir/update-deps"
 
-orig_commit=`git rev-parse HEAD`
+current_commit=`git rev-parse HEAD`
+current_branch=`git symbolic-ref --quiet --short HEAD`
+
+git checkout --detach
 
 if npm version "$@"
 then
     echo 'Successfully built new version release'
 else
-    git reset --hard "$orig_commit"
+    git reset --hard "$current_commit"
 fi
+
+git checkout "$current_branch"
