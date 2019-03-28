@@ -35,7 +35,7 @@ echo 'Checking out dist files'
 
 rm -rf dist
 git checkout --quiet "$version_tag" -- dist
-git reset --quiet
+git reset --quiet # unstage from cheeckout
 
 cd dist
 echo 'TEST!!!' npm publish $publish_args "$@"

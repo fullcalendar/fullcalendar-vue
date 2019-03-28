@@ -25,5 +25,5 @@ then
 fi
 
 git symbolic-ref HEAD "$current_ref"
-git reset --quiet
-git reset --hard
+git reset --quiet # unstage all release files
+git reset --hard # remove release files that are under vc (package.json)
