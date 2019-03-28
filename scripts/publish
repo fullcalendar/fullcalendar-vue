@@ -34,8 +34,8 @@ version_tag="v$version_num"
 echo 'Checking out dist files'
 
 rm -rf dist
-git checkout "$version_tag" -- dist
-git reset
+git checkout --quiet "$version_tag" -- dist
+git reset --quiet
 
 cd dist
 echo 'TEST!!!' npm publish $publish_args "$@"
