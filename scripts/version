@@ -5,7 +5,7 @@ set -e
 
 scripts_dir=`dirname $0`
 
-if [[ -z "$@" ]]
+if [[ -z "$@" ]] # z needed?
 then
     echo 'You must supply a version argument'
     exit 1
