@@ -7,7 +7,10 @@
     "build": "rollup -c",
     "build:umd": "rollup -c --config rollup.config.component.js",
     "build:esm": "rollup -c --config rollup.config.component.js --format es --file dist/main.esm.js",
-    "dist": "npm run build:umd && npm run build:esm"
+    "dist": "npm run build:umd && npm run build:esm && npm run dist:meta",
+    "dist:meta": "cp README.* LICENSE.* dist",
+    "preversion": "npm run clean",
+    "version": "npm run dist"
   },
   "main": "dist/main.umd.js",
   "module": "dist/main.esm.js",
