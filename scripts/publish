@@ -1,24 +1,28 @@
 #!/usr/bin/env bash
 
-# always immediately exit upon error
-set -e
+set -e # always immediately exit upon error
 
 scripts_dir=`dirname $0`
 
 "$scripts_dir/require-clean-working-tree"
 
+publish_args='--access public'
+version_tag=`git tag -l --points-at`
+
+if [[ ! "$version_tag" ]]
+then
+    echo "A new version must be built first"
+    exit 1
+fi
+
 if [[ "$1" == '--production' ]]
 then
-    shift
-
-    version_tag=`git tag -l --points-at`
-
+    shift # remove this the first arg
     git push
     git push origin "$version_tag"
-
-    cd dist
-    npm publish --access public "$@"
 else
-    cd dist
-    npm publish --access public --registry http://localhost:4873 "$@"
+    publish_args="$publish_args --registry http://localhost:4873"
 fi
+
+cd dist
+npm publish "$publish_args" "$@"
