@@ -28,8 +28,8 @@ export default {
 
   data: function() {
     return {
-      calendarPlugins: [ interactionPlugin, dayGridPlugin, timeGridPlugin ],
       isShowingCalendar: true,
+      calendarPlugins: [ interactionPlugin, dayGridPlugin, timeGridPlugin ],
       calendarAllDaySlot: true,
       calendarWeekends: true
     }
@@ -66,10 +66,5 @@ export default {
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
