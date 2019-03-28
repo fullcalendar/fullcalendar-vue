@@ -18,13 +18,23 @@ fi
 if [[ "$1" == '--production' ]]
 then
     shift # remove this the first arg
-    git push
-    git push origin "$version_tag"
-    echo 'Will push to REAL NPM registry'
+    is_production=1
+    echo 'Publishing to PRODUCTION'
 else
+    is_production=0
+    echo 'Publishing as a TEST'
+fi
+
+if [[ "$is_production" == '0' ]]
+then
     publish_args="$publish_args --registry http://localhost:4873"
-    echo 'Will push to test NPM registry'
 fi
 
 cd dist
 npm publish $publish_args "$@"
+
+if [[ "$is_production" == '1' ]]
+then
+    git push
+    git push origin "$version_tag"
+fi
