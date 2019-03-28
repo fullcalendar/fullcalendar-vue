@@ -14,7 +14,7 @@ then
 fi
 
 "$scripts_dir/require-clean-working-tree"
-"$scripts_dir/update-deps" || echo 'Will not update deps'
+"$scripts_dir/update-deps"
 
 current_ref=`git symbolic-ref --quiet HEAD`
 git checkout --detach

@@ -11,7 +11,7 @@ read -p "Do you want to update all depedencies and commit changes in package.jso
 
 if [[ "$yn" != "y" ]]
 then
-    exit 1
+    exit
 fi
 
 npm update

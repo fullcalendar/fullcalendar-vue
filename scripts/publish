@@ -34,13 +34,13 @@ echo 'Checking out dist files'
 
 rm -rf dist
 git checkout --quiet "$version_tag" -- dist
-git reset --quiet # unstage from cheeckout
+git reset --quiet # unstage from checkout
 
 cd dist
-echo 'TEST!!!' npm publish $publish_args "$@"
+npm publish $publish_args "$@"
 
 if [[ "$production_arg" == '--production' ]]
 then
-    echo 'TEST!!!' git push
-    echo 'TEST!!!' git push origin "$version_tag"
+    git push
+    git push origin "$version_tag"
 fi
