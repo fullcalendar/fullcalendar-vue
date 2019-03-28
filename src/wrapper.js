@@ -1,9 +1,16 @@
-// Import vue component
 import FullCalendarComponent from './FullCalendar'
+
+/*
+Registers the component globally if appropriate.
+This modules exposes the component AND an install function.
+
+Derived from:
+https://vuejs.org/v2/cookbook/packaging-sfc-for-npm.html
+*/
 
 let installed = false
 
-// Declare install function executed by Vue.use()
+// declare install function executed by Vue.use()
 export function install(Vue) {
 	if (!installed) {
     installed = true;
@@ -11,18 +18,20 @@ export function install(Vue) {
   }
 }
 
-// Auto-install when vue is found (eg. in browser via <script> tag)
+// detect a globally availble version of Vue (eg. in browser via <script> tag)
 let GlobalVue
 if (typeof window !== 'undefined') {
 	GlobalVue = window.Vue
 } else if (typeof global !== 'undefined') {
 	GlobalVue = global.Vue
 }
+
+// auto-install if possible
 if (GlobalVue) {
 	GlobalVue.use({
     install
   })
 }
 
-// To allow use as module (npm/webpack/etc.) export component
+// to allow use as module (npm/webpack/etc.) export component
 export default FullCalendarComponent
