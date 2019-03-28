@@ -31,11 +31,12 @@ fi
 
 version_tag="v$version_num"
 
+npm run clean
 git checkout "$version_tag" -- dist
 git reset
 
-# cd dist
-# npm publish $publish_args "$@"
+cd dist
+echo 'TEST!!!' npm publish $publish_args "$@"
 
 # if [[ "$production_arg" == '--production' ]]
 # then
