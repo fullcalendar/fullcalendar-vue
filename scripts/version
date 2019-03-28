@@ -14,18 +14,15 @@ then
 fi
 
 "$scripts_dir/require-clean-working-tree"
-"$scripts_dir/update-deps" || npm install # always. needed?
+"$scripts_dir/update-deps"
 
-current_commit=`git rev-parse HEAD`
-current_branch=`git symbolic-ref --quiet --short HEAD`
-
+current_ref=`git symbolic-ref --quiet HEAD`
 git checkout --detach
 
 if npm version "$@"
 then
     echo 'Successfully built new version release'
-else
-    git reset --hard "$current_commit"
 fi
 
-git checkout "$current_branch"
+git symbolic-ref HEAD "$current_ref"
+git reset
