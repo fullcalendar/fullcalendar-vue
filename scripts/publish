@@ -1,40 +1,44 @@
 #!/usr/bin/env bash
 
+# remaining args go to npm-publish
+
 set -e # always immediately exit upon error
 
 scripts_dir=`dirname $0`
-
-"$scripts_dir/require-clean-working-tree"
-
+current_branch=`git symbolic-ref --quiet --short HEAD`
+version_num=$1
+production_arg=$2
 publish_args='--access public'
-version_tag=`git tag -l --points-at`
 
-if [[ ! "$version_tag" ]]
+if [[ ! "$version_num" ]]
 then
-    echo "A new version must be built first"
+    echo 'Must specify an exact version number'
     exit 1
 fi
 
-if [[ "$1" == '--production' ]]
+shift # remove version arg
+
+if [[ "$production_arg" == '--production' ]]
 then
-    shift # remove this the first arg
-    is_production=1
+    shift # remove production arg
     echo 'Publishing to PRODUCTION'
 else
-    is_production=0
     echo 'Publishing as a TEST'
-fi
-
-if [[ "$is_production" == '0' ]]
-then
     publish_args="$publish_args --registry http://localhost:4873"
 fi
 
-cd dist
-npm publish $publish_args "$@"
+"$scripts_dir/require-clean-working-tree"
 
-if [[ "$is_production" == '1' ]]
-then
-    git push
-    git push origin "$version_tag"
-fi
+version_tag="v$version_num"
+
+git checkout "$version_tag" -- .
+git reset
+
+# cd dist
+# npm publish $publish_args "$@"
+
+# if [[ "$production_arg" == '--production' ]]
+# then
+#     git push
+#     git push origin "$version_tag"
+# fi

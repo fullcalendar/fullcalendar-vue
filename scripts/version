@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
+# remaining args go to npm-version
+
 # always immediately exit upon error
 set -e
 
 scripts_dir=`dirname $0`
 
-if [[ -z "$@" ]] # z needed?
+if [[ ! "$@" ]]
 then
     echo 'You must supply a version argument'
     exit 1
@@ -14,26 +16,16 @@ fi
 "$scripts_dir/require-clean-working-tree"
 "$scripts_dir/update-deps"
 
+current_commit=`git rev-parse HEAD`
+current_branch=`git symbolic-ref --quiet --short HEAD`
+
+git checkout --detach
+
 if npm version "$@"
 then
     echo 'Successfully built new version release'
 else
-    git reset --hard
+    git reset --hard "$current_commit"
 fi
 
-
-
-
-# current_commit=`git rev-parse HEAD`
-# current_branch=`git symbolic-ref --quiet --short HEAD`
-
-# git checkout --detach
-
-# if npm version "$@"
-# then
-#     echo 'Successfully built new version release'
-# else
-#     git reset --hard "$current_commit"
-# fi
-
-# git checkout "$current_branch"
+git checkout "$current_branch"
