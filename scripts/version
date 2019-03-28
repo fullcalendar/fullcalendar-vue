@@ -7,7 +7,7 @@ scripts_dir=`dirname $0`
 
 if [[ -z "$@" ]]
 then
-    echo 'Must supply at least a version argument'
+    echo 'You must supply a version argument'
     exit 1
 fi
 
