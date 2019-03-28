@@ -3,7 +3,7 @@
 # always immediately exit upon error
 set -e
 
-scripts_dir="`dirname $0`"
+scripts_dir=`dirname $0`
 
 if [[ -z "$@" ]]
 then
@@ -14,9 +14,11 @@ fi
 "$scripts_dir/require-clean-working-tree"
 "$scripts_dir/update-deps"
 
+orig_commit=`git rev-parse HEAD`
+
 if npm version "$@"
 then
     echo 'Successfully built new version release'
 else
-    git reset --hard
+    git reset --hard "$orig_commit"
 fi
