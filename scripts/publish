@@ -5,7 +5,6 @@
 set -e # always immediately exit upon error
 
 scripts_dir=`dirname $0`
-current_branch=`git symbolic-ref --quiet --short HEAD`
 version_num=$1
 production_arg=$2
 publish_args='--access public'
