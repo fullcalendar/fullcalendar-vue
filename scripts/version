@@ -25,4 +25,4 @@ then
 fi
 
 git symbolic-ref HEAD "$current_ref"
-git reset
+git reset --hard
