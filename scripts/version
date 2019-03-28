@@ -14,7 +14,7 @@ then
 fi
 
 "$scripts_dir/require-clean-working-tree"
-"$scripts_dir/update-deps"
+"$scripts_dir/update-deps" || npm install # always
 
 current_commit=`git rev-parse HEAD`
 current_branch=`git symbolic-ref --quiet --short HEAD`
