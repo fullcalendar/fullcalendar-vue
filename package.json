@@ -10,7 +10,7 @@
     "clean": "rm -rf dist",
     "watch": "rollup -c --watch",
     "build": "rollup -c",
-    "dist": "npm run build:component && npm run dist:meta",
+    "dist": "npm run build && npm run dist:meta",
     "dist:meta": "cp README.* LICENSE.* dist && ./scripts/generate-package-config",
     "test": "jest",
     "lint": "eslint src *.js",
