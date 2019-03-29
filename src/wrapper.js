@@ -12,8 +12,8 @@ let installed = false
 
 // declare install function executed by Vue.use()
 export function install(Vue) {
-	if (!installed) {
-    installed = true;
+  if (!installed) {
+    installed = true
     Vue.component('FullCalendar', FullCalendarComponent)
   }
 }
@@ -21,14 +21,14 @@ export function install(Vue) {
 // detect a globally availble version of Vue (eg. in browser via <script> tag)
 let GlobalVue
 if (typeof window !== 'undefined') {
-	GlobalVue = window.Vue
+  GlobalVue = window.Vue
 } else if (typeof global !== 'undefined') {
-	GlobalVue = global.Vue
+  GlobalVue = global.Vue
 }
 
 // auto-install if possible
 if (GlobalVue) {
-	GlobalVue.use({
+  GlobalVue.use({
     install
   })
 }
