@@ -30,7 +30,7 @@ export default {
     }),
     buble({ // transpile to ES5
       transforms: {
-        dangerousForOf: true // allow for...in loops
+        dangerousForOf: true // allow for...of loops
       }
     })
   ]
