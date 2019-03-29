@@ -5,7 +5,7 @@ import demoConfig from './rollup.config.demo'
 This config lets us generate/watch the demo project AND the component dist files
 */
 
-export default [
+export default [].concat(
   componentConfig,
   demoConfig
-]
+)
