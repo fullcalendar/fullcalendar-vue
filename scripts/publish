@@ -55,7 +55,6 @@ then
   git push origin "$version_tag"
 
   echo 'Committing the version bump...'
-  git checkout "$version_tag" -- package.json
-  git add package.json
+  git checkout "$version_tag" -- package.json # will be staged afterwards
   git commit -m 'bump version'
 fi
