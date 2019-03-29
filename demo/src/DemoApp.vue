@@ -65,7 +65,6 @@ export default {
 /* you must include each plugins' css */
 @import '@fullcalendar/core/main.css';
 @import '@fullcalendar/daygrid/main.css';
-@import '@fullcalendar/timegrid/main.css';
 
 .demo-app {
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
