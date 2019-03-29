@@ -9,7 +9,6 @@
       class='demo-app-calendar'
       ref="fullCalendar"
       defaultView="dayGridMonth"
-      editable
       :plugins="calendarPlugins"
       :weekends="calendarWeekends"
       :events="calendarEvents"
@@ -29,7 +28,10 @@ export default {
   },
   data: function() {
     return {
-      calendarPlugins: [ interactionPlugin, dayGridPlugin ], // plugins must be defined in the JS
+      calendarPlugins: [ // plugins must be defined in the JS
+        dayGridPlugin,
+        interactionPlugin // needed for dateClick
+      ],
       calendarWeekends: true,
       calendarEvents: [ // initial event data
         { title: 'Event Now', start: new Date() }
