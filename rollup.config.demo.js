@@ -7,7 +7,7 @@ import postcssImport from 'postcss-import'
 import buble from 'rollup-plugin-buble'
 
 export default {
-  input: 'demo/src/main.js', // Path relative to package.json
+  input: 'demo/src/main.js',
   output: {
     dir: 'demo/built',
     format: 'iife'
@@ -32,7 +32,7 @@ export default {
     }),
     buble({ // transpile to ES5
       exclude: [
-        'node_modules/**' // couldn't transpile some vue files
+        'node_modules/**' // couldn't transpile some vue lib files
       ],
       transforms: {
         dangerousForOf: true // allow for...in loops

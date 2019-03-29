@@ -2,7 +2,7 @@
 module.exports = {
 
   transform: {
-    '^.+\\.jsx?$': 'buble-jest'
+    '^.+\\.jsx?$': 'buble-jest' // so we can do ES6 module imports
   }
 
 }
