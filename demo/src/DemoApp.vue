@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import FullCalendar from '../../src/main'
+import FullCalendar from '../../src/wrapper'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
