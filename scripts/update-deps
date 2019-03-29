@@ -19,7 +19,7 @@ then
   exit
 fi
 
-npm update # will modify package.json, but not commit
+npm update # will modify package.json, but won't commit
 
 if "$scripts_dir/require-clean-working-tree" 'package.json'
 then
