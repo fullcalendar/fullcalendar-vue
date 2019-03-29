@@ -11,7 +11,7 @@
     "dist": "npm run build:umd && npm run build:esm && npm run dist:meta",
     "dist:meta": "cp README.* LICENSE.* dist && ./scripts/generate-package-config",
     "test": "jest",
-    "lint": "eslint src",
+    "lint": "eslint src demo *.js",
     "preversion": "npm run clean",
     "version": "npm run lint && npm run dist && npm run test && git add -f dist package-lock.json"
   },

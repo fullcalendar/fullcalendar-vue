@@ -24,7 +24,7 @@ export default {
     }),
     vue({ // handles .vue files
       css: false, // output a normal CSS files. don't let JS inject a <style> tag
-      compileTemplate: true, // explicitly convert templates to render functions (needs vue-template-compiler)
+      compileTemplate: true // explicitly convert templates to render functions (needs vue-template-compiler)
     }),
     postcss({
       extract: true, // output a normal CSS files. don't let JS inject a <style> tag
