@@ -23,7 +23,7 @@ fi
 
 # move away from the current branch (for committing release files)
 current_ref=`git symbolic-ref --quiet HEAD`
-git checkout --detach
+git checkout --quiet --detach
 
 # will build the release and commit all generated files
 # see the version-related package.json scripts for more info
@@ -37,4 +37,4 @@ fi
 # return to the original branch, but maintain generated files
 git symbolic-ref HEAD "$current_ref" # will keep the diff staged
 git reset --quiet # unstage all generated files
-git reset --hard # revert files under version control (package.json)
+git reset --quiet --hard # revert files under version control (package.json)
