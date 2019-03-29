@@ -29,7 +29,9 @@ git checkout --detach
 # see the version-related package.json scripts for more info
 if npm version "$@"
 then
+  echo
   echo 'Successfully built new version release'
+  echo
 fi
 
 # return to the original branch, but maintain generated files
