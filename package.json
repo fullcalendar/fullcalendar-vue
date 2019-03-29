@@ -1,6 +1,10 @@
 {
   "name": "arshaw-fullcalendar-vue",
-  "version": "0.0.0",
+  "title": "FullCalendar Vue Component",
+  "description": "Provides an official FullCalendar component for Vue",
+  "docs": "https://fullcalendar.io/docs/vue",
+  "license": "MIT",
+  "copyright": "2019 Adam Shaw",
   "private": true,
   "scripts": {
     "clean": "rm -rf dist demo/built",

@@ -1,5 +1,6 @@
 import resolve from 'rollup-plugin-node-resolve'
 import buble from 'rollup-plugin-buble'
+import packageConfig from './package.json'
 
 /*
 Will generate a UMD by default but can be instructed to generate an ES module
@@ -19,11 +20,13 @@ const OUTPUT_SETTINGS = {
     file: 'dist/main.umd.js',
     exports: 'named',
     name: BROWSER_GLOBAL,
-    globals: EXTERNAL_BROWSER_GLOBALS
+    globals: EXTERNAL_BROWSER_GLOBALS,
+    banner: buildBanner
   },
   esm: {
     format: 'es',
-    file: 'dist/main.esm.js'
+    file: 'dist/main.esm.js',
+    banner: buildBanner
   }
 }
 
@@ -48,4 +51,13 @@ function buildSettings(format) {
       })
     ]
   }
+}
+
+function buildBanner() {
+  return '/*\n' +
+    packageConfig.title + ' v' + (packageConfig.version || '') + '\n' +
+    'Docs: ' + packageConfig.docs + '\n' +
+    'License: ' + packageConfig.license + '\n' +
+    '(c) ' + packageConfig.copyright + '\n' +
+    '*/'
 }
