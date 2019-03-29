@@ -1,8 +1,8 @@
 import { Calendar } from '@fullcalendar/core'
-import { INPUT_NAMES, EVENT_NAMES } from './fullcalendar-options'
+import { INPUT_DEFS, EVENT_NAMES } from './fullcalendar-options'
 
 export default {
-  props: INPUT_NAMES,
+  props: INPUT_DEFS,
   calendar: null, // custom prop accessed via this.$options.calendar
 
   computed: {
@@ -14,7 +14,7 @@ export default {
     fullCalendarInputs() {
       let inputHash = {}
 
-      for (let inputName of INPUT_NAMES) {
+      for (let inputName in INPUT_DEFS) {
         let val = this[inputName]
 
         if (val !== undefined) { // wish we didn't have to do this

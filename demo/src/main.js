@@ -5,4 +5,4 @@ Vue.config.productionTip = false
 
 new Vue({
   render: h => h(DemoApp)
-}).$mount('#demo-app')
+}).$mount('#demo-app-placeholder')

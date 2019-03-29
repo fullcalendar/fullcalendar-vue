@@ -1,18 +1,19 @@
 <template>
-  <div id="app">
-    <button @click="toggleAllDaySlot">toggle allDaySlot</button>
-    <button @click="toggleCalendar">toggle calendar</button>
+  <div class='demo-app'>
+    <div class='demo-app-top'>
+      <button @click="toggleWeekends">dynamically toggle weekends</button>
+      <button @click="gotoPast">go to a date in the past</button>
+      (also, click a date/time to add an event)
+    </div>
     <FullCalendar
-      id="myfullcalendar"
-      class="mycoolclass"
-      v-if="isShowingCalendar"
+      class='demo-app-calendar'
+      ref="fullCalendar"
+      defaultView="dayGridMonth"
+      editable
       :plugins="calendarPlugins"
-      :header="{ left: 'prev,next today', right: 'title' }"
-      defaultView="timeGridWeek"
-      :allDaySlot="calendarAllDaySlot"
       :weekends="calendarWeekends"
+      :events="calendarEvents"
       @dateClick="handleDateClick"
-      timeZone="UTC"
       />
   </div>
 </template>
@@ -20,51 +21,62 @@
 <script>
 import FullCalendar from '../../src/wrapper'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 
 export default {
-  name: 'app',
-
+  components: {
+    FullCalendar // make the <FullCalendar> tag available
+  },
   data: function() {
     return {
-      isShowingCalendar: true,
-      calendarPlugins: [ interactionPlugin, dayGridPlugin, timeGridPlugin ],
-      calendarAllDaySlot: true,
-      calendarWeekends: true
+      calendarPlugins: [ interactionPlugin, dayGridPlugin ], // plugins must be defined in the JS
+      calendarWeekends: true,
+      calendarEvents: [ // initial event data
+        { title: 'Event Now', start: new Date() }
+      ]
     }
   },
-
-  components: {
-    FullCalendar
-  },
-
   methods: {
-
-    toggleCalendar() {
-      this.isShowingCalendar = !this.isShowingCalendar
+    toggleWeekends() {
+      this.calendarWeekends = !this.calendarWeekends // update a property
     },
-
-    toggleAllDaySlot() {
-      this.calendarWeekends = !this.calendarWeekends
-      this.calendarAllDaySlot = !this.calendarAllDaySlot
+    gotoPast() {
+      let calendarApi = this.$refs.fullCalendar.getApi() // from the ref="..."
+      calendarApi.gotoDate('2000-01-01') // call a method on the Calendar object
     },
-
     handleDateClick(arg) {
-      console.log('dateClick', arg.dateStr)
+      if (confirm('Would you like to add an event to ' + arg.dateStr + ' ?')) {
+        this.calendarEvents.push({ // add new event data
+          title: 'New Event',
+          date: arg.date,
+          allDay: arg.allDay
+        })
+      }
     }
-
   }
 }
 
 </script>
 
 <style>
+
+/* you must include each plugins' css */
 @import '@fullcalendar/core/main.css';
 @import '@fullcalendar/daygrid/main.css';
 @import '@fullcalendar/timegrid/main.css';
 
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+.demo-app {
+  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  font-size: 14px;
 }
+
+.demo-app-top {
+  margin: 0 0 3em;
+}
+
+.demo-app-calendar {
+  margin: 0 auto;
+  max-width: 900px;
+}
+
 </style>
