@@ -52,14 +52,14 @@ cd - # go back to root
 if [[ "$production_arg" == '--production' ]]
 then
   echo
-  echo 'Pushing to Github...'
-  echo
-  git push
-  git push origin "$version_tag"
-
-  echo
   echo 'Committing the version bump...'
   echo
   git checkout "$version_tag" -- package.json # will be staged afterwards
   git commit -m 'bump version'
+
+  echo
+  echo 'Pushing to Github...'
+  echo
+  git push
+  git push origin "$version_tag"
 fi
