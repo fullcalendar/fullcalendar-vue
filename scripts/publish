@@ -53,4 +53,9 @@ then
   echo 'Pushing to Github...'
   git push
   git push origin "$version_tag"
+
+  echo 'Committing the version bump...'
+  git checkout "$version_tag" -- package.json
+  git add package.json
+  git commit -m 'bump version'
 fi

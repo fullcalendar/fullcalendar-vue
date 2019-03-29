@@ -21,7 +21,7 @@ fi
 
 npm update # will modify package.json, but won't commit
 
-if "$scripts_dir/require-clean-working-tree" 'package.json'
+if "$scripts_dir/require-clean-working-tree" package.json
 then
   echo 'No dependencies to update'
 else
