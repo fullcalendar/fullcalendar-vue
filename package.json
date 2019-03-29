@@ -1,6 +1,6 @@
 {
   "name": "arshaw-fullcalendar-vue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "title": "FullCalendar Vue Component",
   "description": "Provides an official FullCalendar component for Vue",
   "docs": "https://fullcalendar.io/docs/vue",
