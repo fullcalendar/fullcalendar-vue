@@ -7,14 +7,13 @@
   "copyright": "2019 Adam Shaw",
   "private": true,
   "scripts": {
-    "clean": "rm -rf dist demo/built",
+    "clean": "rm -rf dist",
     "watch": "rollup -c --watch",
     "build": "rollup -c",
-    "build:component": "rollup -c --config rollup.config.component.js",
     "dist": "npm run build:component && npm run dist:meta",
     "dist:meta": "cp README.* LICENSE.* dist && ./scripts/generate-package-config",
     "test": "jest",
-    "lint": "eslint src demo *.js",
+    "lint": "eslint src *.js",
     "preversion": "npm run clean",
     "version": "npm run lint && npm run dist && npm run test && git add -f dist package-lock.json"
   },
@@ -26,8 +25,6 @@
   },
   "devDependencies": {
     "@fullcalendar/daygrid": "^4.0.1",
-    "@fullcalendar/interaction": "^4.0.1",
-    "@fullcalendar/timegrid": "^4.0.1",
     "@vue/test-utils": "^1.0.0-beta.29",
     "buble": "^0.19.7",
     "buble-jest": "^1.0.1",
@@ -39,15 +36,9 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "jest": "^24.5.0",
-    "postcss-import": "^12.0.1",
     "rollup": "^1.7.4",
     "rollup-plugin-buble": "^0.19.6",
-    "rollup-plugin-commonjs": "^9.2.2",
     "rollup-plugin-node-resolve": "^4.0.1",
-    "rollup-plugin-postcss": "^2.0.3",
-    "rollup-plugin-replace": "^2.1.1",
-    "rollup-plugin-vue": "^4.7.2",
-    "vue": "^2.6.6",
-    "vue-template-compiler": "^2.6.10"
+    "vue": "^2.6.6"
   }
 }

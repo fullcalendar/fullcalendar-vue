@@ -7,9 +7,9 @@ import postcssImport from 'postcss-import'
 import buble from 'rollup-plugin-buble'
 
 export default {
-  input: 'demo/src/main.js',
+  input: 'src/main.js',
   output: {
-    dir: 'demo/built',
+    dir: 'built',
     format: 'iife'
   },
   plugins: [
@@ -19,7 +19,8 @@ export default {
     }),
     commonjs({ // rollup has trouble with UMD. TODO: provide an .esm.js
       namedExports: {
-        'node_modules/@fullcalendar/core/main.js': [ 'Calendar' ]
+        'node_modules/@fullcalendar/core/main.js': [ 'Calendar' ],
+        '../node_modules/@fullcalendar/core/main.js': [ 'Calendar' ]
       }
     }),
     vue({ // handles .vue files
