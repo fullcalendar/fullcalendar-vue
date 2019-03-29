@@ -47,6 +47,7 @@ git reset --quiet # unstage dist files, but keep in working tree
 echo 'Publishing dist files...'
 cd dist
 npm publish $publish_args "$@"
+cd - # go back to root
 
 if [[ "$production_arg" == '--production' ]]
 then
