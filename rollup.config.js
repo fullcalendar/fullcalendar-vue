@@ -55,7 +55,7 @@ function buildSettings(format) {
 
 function buildBanner() {
   return '/*\n' +
-    packageConfig.title + ' v' + (packageConfig.version || '') + '\n' +
+    packageConfig.title + ' v' + packageConfig.version + '\n' +
     'Docs: ' + packageConfig.docs + '\n' +
     'License: ' + packageConfig.license + '\n' +
     '(c) ' + packageConfig.copyright + '\n' +
