@@ -11,6 +11,6 @@ describe('something', function() {
     })
     let vm = wrapper.vm
     // console.log(vm)
-    expect(vm).toBeTruthy()
+    expect(vm).toBe(9) // toBeTruthy()
   })
 })
