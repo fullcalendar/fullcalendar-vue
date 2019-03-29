@@ -39,6 +39,14 @@ export default {
 
   },
 
+  methods: {
+
+    getApi() {
+      return this.$options.calendar
+    }
+
+  },
+
   render(createElement) {
     return createElement('div')
   },

@@ -105,6 +105,8 @@ export const INPUT_NAMES = [
 ]
 
 export const EVENT_NAMES = [
+  '_destroyed',
+  'viewSkeletonRender',
   'datesRender',
   'datesDestroy',
   'dayRender',
