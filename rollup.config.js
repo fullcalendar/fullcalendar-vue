@@ -41,9 +41,9 @@ function buildSettings(format) {
       resolve({
         jail: 'src' // any files outside of here are considered external libs
       }),
-      buble({ // transpile to ES5
+      buble({ // transpile to ES5 (TODO: better to use Babel?)
         transforms: {
-          dangerousForOf: true // allow for...of loops
+          dangerousForOf: true // compile for...of loops
         }
       })
     ]
@@ -55,6 +55,5 @@ function buildBanner() {
     packageConfig.title + ' v' + packageConfig.version + '\n' +
     'Docs: ' + packageConfig.docs + '\n' +
     'License: ' + packageConfig.license + '\n' +
-    '(c) ' + packageConfig.copyright + '\n' +
     '*/'
 }
