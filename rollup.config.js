@@ -5,9 +5,6 @@ import packageConfig from './package.json'
 /*
 Will generate a UMD by default but can be instructed to generate an ES module
 by using command line argument overrides.
-
-Concept derived from:
-https://vuejs.org/v2/cookbook/packaging-sfc-for-npm.html
 */
 
 const BROWSER_GLOBAL = 'FullCalendarVue'

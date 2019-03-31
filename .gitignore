@@ -1,7 +1,3 @@
 node_modules
 package-lock.json
 dist
-
-# TODO: eventually move to demo projects
-# ALSO, need to write linting
-demo/built
