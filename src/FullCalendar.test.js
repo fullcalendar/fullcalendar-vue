@@ -20,7 +20,15 @@ it('should unmount and call destroy', function() {
   expect(wrapper.emitted()._destroyed).toBeTruthy()
 })
 
-it('should accept a callback', function() {
+it('should handle prop changes', function() {
+  let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
+  expect(wrapper.find('.fc-sat').exists()).toBe(true)
+
+  wrapper.setProps({ weekends: false })
+  expect(wrapper.find('.fc-sat').exists()).toBe(false)
+})
+
+it('should emit an event', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
   expect(wrapper.emitted().viewSkeletonRender).toBeTruthy()
 })
@@ -33,12 +41,4 @@ it('should expose an API', function() {
   let newDate = new Date(Date.UTC(2000, 0, 1))
   calendarApi.gotoDate(newDate)
   expect(calendarApi.getDate().valueOf()).toBe(newDate.valueOf())
-})
-
-it('should handle prop changes', function() {
-  let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
-  expect(wrapper.find('.fc-sat').exists()).toBe(true)
-
-  wrapper.setProps({ weekends: false })
-  expect(wrapper.find('.fc-sat').exists()).toBe(false)
 })

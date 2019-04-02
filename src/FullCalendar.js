@@ -5,12 +5,32 @@ export default {
   props: INPUT_DEFS,
   calendar: null, // custom prop accessed via this.$options.calendar
 
-  computed: {
+  render(createElement) {
+    return createElement('div')
+  },
 
+  mounted() {
+    this.$options.calendar = new Calendar(this.$el, this.fullCalendarOptions)
+    this.$options.calendar.render()
+  },
+
+  beforeDestroy() {
+    this.$options.calendar.destroy()
+    this.$options.calendar = null
+  },
+
+  watch: {
+    fullCalendarOptions() {
+      this.$options.calendar.destroy()
+      this.$options.calendar = new Calendar(this.$el, this.fullCalendarOptions)
+      this.$options.calendar.render()
+    }
+  },
+
+  computed: {
     fullCalendarOptions() {
       return Object.assign({}, this.fullCalendarInputs, this.fullCalendarEvents)
     },
-
     fullCalendarInputs() {
       let inputHash = {}
 
@@ -24,7 +44,6 @@ export default {
 
       return inputHash
     },
-
     fullCalendarEvents() {
       let handlerHash = {}
 
@@ -36,37 +55,12 @@ export default {
 
       return handlerHash
     }
-
   },
 
   methods: {
-
     getApi() {
       return this.$options.calendar
     }
-
-  },
-
-  render(createElement) {
-    return createElement('div')
-  },
-
-  mounted() {
-    this.$options.calendar = new Calendar(this.$el, this.fullCalendarOptions)
-    this.$options.calendar.render()
-  },
-
-  watch: {
-    fullCalendarOptions() {
-      this.$options.calendar.destroy()
-      this.$options.calendar = new Calendar(this.$el, this.fullCalendarOptions)
-      this.$options.calendar.render()
-    }
-  },
-
-  beforeDestroy() {
-    this.$options.calendar.destroy()
-    this.$options.calendar = null
   }
 
 }
