@@ -1,5 +1,5 @@
 
 module.exports = {
-  rootDir: 'src',
+  rootDir: 'src'
   // will automatically use babel.config.js
 }
