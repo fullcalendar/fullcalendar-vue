@@ -7,8 +7,6 @@ const DEFAULT_PROPS = {
   plugins: [ dayGridPlugin ]
 }
 
-// TODO: test a boolean prop
-
 it('should render', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
   expect(wrapper.find('.fc').exists()).toBe(true)
@@ -24,7 +22,7 @@ it('should handle prop changes', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
   expect(wrapper.find('.fc-sat').exists()).toBe(true)
 
-  wrapper.setProps({ weekends: false })
+  wrapper.setProps({ weekends: false }) // good idea to test a falsy prop
   expect(wrapper.find('.fc-sat').exists()).toBe(false)
 })
 

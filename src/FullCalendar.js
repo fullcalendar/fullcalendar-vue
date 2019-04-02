@@ -3,7 +3,7 @@ import { INPUT_DEFS, EVENT_NAMES } from './fullcalendar-options'
 
 export default {
   props: INPUT_DEFS,
-  calendar: null, // custom prop accessed via this.$options.calendar
+  calendar: null, // accessed via this.$options.calendar
 
   render(createElement) {
     return createElement('div')
@@ -16,20 +16,17 @@ export default {
 
   beforeDestroy() {
     this.$options.calendar.destroy()
-    this.$options.calendar = null
   },
 
   watch: {
-    fullCalendarOptions() {
-      this.$options.calendar.destroy()
-      this.$options.calendar = new Calendar(this.$el, this.fullCalendarOptions)
-      this.$options.calendar.render()
+    fullCalendarOptions(options) {
+      this.$options.calendar.resetOptions(options)
     }
   },
 
   computed: {
     fullCalendarOptions() {
-      return Object.assign({}, this.fullCalendarInputs, this.fullCalendarEvents)
+      return { ...this.fullCalendarInputs, ...this.fullCalendarEvents }
     },
     fullCalendarInputs() {
       let inputHash = {}
@@ -37,7 +34,7 @@ export default {
       for (let inputName in INPUT_DEFS) {
         let val = this[inputName]
 
-        if (val !== undefined) { // wish we didn't have to do this
+        if (val !== undefined) { // unfortunately FC chokes when some props are set to undefined
           inputHash[inputName] = val
         }
       }
