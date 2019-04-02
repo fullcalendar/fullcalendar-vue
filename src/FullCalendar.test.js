@@ -17,7 +17,7 @@ it('should render', function() {
 it('should unmount and call destroy', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
   wrapper.destroy()
-  // expect(wrapper.emitted()._destroyed).toBeTruthy() TODO
+  expect(wrapper.emitted()._destroyed).toBeTruthy()
 })
 
 it('should accept a callback', function() {
