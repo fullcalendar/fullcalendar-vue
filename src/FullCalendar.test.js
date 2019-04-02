@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import FullCalendar from '../dist/main.esm' // weird, but most realistic testing scenario
+import FullCalendar from './wrapper'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 const DEFAULT_PROPS = {
