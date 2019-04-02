@@ -1,5 +1,5 @@
 import resolve from 'rollup-plugin-node-resolve'
-import buble from 'rollup-plugin-buble'
+import babel from 'rollup-plugin-babel'
 import packageConfig from './package.json'
 
 /*
@@ -41,11 +41,7 @@ function buildSettings(format) {
       resolve({
         jail: 'src' // any files outside of here are considered external libs
       }),
-      buble({ // transpile to ES5 (TODO: better to use Babel?)
-        transforms: {
-          dangerousForOf: true // compile for...of loops
-        }
-      })
+      babel() // will automatically use bable.config.js
     ]
   }
 }
