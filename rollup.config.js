@@ -41,7 +41,7 @@ function buildSettings(format) {
       resolve({
         jail: 'src' // any files outside of here are considered external libs
       }),
-      babel() // will automatically use bable.config.js
+      babel() // will automatically use babel.config.js
     ]
   }
 }
