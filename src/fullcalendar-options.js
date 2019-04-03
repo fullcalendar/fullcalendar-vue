@@ -1,4 +1,8 @@
 
+/*
+when this file is moved, update the docs
+*/
+
 export const INPUT_DEFS = {
   plugins: {},
   header: {},
