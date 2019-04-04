@@ -1,8 +1,8 @@
 
 # FullCalendar Vue Component
 
-TODO: instructions how to build/watch/run
-TODO: link to docs
-TODO: link to example repo
-TODO: travis ci badge
-TODO: try different casing of tags/attributes
+This project provides an official Vue component for FullCalendar, with all the same setting.
+
+- [FullCalendar Vue Component Docs](https://fullcalendar.io/docs/vue)
+- [Example Project](https://github.com/fullcalendar/fullcalendar-example-projects/tree/master/vue)
+- [Contributor Guide](CONTRIBUTORS.md)
