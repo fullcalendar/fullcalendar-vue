@@ -1,5 +1,4 @@
 language: node_js
-node_js:
-  - node # implies latest version
-# cache: npm # don't reinstall node_modules from scratch each time
+node_js: stable
+cache: npm # don't reinstall packages from scratch each time
 script: npm run ci
