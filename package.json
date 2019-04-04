@@ -1,11 +1,20 @@
 {
   "name": "@fullcalendar/vue",
   "version": "4.0.2-beta",
+  "private": true,
   "title": "FullCalendar Vue Component",
   "description": "An official FullCalendar component for Vue",
+  "keywords": [
+    "vue",
+    "calendar",
+    "fullcalendar"
+  ],
   "docs": "https://fullcalendar.io/docs/vue",
   "license": "MIT",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fullcalendar/fullcalendar-vue.git"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "watch": "rollup -c --watch",

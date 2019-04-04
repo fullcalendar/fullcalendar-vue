@@ -24,7 +24,7 @@ npm run test-single
 npm run lint
 ```
 
-Also, make sure the [example repo](https://github.com/fullcalendar/fullcalendar-example-projects/tree/master/vue) builds correctly with the new code. To test, use [npm link](https://docs.npmjs.com/cli/link.html) to trick it into using your not-yet-published dist files.
+Also, make sure the [example project] builds correctly with the new code. To test, use [npm link] to trick it into using your not-yet-published dist files.
 
 
 ## Publishing
@@ -38,3 +38,7 @@ For publishing to NPM/Github, run something like this:
 ```
 
 This will create a detached+tagged release commit.
+
+
+[example project]: https://github.com/fullcalendar/fullcalendar-example-projects/tree/master/vue
+[npm link]: https://docs.npmjs.com/cli/link.html
