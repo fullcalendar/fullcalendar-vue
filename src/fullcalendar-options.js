@@ -112,6 +112,7 @@ export const INPUT_DEFS = {
   eventDataTransform: {},
   allDayMaintainDuration: {},
   eventResizableFromStart: {},
+  timeGridEventMinHeight: {},
   // compound OptionsInput...
   buttonText: {},
   views: {},
