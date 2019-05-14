@@ -130,7 +130,8 @@ export const INPUT_DEFS = {
   resourceColumns: {},
   resourcesInitiallyExpanded: {},
   slotWidth: {},
-  datesAboveResources: {}
+  datesAboveResources: {},
+  googleCalendarApiKey: {}
 }
 
 export const EVENT_NAMES = [
