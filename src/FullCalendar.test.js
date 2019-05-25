@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import FullCalendar from './wrapper'
+import FullCalendar from './wrapper' // bad name, considering other "wrapper" in this file
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 const DEFAULT_PROPS = {
