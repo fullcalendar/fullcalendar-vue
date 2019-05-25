@@ -17,8 +17,8 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "watch": "rollup -c --watch",
-    "build": "rollup -c",
+    "watch": "rollup -c --environment BUILD:development --watch",
+    "build": "rollup -c --environment BUILD:production",
     "dist": "npm run build && npm run dist:meta",
     "dist:meta": "cp README.* LICENSE.* dist && ./scripts/generate-package-config",
     "test": "jest --watch",
@@ -49,6 +49,7 @@
     "rollup": "^1.8.0",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-node-resolve": "^4.0.1",
+    "rollup-plugin-sourcemaps": "^0.4.2",
     "vue": "^2.6.6",
     "vue-template-compiler": "^2.6.10"
   }
