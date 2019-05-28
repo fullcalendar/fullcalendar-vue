@@ -81,7 +81,11 @@ function buildPlainComputed() {
 
   for (let inputName in DEEP_REACTIVE_PROPS) {
     computed['plain_' + inputName] = function() {
-      return dcopy(this[inputName])
+      let complexVal = this[inputName]
+
+      if (complexVal !== undefined) {
+        return dcopy(complexVal)
+      } // will return undefined otherwise
     }
   }
 
