@@ -187,6 +187,12 @@ export const EMISSIONS = [
   'resourceRender'
 ]
 
+export const DEEP_REACTIVE_PROPS = {
+  events: true,
+  eventSources: true,
+  resources: true
+}
+
 // identify deprecated EMISSIONS (TODO: eventually remove)
 export const EMISSIONS_USE_INPUT = {
   datesRender: true,

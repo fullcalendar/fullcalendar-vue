@@ -36,7 +36,7 @@ it('should handle prop changes', function() {
 
 it('should emit an event', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
-  expect(wrapper.emitted().viewSkeletonRender).toBeTruthy()
+  expect(wrapper.emitted()._eventsPositioned).toBeTruthy()
 })
 
 
@@ -82,4 +82,44 @@ it('should expose an API', function() {
   let newDate = new Date(Date.UTC(2000, 0, 1))
   calendarApi.gotoDate(newDate)
   expect(calendarApi.getDate().valueOf()).toBe(newDate.valueOf())
+})
+
+
+// event reactivity
+
+const WRAPPER_COMPONENT = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <FullCalendar :events='calendarEvents' :plugins='calendarPlugins' timeZone='UTC' />
+  `,
+  data() {
+    return {
+      calendarEvents: EVENT_DATA,
+      calendarPlugins: DEFAULT_PROPS.plugins
+    }
+  },
+  methods: {
+    addEvent() {
+      this.calendarEvents.push({ title: 'event2', start: new Date() })
+    },
+    mutateEvent() {
+      this.calendarEvents[0].title = 'another title'
+    }
+  }
+}
+
+it('reacts to event adding', function() {
+  let wrapper = mount(WRAPPER_COMPONENT)
+  expect(wrapper.findAll('.fc-event').length).toBe(1)
+  wrapper.vm.addEvent()
+  expect(wrapper.findAll('.fc-event').length).toBe(2)
+})
+
+it('reacts to individual event changes', function() {
+  let wrapper = mount(WRAPPER_COMPONENT)
+  expect(wrapper.find('.fc-event .fc-title').text()).toBe('event1')
+  wrapper.vm.mutateEvent()
+  expect(wrapper.find('.fc-event .fc-title').text()).toBe('another title')
 })

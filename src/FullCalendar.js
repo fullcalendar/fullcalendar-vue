@@ -1,5 +1,6 @@
+import { default as dcopy } from 'deep-copy'
 import { Calendar } from '@fullcalendar/core'
-import { INPUT_DEFS, EMISSIONS, EMISSIONS_USE_INPUT } from './fullcalendar-options'
+import { INPUT_DEFS, EMISSIONS, EMISSIONS_USE_INPUT, DEEP_REACTIVE_PROPS } from './fullcalendar-options'
 
 export default {
   props: INPUT_DEFS,
@@ -27,6 +28,7 @@ export default {
   },
 
   computed: {
+    ...buildPlainComputed(),
     fullCalendarOptions() {
       return {
         ...this.fullCalendarEmissions,
@@ -37,7 +39,9 @@ export default {
       let inputHash = {}
 
       for (let inputName in INPUT_DEFS) {
-        let val = this[inputName]
+        let val = DEEP_REACTIVE_PROPS[inputName] ?
+          this['plain_' + inputName] :
+          this[inputName]
 
         if (val !== undefined) { // unfortunately FC chokes when some props are set to undefined
           inputHash[inputName] = val
@@ -66,6 +70,24 @@ export default {
   }
 
 }
+
+
+/*
+generates a map of computed props for props that Vue converts to reactive objects.
+each of these getters generates a plain object copy.
+*/
+function buildPlainComputed() {
+  let computed = {}
+
+  for (let inputName in DEEP_REACTIVE_PROPS) {
+    computed['plain_' + inputName] = function() {
+      return dcopy(this[inputName])
+    }
+  }
+
+  return computed
+}
+
 
 function warnDeprecatedListeners(listenerHash) {
   for (let emissionName in listenerHash) {
