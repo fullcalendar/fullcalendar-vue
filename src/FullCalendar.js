@@ -6,6 +6,8 @@ export default {
   props: INPUT_DEFS,
   calendar: null, // accessed via this.$options.calendar
 
+  // TODO: experiment with dirty flags and updated() hook
+
   render(createElement) {
     return createElement('div')
   },
