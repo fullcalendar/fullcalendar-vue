@@ -1,5 +1,5 @@
 import { Calendar } from '@fullcalendar/core'
-import { INPUT_DEFS, EVENT_NAMES } from './fullcalendar-options'
+import { INPUT_DEFS, EMISSIONS, EMISSIONS_USE_INPUT } from './fullcalendar-options'
 
 export default {
   props: INPUT_DEFS,
@@ -10,6 +10,8 @@ export default {
   },
 
   mounted() {
+    warnDeprecatedListeners(this.$listeners)
+
     this.$options.calendar = new Calendar(this.$el, this.fullCalendarOptions)
     this.$options.calendar.render()
   },
@@ -26,7 +28,10 @@ export default {
 
   computed: {
     fullCalendarOptions() {
-      return { ...this.fullCalendarInputs, ...this.fullCalendarEvents }
+      return {
+        ...this.fullCalendarEmissions,
+        ...this.fullCalendarInputs // needs to take precedence over fullCalendarEmissions, for EMISSIONS_USE_INPUT
+      }
     },
     fullCalendarInputs() {
       let inputHash = {}
@@ -41,10 +46,10 @@ export default {
 
       return inputHash
     },
-    fullCalendarEvents() {
+    fullCalendarEmissions() {
       let handlerHash = {}
 
-      for (let eventName of EVENT_NAMES) {
+      for (let eventName of EMISSIONS) {
         handlerHash[eventName] = (...args) => {
           this.$emit(eventName, ...args)
         }
@@ -60,4 +65,12 @@ export default {
     }
   }
 
+}
+
+function warnDeprecatedListeners(listenerHash) {
+  for (let emissionName in listenerHash) {
+    if (EMISSIONS_USE_INPUT[emissionName]) {
+      console.warn('Use of ' + emissionName + ' as an event is deprecated. Please convert to a prop.')
+    }
+  }
 }

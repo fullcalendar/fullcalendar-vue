@@ -131,13 +131,19 @@ export const INPUT_DEFS = {
   resourcesInitiallyExpanded: {},
   slotWidth: {},
   datesAboveResources: {},
-  googleCalendarApiKey: {}
+  googleCalendarApiKey: {},
+  // used to be events but are now props...
+  datesRender: {},
+  datesDestroy: {},
+  dayRender: {},
+  eventRender: {},
+  eventDestroy: {},
+  viewSkeletonRender: {},
+  viewSkeletonDestroy: {},
+  resourceRender: {}
 }
 
-export const EVENT_NAMES = [
-  'datesRender',
-  'datesDestroy',
-  'dayRender',
+export const EMISSIONS = [
   'windowResize',
   'dateClick',
   'eventClick',
@@ -146,10 +152,8 @@ export const EVENT_NAMES = [
   'select',
   'unselect',
   'loading',
-  'eventRender',
   'eventPositioned',
   '_eventsPositioned',
-  'eventDestroy',
   'eventDragStart',
   'eventDragStop',
   'eventDrop',
@@ -159,9 +163,26 @@ export const EVENT_NAMES = [
   'drop',
   'eventReceive',
   'eventLeave',
+  '_destroyed',
+  // should now be props... (TODO: eventually remove)
+  'datesRender',
+  'datesDestroy',
+  'dayRender',
+  'eventRender',
+  'eventDestroy',
   'viewSkeletonRender',
   'viewSkeletonDestroy',
-  '_destroyed',
-  // scheduler...
   'resourceRender'
 ]
+
+// identify deprecated EMISSIONS (TODO: eventually remove)
+export const EMISSIONS_USE_INPUT = {
+  datesRender: true,
+  datesDestroy: true,
+  dayRender: true,
+  eventRender: true,
+  eventDestroy: true,
+  viewSkeletonRender: true,
+  viewSkeletonDestroy: true,
+  resourceRender: true
+}
