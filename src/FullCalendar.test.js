@@ -51,6 +51,7 @@ it('fires eventRender listeners', function() { // DEPRECATED behavior
     }
   })
   expect(wrapper.emitted().eventRender).toBeTruthy()
+  expect(wrapper.findAll('.fc-event').length).toBe(1) // USEFUL even after DEPRECATION
 })
 
 
@@ -69,7 +70,7 @@ it('eventRender as a prop gets fired and can prevent rendering false', function(
   })
 
   expect(eventRenderCalled).toBe(true)
-  expect(wrapper.findAll('.fc').isEmpty()).toBe(true)
+  expect(wrapper.findAll('.fc-event').length).toBe(0)
 })
 
 
