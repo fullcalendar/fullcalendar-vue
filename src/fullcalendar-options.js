@@ -113,6 +113,17 @@ export const INPUT_DEFS = {
   allDayMaintainDuration: {},
   eventResizableFromStart: {},
   timeGridEventMinHeight: {},
+  googleCalendarApiKey: {},
+  eventDragMinDistance: {},
+  eventResourceEditable: {},
+  eventSourceFailure: {},
+  eventSourceSuccess: {},
+  forceEventDuration: {},
+  progressiveEventRendering: {},
+  selectLongPressDelay: {},
+  selectMinDistance: {},
+  timeZoneParam: {},
+  titleRangeSeparator: {},
   // compound OptionsInput...
   buttonText: {},
   views: {},
@@ -131,7 +142,7 @@ export const INPUT_DEFS = {
   resourcesInitiallyExpanded: {},
   slotWidth: {},
   datesAboveResources: {},
-  googleCalendarApiKey: {}
+  refetchResourcesOnNavigate: {}
 }
 
 export const EVENT_NAMES = [
