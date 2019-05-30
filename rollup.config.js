@@ -1,4 +1,5 @@
 import nodeResolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
 import babel from 'rollup-plugin-babel'
 import sourcemaps from 'rollup-plugin-sourcemaps'
 import packageConfig from './package.json'
@@ -15,10 +16,13 @@ let sourcemap = isDev ? 'inline' : false
 
 const BROWSER_GLOBAL = 'FullCalendarVue'
 const EXTERNAL_BROWSER_GLOBALS = {
-  'deep-copy': 'dcopy',
-  'fast-deep-equal': 'fdequal', // isn't true! there is no browser global!
   '@fullcalendar/core': 'FullCalendar'
+  // we don't need to define Vue. components are just objects
 }
+const ESM_EXTERNALS = [ // only for ES build. UMD build will bundle these
+  'fast-deep-equal',
+  'deep-copy'
+]
 const OUTPUT_SETTINGS = {
   umd: {
     format: 'umd',
@@ -43,21 +47,33 @@ export default [
 ]
 
 function buildSettings(format) {
-  let plugins = [
-    nodeResolve({
-      jail: 'src' // any files outside of here are considered external libs
-    }),
+  let external = Object.keys(EXTERNAL_BROWSER_GLOBALS)
+  let plugins = []
+
+  if (format === 'esm') {
+    external = external.concat(ESM_EXTERNALS)
+    plugins.push(
+      nodeResolve({ jail: 'src' }), // any files outside of here are considered external libs
+    )
+  } else {
+    plugins.push(
+      nodeResolve()
+    )
+  }
+
+  plugins.push(
+    commonjs(), // allows importing of external cjs modules
     babel() // will automatically use babel.config.js
-  ]
+  )
 
   if (isDev) {
     plugins.push(sourcemaps())
   }
 
   return {
-    input: 'src/wrapper.js',
+    input: 'src/install.js',
     output: OUTPUT_SETTINGS[format],
-    external: Object.keys(EXTERNAL_BROWSER_GLOBALS),
+    external,
     plugins
   }
 }

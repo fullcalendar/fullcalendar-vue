@@ -1,5 +1,5 @@
-import { default as deepEquals } from 'fast-deep-equal' // TODO: bundle with lib
-import { default as deepCopy } from 'deep-copy' // TODO: bundle with lib also?
+import { default as deepEquals } from 'fast-deep-equal'
+import { default as deepCopy } from 'deep-copy'
 import { Calendar } from '@fullcalendar/core'
 import { PROP_DEFS, PROP_IS_DEEP, EMISSION_NAMES, EMISSION_USE_PROP } from './fullcalendar-options'
 
