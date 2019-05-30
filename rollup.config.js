@@ -1,4 +1,4 @@
-import resolve from 'rollup-plugin-node-resolve'
+import nodeResolve from 'rollup-plugin-node-resolve'
 import babel from 'rollup-plugin-babel'
 import sourcemaps from 'rollup-plugin-sourcemaps'
 import packageConfig from './package.json'
@@ -15,6 +15,8 @@ let sourcemap = isDev ? 'inline' : false
 
 const BROWSER_GLOBAL = 'FullCalendarVue'
 const EXTERNAL_BROWSER_GLOBALS = {
+  'deep-copy': 'dcopy',
+  'fast-deep-equal': 'fdequal', // isn't true! there is no browser global!
   '@fullcalendar/core': 'FullCalendar'
 }
 const OUTPUT_SETTINGS = {
@@ -42,7 +44,7 @@ export default [
 
 function buildSettings(format) {
   let plugins = [
-    resolve({
+    nodeResolve({
       jail: 'src' // any files outside of here are considered external libs
     }),
     babel() // will automatically use babel.config.js
