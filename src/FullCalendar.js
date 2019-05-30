@@ -11,8 +11,8 @@ VOCAB:
 
 NOTE: "deep" props are complex objects that we want to watch for internal changes.
 Vue allows a reference to be internally mutated. Each time we detect a mutation,
-we use deepCopy to freeze the state. This has the added benefit of avoiding the
-getter/setter methods that Vue has embedded before passing to FullCalendar's API.
+we use deepCopy to freeze the state. This has the added benefit of stripping the
+getter/setter methods that Vue embeds.
 */
 
 export default {

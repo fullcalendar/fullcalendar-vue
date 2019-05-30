@@ -123,11 +123,11 @@ const WRAPPER_COMPONENT = {
     }
   },
   methods: {
-    mutateEvent() {
-      this.calendarEvents[0].title = 'another title'
-    },
     addEvent() {
       this.calendarEvents.push(buildEvent(1))
+    },
+    updateTitle(title) {
+      this.calendarEvents[0].title = title
     }
   }
 }
@@ -142,7 +142,7 @@ it('reacts to event adding', function() {
 it('reacts to event property changes', function() {
   let wrapper = mount(WRAPPER_COMPONENT)
   expect(getFirstEventTitle(wrapper)).toBe('event0')
-  wrapper.vm.mutateEvent()
+  wrapper.vm.updateTitle('another title')
   expect(getFirstEventTitle(wrapper)).toBe('another title')
 })
 
