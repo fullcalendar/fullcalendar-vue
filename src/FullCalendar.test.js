@@ -30,16 +30,18 @@ it('handles multiple prop changes, include event reset', function() {
   let eventRenderCnt = 0
   let viewSkeletonRenderCnt = 0
 
-  let wrapper = mount(FullCalendar, { propsData: {
-    ...DEFAULT_PROPS,
-    events: buildEvents(1),
-    eventRender() {
-      eventRenderCnt++
-    },
-    viewSkeletonRender() {
-      viewSkeletonRenderCnt++
+  let wrapper = mount(FullCalendar, {
+    propsData: {
+      ...DEFAULT_PROPS,
+      events: buildEvents(1),
+      eventRender() {
+        eventRenderCnt++
+      },
+      viewSkeletonRender() {
+        viewSkeletonRenderCnt++
+      }
     }
-  }})
+  })
 
   expect(getRenderedEventCount(wrapper)).toBe(1)
   expect(isWeekendsRendered(wrapper)).toBe(true)
@@ -106,14 +108,77 @@ it('should expose an API', function() {
 })
 
 
-// event reactivity
+// toolbar/event non-reactivity
+// (Vue naturally won't recompute bound props that don't have dependencies)
 
-const WRAPPER_COMPONENT = {
+const BORING_COMPONENT = {
+  props: [ 'calendarViewSkeletonRender', 'calendarEventRender' ],
   components: {
     FullCalendar
   },
   template: `
-    <FullCalendar :plugins='calendarPlugins' :timeZone='calendarTimeZone' :events='calendarEvents' />
+    <FullCalendar
+      :plugins='calendarPlugins'
+      :timeZone='calendarTimeZone'
+      :height='calendarHeight'
+      :toolbar='buildToolbar()'
+      :events='buildEvents(1)'
+      :viewSkeletonRender='calendarViewSkeletonRender'
+      :eventRender='calendarEventRender'
+    />
+  `,
+  data() {
+    return {
+      calendarPlugins: DEFAULT_PROPS.plugins,
+      calendarTimeZone: DEFAULT_PROPS.timeZone,
+      calendarHeight: 400
+    }
+  },
+  methods: {
+    buildToolbar,
+    buildEvents,
+    changeHeight() {
+      this.calendarHeight = 500
+    }
+  }
+}
+
+it('avoids rerendering unchanged toolbar/events', function() {
+  let viewSkeletonRenderCnt = 0
+  let eventRenderCnt = 0
+
+  let wrapper = mount(BORING_COMPONENT, {
+    propsData: {
+      calendarViewSkeletonRender() {
+        viewSkeletonRenderCnt++
+      },
+      calendarEventRender() {
+        eventRenderCnt++
+      }
+    }
+  })
+
+  expect(viewSkeletonRenderCnt).toBe(1)
+  expect(eventRenderCnt).toBe(1)
+
+  wrapper.vm.changeHeight()
+  expect(viewSkeletonRenderCnt).toBe(1)
+  expect(eventRenderCnt).toBe(1)
+})
+
+
+// event reactivity
+
+const EVENT_MANIP_COMPONENT = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <FullCalendar
+      :plugins='calendarPlugins'
+      :timeZone='calendarTimeZone'
+      :events='calendarEvents'
+    />
   `,
   data() {
     return {
@@ -133,14 +198,14 @@ const WRAPPER_COMPONENT = {
 }
 
 it('reacts to event adding', function() {
-  let wrapper = mount(WRAPPER_COMPONENT)
+  let wrapper = mount(EVENT_MANIP_COMPONENT)
   expect(getRenderedEventCount(wrapper)).toBe(1)
   wrapper.vm.addEvent()
   expect(getRenderedEventCount(wrapper)).toBe(2)
 })
 
 it('reacts to event property changes', function() {
-  let wrapper = mount(WRAPPER_COMPONENT)
+  let wrapper = mount(EVENT_MANIP_COMPONENT)
   expect(getFirstEventTitle(wrapper)).toBe('event0')
   wrapper.vm.updateTitle('another title')
   expect(getFirstEventTitle(wrapper)).toBe('another title')
@@ -161,6 +226,14 @@ function buildEvents(length) {
 
 function buildEvent(i) {
   return { title: 'event' + i, start: new Date() }
+}
+
+function buildToolbar() {
+  return {
+    left: 'prev,next today',
+    center: 'title',
+    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+  }
 }
 
 
