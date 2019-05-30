@@ -7,7 +7,7 @@ when this files is moved, update the docs.
 TODO: figure out booleans so attributes can be defined like:
 <FullCalendar editable />
 */
-export const INPUT_DEFS = {
+export const PROP_DEFS = {
   header: {},
   footer: {},
   customButtons: {},
@@ -144,7 +144,7 @@ export const INPUT_DEFS = {
   datesAboveResources: {},
   googleCalendarApiKey: {},
   refetchResourcesOnNavigate: {},
-  // used to be events but are now props...
+  // used to be emissions but are now props...
   datesRender: {},
   datesDestroy: {},
   dayRender: {},
@@ -155,7 +155,15 @@ export const INPUT_DEFS = {
   resourceRender: {}
 }
 
-export const EMISSIONS = [
+export const PROP_IS_DEEP = {
+  header: true,
+  footer: true,
+  events: true,
+  eventSources: true,
+  resources: true
+}
+
+export const EMISSION_NAMES = [
   'windowResize',
   'dateClick',
   'eventClick',
@@ -187,14 +195,8 @@ export const EMISSIONS = [
   'resourceRender'
 ]
 
-export const DEEP_REACTIVE_PROPS = {
-  events: true,
-  eventSources: true,
-  resources: true
-}
-
-// identify deprecated EMISSIONS (TODO: eventually remove)
-export const EMISSIONS_USE_INPUT = {
+// identify deprecated emissions (TODO: eventually remove)
+export const EMISSION_USE_PROP = {
   datesRender: true,
   datesDestroy: true,
   dayRender: true,

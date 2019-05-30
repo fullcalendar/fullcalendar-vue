@@ -7,61 +7,83 @@ const DEFAULT_PROPS = {
   plugins: [ dayGridPlugin ]
 }
 
-const EVENT_DATA = [
-  { title: 'event1', start: new Date() }
-]
 
-
-it('should render', function() {
+it('renders', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
-  expect(wrapper.find('.fc').exists()).toBe(true)
+  expect(isSkeletonRendered(wrapper)).toBe(true)
 })
 
-
-it('should unmount and call destroy', function() {
+it('unmounts and calls destroy', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
   wrapper.destroy()
   expect(wrapper.emitted()._destroyed).toBeTruthy()
 })
 
-
-it('should handle prop changes', function() {
+it('handles a single prop change', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
-  expect(wrapper.find('.fc-sat').exists()).toBe(true)
-
+  expect(isWeekendsRendered(wrapper)).toBe(true)
   wrapper.setProps({ weekends: false }) // good idea to test a falsy prop
-  expect(wrapper.find('.fc-sat').exists()).toBe(false)
+  expect(isWeekendsRendered(wrapper)).toBe(false)
 })
 
+it('handles multiple prop changes, include event reset', function() {
+  let eventRenderCnt = 0
+  let viewSkeletonRenderCnt = 0
 
-it('should emit an event', function() {
+  let wrapper = mount(FullCalendar, { propsData: {
+    ...DEFAULT_PROPS,
+    events: buildEvents(1),
+    eventRender() {
+      eventRenderCnt++
+    },
+    viewSkeletonRender() {
+      viewSkeletonRenderCnt++
+    }
+  }})
+
+  expect(getRenderedEventCount(wrapper)).toBe(1)
+  expect(isWeekendsRendered(wrapper)).toBe(true)
+  expect(eventRenderCnt).toBe(1)
+  expect(viewSkeletonRenderCnt).toBe(1)
+
+  wrapper.setProps({
+    dir: 'rtl',
+    weekends: false,
+    events: buildEvents(2)
+  })
+
+  expect(getRenderedEventCount(wrapper)).toBe(2)
+  expect(isWeekendsRendered(wrapper)).toBe(false)
+  expect(eventRenderCnt).toBe(3) // +2
+  expect(viewSkeletonRenderCnt).toBe(2) // +1
+})
+
+it('emits an event', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
   expect(wrapper.emitted()._eventsPositioned).toBeTruthy()
 })
 
-
-it('fires eventRender listeners', function() { // DEPRECATED behavior
+// DEPRECATED behavior
+it('emits eventRender', function() {
   let wrapper = mount(FullCalendar, {
     propsData: {
       ...DEFAULT_PROPS,
-      events: EVENT_DATA
+      events: buildEvents(1)
     },
     listeners: {
       // eventRender() {} // should do a console.warn
     }
   })
   expect(wrapper.emitted().eventRender).toBeTruthy()
-  expect(wrapper.findAll('.fc-event').length).toBe(1) // USEFUL even after DEPRECATION
 })
 
-
-it('eventRender as a prop gets fired and can prevent rendering false', function() {
+it('calls eventRender prop and can cancel rendering', function() {
   let eventRenderCalled = false
 
   let wrapper = mount(FullCalendar, {
     propsData: {
       ...DEFAULT_PROPS,
-      events: EVENT_DATA,
+      events: buildEvents(1),
       eventRender() {
         eventRenderCalled = true
         return false
@@ -70,9 +92,8 @@ it('eventRender as a prop gets fired and can prevent rendering false', function(
   })
 
   expect(eventRenderCalled).toBe(true)
-  expect(wrapper.findAll('.fc-event').length).toBe(0)
+  expect(getRenderedEventCount(wrapper)).toBe(0) // all were cancelled
 })
-
 
 it('should expose an API', function() {
   let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
@@ -92,34 +113,71 @@ const WRAPPER_COMPONENT = {
     FullCalendar
   },
   template: `
-    <FullCalendar :events='calendarEvents' :plugins='calendarPlugins' timeZone='UTC' />
+    <FullCalendar :plugins='calendarPlugins' :timeZone='calendarTimeZone' :events='calendarEvents' />
   `,
   data() {
     return {
-      calendarEvents: EVENT_DATA,
-      calendarPlugins: DEFAULT_PROPS.plugins
+      calendarPlugins: DEFAULT_PROPS.plugins,
+      calendarTimeZone: DEFAULT_PROPS.timeZone,
+      calendarEvents: buildEvents(1)
     }
   },
   methods: {
-    addEvent() {
-      this.calendarEvents.push({ title: 'event2', start: new Date() })
-    },
     mutateEvent() {
       this.calendarEvents[0].title = 'another title'
+    },
+    addEvent() {
+      this.calendarEvents.push(buildEvent(1))
     }
   }
 }
 
 it('reacts to event adding', function() {
   let wrapper = mount(WRAPPER_COMPONENT)
-  expect(wrapper.findAll('.fc-event').length).toBe(1)
+  expect(getRenderedEventCount(wrapper)).toBe(1)
   wrapper.vm.addEvent()
-  expect(wrapper.findAll('.fc-event').length).toBe(2)
+  expect(getRenderedEventCount(wrapper)).toBe(2)
 })
 
-it('reacts to individual event changes', function() {
+it('reacts to event property changes', function() {
   let wrapper = mount(WRAPPER_COMPONENT)
-  expect(wrapper.find('.fc-event .fc-title').text()).toBe('event1')
+  expect(getFirstEventTitle(wrapper)).toBe('event0')
   wrapper.vm.mutateEvent()
-  expect(wrapper.find('.fc-event .fc-title').text()).toBe('another title')
+  expect(getFirstEventTitle(wrapper)).toBe('another title')
 })
+
+
+// FullCalendar options utils
+
+function buildEvents(length) {
+  let events = []
+
+  for (let i = 0; i < length; i++) {
+    events.push(buildEvent(i))
+  }
+
+  return events
+}
+
+function buildEvent(i) {
+  return { title: 'event' + i, start: new Date() }
+}
+
+
+// DOM querying utils
+
+function isSkeletonRendered(wrapper) {
+  return wrapper.find('.fc').exists()
+}
+
+function isWeekendsRendered(wrapper) {
+  return wrapper.find('.fc-sat').exists()
+}
+
+function getRenderedEventCount(wrapper) {
+  return wrapper.findAll('.fc-event').length
+}
+
+function getFirstEventTitle(wrapper) {
+  return wrapper.find('.fc-event .fc-title').text()
+}
