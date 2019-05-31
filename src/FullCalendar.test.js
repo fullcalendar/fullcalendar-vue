@@ -117,15 +117,18 @@ const BORING_COMPONENT = {
     FullCalendar
   },
   template: `
-    <FullCalendar
-      :plugins='calendarPlugins'
-      :timeZone='calendarTimeZone'
-      :height='calendarHeight'
-      :toolbar='buildToolbar()'
-      :events='buildEvents(1)'
-      :viewSkeletonRender='calendarViewSkeletonRender'
-      :eventRender='calendarEventRender'
-    />
+    <div>
+      <div>calendarHeight: {{ calendarHeight }}</div>
+      <FullCalendar
+        :plugins='calendarPlugins'
+        :timeZone='calendarTimeZone'
+        :height='calendarHeight'
+        :toolbar='buildToolbar()'
+        :events='buildEvents(1)'
+        :viewSkeletonRender='calendarViewSkeletonRender'
+        :eventRender='calendarEventRender'
+      />
+    </div>
   `,
   data() {
     return {
