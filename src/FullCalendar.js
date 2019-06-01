@@ -1,5 +1,5 @@
-import { default as deepEquals } from 'fast-deep-equal'
-import { default as deepCopy } from 'deep-copy'
+import deepEqual from 'fast-deep-equal'
+import deepCopy from 'deep-copy'
 import { Calendar } from '@fullcalendar/core'
 import { PROP_DEFS, PROP_IS_DEEP, EMISSION_NAMES, EMISSION_USE_PROP } from './fullcalendar-options'
 
@@ -59,9 +59,9 @@ export default {
         let propVal = this[propName]
 
         if (propVal !== undefined) { // NOTE: FullCalendar's API often chokes on undefines
-          options[propName] = PROP_IS_DEEP[propName] ?
-            deepCopy(propVal) : // NOTE: deepCopy will choke on undefined as well
-            propVal
+          options[propName] = PROP_IS_DEEP[propName]
+            ? deepCopy(propVal) // NOTE: deepCopy will choke on undefined as well
+            : propVal
         }
       }
 
@@ -73,7 +73,7 @@ export default {
 
       if (dirtyOptions) {
         this.$options.dirtyOptions = null // clear before rendering. might trigger new dirtiness
-        this.$options.calendar.mutateOptions(dirtyOptions, [], false, deepEquals)
+        this.$options.calendar.mutateOptions(dirtyOptions, [], false, deepEqual)
       }
     },
 

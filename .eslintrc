@@ -7,6 +7,8 @@
     "jest/globals": true
   },
   "rules": {
+    "no-multiple-empty-lines": 0,
+    "padded-blocks": 0,
     "space-before-function-paren": 0
   }
 }

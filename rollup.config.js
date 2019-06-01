@@ -53,7 +53,7 @@ function buildSettings(format) {
   if (format === 'esm') {
     external = external.concat(ESM_EXTERNALS)
     plugins.push(
-      nodeResolve({ jail: 'src' }), // any files outside of here are considered external libs
+      nodeResolve({ jail: 'src' }) // any files outside of here are considered external libs
     )
   } else {
     plugins.push(
