@@ -17,6 +17,7 @@
   Allows returning false/DOM nodes (#27)
 - no unnecessary rerendering of calendar caused by header/footer
   props being specified as literals (#11)
+- new dependency: fast-deep-equal
 
 4.1.1 (2019-05-14)
 ------------------
