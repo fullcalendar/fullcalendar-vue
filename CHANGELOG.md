@@ -18,6 +18,7 @@
 - no unnecessary rerendering of calendar caused by header/footer
   props being specified as literals (#11)
 - new dependency: fast-deep-equal
+  automatically bundled with UMD dist
 
 4.1.1 (2019-05-14)
 ------------------
