@@ -1,6 +1,7 @@
 
-4.2.0
------
+4.2.0 (2019-06-02)
+------------------
+
 - nested props data mutations, like events being updated,
   will now be rendred on the calendar (#9)
 - added missing props (#25, #29)
@@ -20,6 +21,8 @@
 - new dependency: fast-deep-equal
   automatically bundled with UMD dist
 
+
 4.1.1 (2019-05-14)
 ------------------
+
 Fix missing option `googleCalendarApiKey` (#12)
