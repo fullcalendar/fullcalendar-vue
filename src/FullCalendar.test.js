@@ -3,6 +3,8 @@ import FullCalendar from './install'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 const DEFAULT_PROPS = {
+  defaultDate: '2019-05-15',
+  defaultView: 'dayGridMonth',
   timeZone: 'UTC',
   plugins: [ dayGridPlugin ]
 }
@@ -120,6 +122,8 @@ const BORING_COMPONENT = {
     <div>
       <div>calendarHeight: {{ calendarHeight }}</div>
       <FullCalendar
+        defaultDate='${DEFAULT_PROPS.defaultDate}'
+        defaultView='${DEFAULT_PROPS.defaultView}'
         :plugins='calendarPlugins'
         :timeZone='calendarTimeZone'
         :height='calendarHeight'
@@ -178,6 +182,8 @@ const EVENT_MANIP_COMPONENT = {
   },
   template: `
     <FullCalendar
+      defaultDate='${DEFAULT_PROPS.defaultDate}'
+      defaultView='${DEFAULT_PROPS.defaultView}'
       :plugins='calendarPlugins'
       :timeZone='calendarTimeZone'
       :events='calendarEvents'
@@ -228,7 +234,7 @@ function buildEvents(length) {
 }
 
 function buildEvent(i) {
-  return { title: 'event' + i, start: new Date() }
+  return { title: 'event' + i, start: DEFAULT_PROPS.defaultDate }
 }
 
 function buildToolbar() {
