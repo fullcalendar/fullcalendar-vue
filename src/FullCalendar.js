@@ -20,10 +20,14 @@ export default {
 
   // INTERNALS
   // this.$options.calendar
-  // this.$options.dirtyOptions - null means no dirty options
+  // this.$options.dirtyOptions - undefined means not ready to accept rerenders
+
+  data() {
+    return { renderId: 0 }
+  },
 
   render(createElement) {
-    return createElement('div')
+    return createElement('div', { attrs: { 'data-fc-render-id': this.renderId } })
   },
 
   mounted() {
@@ -31,6 +35,8 @@ export default {
 
     this.$options.calendar = new Calendar(this.$el, this.buildOptions())
     this.$options.calendar.render()
+
+    this.$options.dirtyOptions = {} // start accepting rerenders
   },
 
   beforeUpdate() {
@@ -58,9 +64,10 @@ export default {
       for (let propName in PROP_DEFS) {
         let propVal = this[propName]
 
-        if (propVal !== undefined) { // NOTE: FullCalendar's API often chokes on undefines
+        // protect against undefined because both FullCalendar AND deepCopy choke
+        if (propVal !== undefined) {
           options[propName] = PROP_IS_DEEP[propName]
-            ? deepCopy(propVal) // NOTE: deepCopy will choke on undefined as well
+            ? deepCopy(propVal)
             : propVal
         }
       }
@@ -68,11 +75,20 @@ export default {
       return options
     },
 
-    renderDirty() {
+    recordDirtyOption(optionName, newVal) {
       let { dirtyOptions } = this.$options
 
       if (dirtyOptions) {
-        this.$options.dirtyOptions = null // clear before rendering. might trigger new dirtiness
+        dirtyOptions[optionName] = newVal
+        this.renderId++
+      }
+    },
+
+    renderDirty() {
+      let { dirtyOptions } = this.$options
+
+      if (dirtyOptions && Object.keys(dirtyOptions).length > 0) {
+        this.$options.dirtyOptions = {} // clear before rendering. might trigger new dirtiness
         this.$options.calendar.mutateOptions(dirtyOptions, [], false, deepEqual)
       }
     },
@@ -92,35 +108,20 @@ function buildWatchers() {
   for (let propName in PROP_DEFS) {
 
     if (PROP_IS_DEEP[propName]) {
-
       watchers[propName] = {
         deep: true, // listen to children as well
-
-        handler(newVal, oldVal) {
-          recordDirtyOption(this, propName, deepCopy(newVal))
-
-          // if the reference is the same, it's an add, remove, or internal mutation. the beforeUpdate hook WON'T fire.
-          // otherwise, the beforeUpdate hook WILL fire and cause a rerender
-          if (newVal === oldVal) {
-            this.renderDirty()
-          }
+        handler(newVal) {
+          this.recordDirtyOption(propName, deepCopy(newVal))
         }
       }
-
     } else {
-
       watchers[propName] = function(newVal) {
-        recordDirtyOption(this, propName, newVal) // the beforeUpdate hook will render the dirtiness
+        this.recordDirtyOption(propName, newVal)
       }
     }
   }
 
   return watchers
-}
-
-
-function recordDirtyOption(vm, optionName, newVal) {
-  ;(vm.$options.dirtyOptions || (vm.$options.dirtyOptions = {}))[optionName] = newVal
 }
 
 
