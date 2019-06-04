@@ -29,6 +29,23 @@ it('handles a single prop change', function() {
   expect(isWeekendsRendered(wrapper)).toBe(false)
 })
 
+/*
+necessary to test copy util
+*/
+it('renders events with Date objects', function() {
+  let nowDate = new Date()
+  let wrapper = mount(FullCalendar, {
+    propsData: {
+      ...DEFAULT_PROPS,
+      events: [
+        { title: 'event', start: nowDate },
+        { title: 'event', start: nowDate }
+      ]
+    }
+  })
+  expect(getRenderedEventCount(wrapper)).toBe(2)
+})
+
 it('handles multiple prop changes, include event reset', function() {
   let eventRenderCnt = 0
   let viewSkeletonRenderCnt = 0

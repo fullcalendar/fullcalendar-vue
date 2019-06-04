@@ -6,8 +6,12 @@ Really simple clone utility. Only copies plain arrays and objects. Transfers eve
 Wanted to use a third-party lib, but none did exactly this.
 */
 export function deepCopy(input) {
+
   if (Array.isArray(input)) {
     return input.map(deepCopy)
+
+  } else if (input instanceof Date) {
+    return new Date(input.valueOf())
 
   } else if (typeof input === 'object' && input) { // non-null object
     return mapHash(input, deepCopy)

@@ -1,4 +1,9 @@
 
+4.2.2 (2019-06-04)
+------------------
+Emergency bugfix: event objects with Date objects wouldn't render
+
+
 4.2.1 (2019-06-04)
 ------------------
 
