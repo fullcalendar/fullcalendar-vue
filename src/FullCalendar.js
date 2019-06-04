@@ -20,14 +20,17 @@ export default {
 
   // INTERNALS
   // this.$options.calendar
-  // this.$options.dirtyOptions - undefined means not ready to accept rerenders
+  // this.$options.dirtyOptions - null/undefined means nothing dirty
 
   data() {
     return { renderId: 0 }
   },
 
   render(createElement) {
-    return createElement('div', { attrs: { 'data-fc-render-id': this.renderId } })
+    return createElement('div', {
+      // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
+      attrs: { 'data-fc-render-id': this.renderId }
+    })
   },
 
   mounted() {
@@ -35,8 +38,6 @@ export default {
 
     this.$options.calendar = new Calendar(this.$el, this.buildOptions())
     this.$options.calendar.render()
-
-    this.$options.dirtyOptions = {} // start accepting rerenders
   },
 
   beforeUpdate() {
@@ -76,19 +77,15 @@ export default {
     },
 
     recordDirtyOption(optionName, newVal) {
-      let { dirtyOptions } = this.$options
-
-      if (dirtyOptions) {
-        dirtyOptions[optionName] = newVal
-        this.renderId++
-      }
+      ;(this.$options.dirtyOptions || (this.$options.dirtyOptions = {}))[optionName] = newVal
+      this.renderId++ // triggers a render eventually
     },
 
     renderDirty() {
       let { dirtyOptions } = this.$options
 
-      if (dirtyOptions && Object.keys(dirtyOptions).length > 0) {
-        this.$options.dirtyOptions = {} // clear before rendering. might trigger new dirtiness
+      if (dirtyOptions) {
+        this.$options.dirtyOptions = null // clear before rendering. might trigger new dirtiness
         this.$options.calendar.mutateOptions(dirtyOptions, [], false, deepEqual)
       }
     },
