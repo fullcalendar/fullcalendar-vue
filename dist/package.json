@@ -1,0 +1,26 @@
+{
+  "name": "@fullcalendar/vue",
+  "version": "4.2.2",
+  "title": "FullCalendar Vue Component",
+  "description": "An official FullCalendar component for Vue",
+  "keywords": [
+    "vue",
+    "calendar",
+    "fullcalendar"
+  ],
+  "docs": "https://fullcalendar.io/docs/vue",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fullcalendar/fullcalendar-vue.git"
+  },
+  "dependencies": {
+    "@fullcalendar/core": "~4.2.0",
+    "fast-deep-equal": "^2.0.1"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.6"
+  },
+  "main": "main.umd.js",
+  "module": "main.esm.js"
+}
