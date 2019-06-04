@@ -219,6 +219,89 @@ it('reacts to event property changes', function() {
 })
 
 
+// event reactivity with fetch function
+
+const EVENT_FUNC_COMPONENT = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <FullCalendar
+      defaultDate='${DEFAULT_PROPS.defaultDate}'
+      defaultView='${DEFAULT_PROPS.defaultView}'
+      timeZone='${DEFAULT_PROPS.timeZone}'
+      :plugins='calendarPlugins'
+      :events='fetchEvents'
+    />
+  `,
+  data() {
+    return {
+      calendarPlugins: DEFAULT_PROPS.plugins
+    }
+  },
+  methods: {
+    fetchEvents(fetchInfo, successCallback) {
+      setTimeout(function() {
+        successCallback(buildEvents(2))
+      }, 0)
+    }
+  }
+}
+
+it('can receive an async event function', function(done) {
+  let wrapper = mount(EVENT_FUNC_COMPONENT)
+  setTimeout(function() {
+    expect(getRenderedEventCount(wrapper)).toBe(2)
+    done()
+  }, 100)
+})
+
+
+// event reactivity with computed prop
+
+const EVENT_COMP_PROP_COMPONENT = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <FullCalendar
+      defaultDate='${DEFAULT_PROPS.defaultDate}'
+      defaultView='${DEFAULT_PROPS.defaultView}'
+      timeZone='${DEFAULT_PROPS.timeZone}'
+      :plugins='calendarPlugins'
+      :events='computedEvents'
+    />
+  `,
+  data() {
+    return {
+      calendarPlugins: DEFAULT_PROPS.plugins,
+      first: true
+    }
+  },
+  computed: {
+    computedEvents() {
+      if (this.first) {
+        return []
+      } else {
+        return buildEvents(2)
+      }
+    }
+  },
+  methods: {
+    markNotFirst() {
+      this.first = false
+    }
+  }
+}
+
+it('reacts to computed events prop', function() {
+  let wrapper = mount(EVENT_COMP_PROP_COMPONENT)
+  expect(getRenderedEventCount(wrapper)).toBe(0)
+  wrapper.vm.markNotFirst()
+  expect(getRenderedEventCount(wrapper)).toBe(2)
+})
+
+
 // FullCalendar options utils
 
 function buildEvents(length) {
