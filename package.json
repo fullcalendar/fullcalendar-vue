@@ -23,6 +23,7 @@
     "dist:meta": "cp README.* LICENSE.* dist && ./scripts/generate-package-config",
     "test": "jest --watch",
     "test-single": "jest",
+    "test-inspect": "echo 'open chrome://inspect\n' && node --inspect-brk node_modules/.bin/jest --runInBand",
     "lint": "eslint src *.js",
     "preversion": "npm run clean",
     "version": "npm run lint && npm run dist && npm run test-single && git add -f dist package-lock.json",
