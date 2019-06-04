@@ -124,8 +124,8 @@ const BORING_COMPONENT = {
       <FullCalendar
         defaultDate='${DEFAULT_PROPS.defaultDate}'
         defaultView='${DEFAULT_PROPS.defaultView}'
+        timeZone='${DEFAULT_PROPS.timeZone}'
         :plugins='calendarPlugins'
-        :timeZone='calendarTimeZone'
         :height='calendarHeight'
         :toolbar='buildToolbar()'
         :events='buildEvents(1)'
@@ -137,7 +137,6 @@ const BORING_COMPONENT = {
   data() {
     return {
       calendarPlugins: DEFAULT_PROPS.plugins,
-      calendarTimeZone: DEFAULT_PROPS.timeZone,
       calendarHeight: 400
     }
   },
@@ -184,15 +183,14 @@ const EVENT_MANIP_COMPONENT = {
     <FullCalendar
       defaultDate='${DEFAULT_PROPS.defaultDate}'
       defaultView='${DEFAULT_PROPS.defaultView}'
+      timeZone='${DEFAULT_PROPS.timeZone}'
       :plugins='calendarPlugins'
-      :timeZone='calendarTimeZone'
       :events='calendarEvents'
     />
   `,
   data() {
     return {
       calendarPlugins: DEFAULT_PROPS.plugins,
-      calendarTimeZone: DEFAULT_PROPS.timeZone,
       calendarEvents: buildEvents(1)
     }
   },
