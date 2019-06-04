@@ -1,6 +1,6 @@
 import deepEqual from 'fast-deep-equal'
-import deepCopy from 'deep-copy'
 import { Calendar } from '@fullcalendar/core'
+import { deepCopy, mapHash } from './utils'
 import { PROP_DEFS, PROP_IS_DEEP, EMISSION_NAMES, EMISSION_USE_PROP } from './fullcalendar-options'
 
 /*
@@ -48,7 +48,7 @@ export default {
     this.$options.calendar.destroy()
   },
 
-  watch: buildWatchers(),
+  watch: mapHash(PROP_DEFS, buildPropWatcher),
 
   methods: {
 
@@ -65,7 +65,7 @@ export default {
       for (let propName in PROP_DEFS) {
         let propVal = this[propName]
 
-        // protect against undefined because both FullCalendar AND deepCopy choke
+        // protect against FullCalendar choking on undefined options
         if (propVal !== undefined) {
           options[propName] = PROP_IS_DEEP[propName]
             ? deepCopy(propVal)
@@ -99,26 +99,19 @@ export default {
 }
 
 
-function buildWatchers() {
-  let watchers = {}
-
-  for (let propName in PROP_DEFS) {
-
-    if (PROP_IS_DEEP[propName]) {
-      watchers[propName] = {
-        deep: true, // listen to children as well
-        handler(newVal) {
-          this.recordDirtyOption(propName, deepCopy(newVal))
-        }
-      }
-    } else {
-      watchers[propName] = function(newVal) {
-        this.recordDirtyOption(propName, newVal)
+function buildPropWatcher(propDef, propName) {
+  if (PROP_IS_DEEP[propName]) {
+    return {
+      deep: true, // listen to children as well
+      handler(newVal) {
+        this.recordDirtyOption(propName, deepCopy(newVal))
       }
     }
+  } else {
+    return function(newVal) {
+      this.recordDirtyOption(propName, newVal)
+    }
   }
-
-  return watchers
 }
 
 

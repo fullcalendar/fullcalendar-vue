@@ -20,8 +20,7 @@ const EXTERNAL_BROWSER_GLOBALS = {
   // we don't need to define Vue. components are just objects
 }
 const ESM_EXTERNALS = [ // only for ES build. UMD build will bundle these
-  'fast-deep-equal',
-  'deep-copy'
+  'fast-deep-equal'
 ]
 const OUTPUT_SETTINGS = {
   umd: {
