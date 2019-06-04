@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { mount } from '@vue/test-utils'
 import FullCalendar from './install'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -33,6 +34,7 @@ it('handles multiple prop changes, include event reset', function() {
   let viewSkeletonRenderCnt = 0
 
   let wrapper = mount(FullCalendar, {
+    sync: false, // restore normal real-DOM batching
     propsData: {
       ...DEFAULT_PROPS,
       events: buildEvents(1),
@@ -56,10 +58,12 @@ it('handles multiple prop changes, include event reset', function() {
     events: buildEvents(2)
   })
 
-  expect(getRenderedEventCount(wrapper)).toBe(2)
-  expect(isWeekendsRendered(wrapper)).toBe(false)
-  expect(eventRenderCnt).toBe(3) // +2
-  expect(viewSkeletonRenderCnt).toBe(2) // +1
+  return Vue.nextTick().then(function() { // because of sync:false
+    expect(getRenderedEventCount(wrapper)).toBe(2)
+    expect(isWeekendsRendered(wrapper)).toBe(false)
+    expect(eventRenderCnt).toBe(3) // +2
+    expect(viewSkeletonRenderCnt).toBe(2) // +1
+  })
 })
 
 it('emits an event', function() {
