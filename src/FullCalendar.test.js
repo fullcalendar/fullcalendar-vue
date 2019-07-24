@@ -33,13 +33,12 @@ it('handles a single prop change', function() {
 necessary to test copy util
 */
 it('renders events with Date objects', function() {
-  let nowDate = new Date()
   let wrapper = mount(FullCalendar, {
     propsData: {
       ...DEFAULT_PROPS,
       events: [
-        { title: 'event', start: nowDate },
-        { title: 'event', start: nowDate }
+        { title: 'event', start: DEFAULT_PROPS.defaultDate },
+        { title: 'event', start: DEFAULT_PROPS.defaultDate }
       ]
     }
   })
