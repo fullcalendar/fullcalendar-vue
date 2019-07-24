@@ -19,15 +19,13 @@
     "clean": "rm -rf dist",
     "watch": "rollup -c --environment BUILD:development --watch",
     "build": "rollup -c --environment BUILD:production",
-    "dist": "npm run build && npm run dist:meta",
-    "dist:meta": "cp README.* LICENSE.* dist && ./scripts/generate-package-config",
+    "meta": "mkdir -p dist && cp README.* LICENSE.* dist && ./scripts/pkg-json.js",
     "test": "jest --watch",
     "test:single": "jest",
-    "test:inspect": "echo 'open chrome://inspect\n' && node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test:inspect": "node --inspect-brk \"$(which jest)\" --runInBand",
     "lint": "eslint src *.js",
-    "preversion": "npm run clean",
-    "version": "npm run lint && npm run dist && npm run test:single && git add -f dist package-lock.json",
-    "ci": "npm run dist && npm run test:single && npm run lint"
+    "ci": "./scripts/ci.sh",
+    "version": "npm run ci"
   },
   "dependencies": {
     "@fullcalendar/core": "~4.2.0",
