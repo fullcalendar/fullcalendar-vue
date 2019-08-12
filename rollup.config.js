@@ -38,7 +38,7 @@ const OUTPUT_SETTINGS = {
   }
 }
 
-export default [ // TODO: use same config with multiple outputs
+export default [
   buildSettings('umd'),
   buildSettings('esm')
 ]
@@ -52,7 +52,7 @@ function buildSettings(format) {
     plugins.push(
       nodeResolve({ jail: 'src' }) // any files outside of here are considered external libs
     )
-  } else {
+  } else { // will bundle small dependencies like fast-deep-equal
     plugins.push(
       nodeResolve()
     )
