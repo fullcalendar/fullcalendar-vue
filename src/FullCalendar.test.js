@@ -172,7 +172,6 @@ it('should expose an API in $refs', function() {
 
 
 // toolbar/event non-reactivity
-// (Vue naturally won't recompute bound props that don't have dependencies)
 
 const BORING_COMPONENT = {
   props: [ 'calendarViewSkeletonRender', 'calendarEventRender' ],
@@ -188,7 +187,7 @@ const BORING_COMPONENT = {
         timeZone='${DEFAULT_PROPS.timeZone}'
         :plugins='calendarPlugins'
         :height='calendarHeight'
-        :toolbar='buildToolbar()'
+        :header='buildToolbar()'
         :events='buildEvents(1)'
         :viewSkeletonRender='calendarViewSkeletonRender'
         :eventRender='calendarEventRender'

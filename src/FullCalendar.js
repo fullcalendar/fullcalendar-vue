@@ -20,10 +20,11 @@ export default {
 
   // INTERNALS
   // this.$options.calendar
+  // this.$options.deepCopies - all current deep options
   // this.$options.dirtyOptions - null/undefined means nothing dirty
 
   data() {
-    return { renderId: 0 }
+    return { renderId: 0, deepCopies: {} }
   },
 
   render(createElement) {
@@ -36,7 +37,7 @@ export default {
   mounted() {
     warnDeprecatedListeners(this.$listeners)
 
-    this.$options.calendar = new Calendar(this.$el, this.buildOptions())
+    this.$options.calendar = new Calendar(this.$el, this.buildCalendarOptions())
     this.$options.calendar.render()
   },
 
@@ -52,7 +53,7 @@ export default {
 
   methods: {
 
-    buildOptions() {
+    buildCalendarOptions() {
       let options = {}
 
       for (let emissionName of EMISSION_NAMES) {
@@ -67,9 +68,13 @@ export default {
 
         // protect against FullCalendar choking on undefined options
         if (propVal !== undefined) {
-          options[propName] = PROP_IS_DEEP[propName]
-            ? deepCopy(propVal)
-            : propVal
+
+          if (PROP_IS_DEEP[propName]) {
+            propVal = deepCopy(propVal) // freeze state
+            this.deepCopies[propName] = propVal // side effect!
+          }
+
+          options[propName] = propVal
         }
       }
 
@@ -104,7 +109,14 @@ function buildPropWatcher(propDef, propName) {
     return {
       deep: true, // listen to children as well
       handler(newVal) {
-        this.recordDirtyOption(propName, deepCopy(newVal))
+        // use this instead of the handler's param because if same reference, will always be equal
+        let oldVal = this.deepCopies[propName]
+
+        if (!deepEqual(newVal, oldVal)) {
+          newVal = deepCopy(newVal) // freeze state
+          this.deepCopies[propName] = newVal // always keep this up to date
+          this.recordDirtyOption(propName, newVal)
+        }
       }
     }
   } else {
