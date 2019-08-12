@@ -130,6 +130,47 @@ it('should expose an API', function() {
 })
 
 
+const COMPONENT_FOR_API = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <div>
+      <FullCalendar
+        :plugins='calendarPlugins'
+        defaultDate='${DEFAULT_PROPS.defaultDate}'
+        defaultView='${DEFAULT_PROPS.defaultView}'
+        timeZone='${DEFAULT_PROPS.timeZone}'
+        ref='fullCalendar'
+      />
+    </div>
+  `,
+  data() {
+    return {
+      calendarPlugins: DEFAULT_PROPS.plugins
+    }
+  },
+  methods: {
+    gotoDate(newDate) {
+      let calendarApi = this.$refs.fullCalendar.getApi()
+      calendarApi.gotoDate(newDate)
+    },
+    getDate() {
+      let calendarApi = this.$refs.fullCalendar.getApi()
+      return calendarApi.getDate()
+    }
+  }
+}
+
+it('should expose an API in $refs', function() {
+  let wrapper = mount(COMPONENT_FOR_API)
+  let newDate = new Date(Date.UTC(2000, 0, 1))
+
+  wrapper.vm.gotoDate(newDate)
+  expect(wrapper.vm.getDate().valueOf()).toBe(newDate.valueOf())
+})
+
+
 // toolbar/event non-reactivity
 // (Vue naturally won't recompute bound props that don't have dependencies)
 
