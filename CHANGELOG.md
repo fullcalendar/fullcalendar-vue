@@ -1,4 +1,9 @@
 
+4.3.1 (2019-08-12)
+------------------
+fix regression where object props wrongly forcing rerenders (#11, #34)
+
+
 4.2.2 (2019-06-04)
 ------------------
 Emergency bugfix: event objects with Date objects wouldn't render
