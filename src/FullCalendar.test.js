@@ -78,7 +78,7 @@ it('handles multiple prop changes, include event reset', function() {
     expect(getRenderedEventCount(wrapper)).toBe(2)
     expect(isWeekendsRendered(wrapper)).toBe(false)
     expect(eventRenderCnt).toBe(3) // +2
-    expect(viewSkeletonRenderCnt).toBe(2) // +1
+    expect(viewSkeletonRenderCnt).toBe(1) // +0
   })
 })
 
