@@ -74,11 +74,14 @@ it('handles multiple prop changes, include event reset', function() {
     events: buildEvents(2)
   })
 
+  eventRenderCnt = 0
+  viewSkeletonRenderCnt = 0
+
   return Vue.nextTick().then(function() { // because of sync:false
     expect(getRenderedEventCount(wrapper)).toBe(2)
     expect(isWeekendsRendered(wrapper)).toBe(false)
-    expect(eventRenderCnt).toBe(3) // +2
-    expect(viewSkeletonRenderCnt).toBe(2) // +1
+    expect(eventRenderCnt).toBe(2)
+    expect(viewSkeletonRenderCnt).toBeLessThanOrEqual(1)
   })
 })
 
@@ -227,9 +230,12 @@ it('avoids rerendering unchanged toolbar/events', function() {
   expect(viewSkeletonRenderCnt).toBe(1)
   expect(eventRenderCnt).toBe(1)
 
+  viewSkeletonRenderCnt = 0
+  eventRenderCnt = 0
+
   wrapper.vm.changeHeight()
-  expect(viewSkeletonRenderCnt).toBe(1)
-  expect(eventRenderCnt).toBe(1)
+  expect(viewSkeletonRenderCnt).toBe(0)
+  expect(eventRenderCnt).toBe(0)
 })
 
 
