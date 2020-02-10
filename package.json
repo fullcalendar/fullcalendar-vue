@@ -21,7 +21,7 @@
     "build": "rollup -c --environment BUILD:production",
     "meta": "mkdir -p dist && cp README.* LICENSE.* dist && ./scripts/pkg-json.js",
     "test": "jest --watch",
-    "test:single": "jest",
+    "test:single": "jest --no-cache",
     "test:inspect": "node --inspect-brk \"$(which jest)\" --runInBand",
     "lint": "eslint src *.js",
     "ci": "./scripts/ci.sh"
