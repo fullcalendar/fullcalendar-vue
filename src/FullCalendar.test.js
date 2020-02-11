@@ -86,7 +86,7 @@ it('handles multiple prop changes, include event reset', function() {
     expect(getRenderedEventCount(wrapper)).toBe(2)
     expect(isWeekendsRendered(wrapper)).toBe(false)
     expect(eventRenderCnt).toBe(2)
-    expect(viewSkeletonRenderCnt).toBe(1)
+    expect(viewSkeletonRenderCnt).toBeLessThanOrEqual(1)
   })
 })
 
@@ -236,7 +236,7 @@ it('avoids rerendering unchanged toolbar/events', function() {
   expect(eventRenderCnt).toBe(1)
 
   wrapper.vm.changeHeight()
-  expect(viewSkeletonRenderCnt).toBe(1)
+  expect(viewSkeletonRenderCnt).toBeLessThanOrEqual(1)
   expect(eventRenderCnt).toBe(1)
 })
 
