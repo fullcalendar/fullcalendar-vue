@@ -34,24 +34,24 @@
     "vue": "^2.6.6"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.4.3",
-    "@fullcalendar/daygrid": "~4.3.0",
-    "@vue/test-utils": "^1.0.0-beta.29",
+    "@babel/preset-env": "^7.8.4",
+    "@fullcalendar/daygrid": "^4.3.0",
+    "@vue/test-utils": "1.0.0-beta.29",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-jest": "^22.4.1",
-    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^22.21.0",
+    "eslint-plugin-node": "^9.2.0",
     "eslint-plugin-promise": "^4.1.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "jest": "^24.7.1",
-    "jest-cli": "^24.8.0",
-    "rollup": "^1.8.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "jest": "^24.9.0",
+    "jest-cli": "^24.9.0",
+    "rollup": "^1.31.0",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.0.0",
     "rollup-plugin-node-resolve": "^4.0.1",
     "rollup-plugin-sourcemaps": "^0.4.2",
-    "vue": "^2.6.6",
-    "vue-template-compiler": "^2.6.10"
+    "vue": "^2.6.11",
+    "vue-template-compiler": "^2.6.11"
   }
 }

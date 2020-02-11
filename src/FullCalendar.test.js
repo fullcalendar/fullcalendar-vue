@@ -3,6 +3,11 @@ import { mount } from '@vue/test-utils'
 import FullCalendar from './install'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
+/* NOTE:
+has to hardcode @vue/test-utils at 1.0.0-beta.29 because later versions (1.0.0-beta.31 ?)
+weren't rendering changes synchronously
+*/
+
 const DEFAULT_PROPS = {
   defaultDate: '2019-05-15',
   defaultView: 'dayGridMonth',
@@ -74,11 +79,14 @@ it('handles multiple prop changes, include event reset', function() {
     events: buildEvents(2)
   })
 
+  eventRenderCnt = 0
+  viewSkeletonRenderCnt = 0
+
   return Vue.nextTick().then(function() { // because of sync:false
     expect(getRenderedEventCount(wrapper)).toBe(2)
     expect(isWeekendsRendered(wrapper)).toBe(false)
-    expect(eventRenderCnt).toBe(3) // +2
-    expect(viewSkeletonRenderCnt).toBe(1) // +0
+    expect(eventRenderCnt).toBe(2)
+    expect(viewSkeletonRenderCnt).toBe(1)
   })
 })
 
