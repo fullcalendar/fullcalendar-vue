@@ -20,7 +20,6 @@ export const PROP_DEFS = {
   hiddenDays: {},
   fixedWeekCount: {},
   weekNumbers: {},
-  weekNumbersWithinDays: {},
   weekNumberCalculation: {},
   businessHours: {},
   showNonCurrentDates: {},
