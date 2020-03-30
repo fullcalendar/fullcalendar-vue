@@ -4,11 +4,11 @@ import FullCalendar from './install'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 /* NOTE:
-has to hardcode @vue/test-utils at 1.0.0-beta.29 because later versions (1.0.0-beta.31 ?)
+had to hardcode @vue/test-utils at 1.0.0-beta.29 because later versions (1.0.0-beta.31 ?)
 weren't rendering changes synchronously
 */
 
-const DEFAULT_PROPS = {
+const DEFAULT_OPTIONS = {
   defaultDate: '2019-05-15',
   defaultView: 'dayGridMonth',
   timeZone: 'UTC',
@@ -17,118 +17,104 @@ const DEFAULT_PROPS = {
 
 
 it('renders', function() {
-  let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
+  let wrapper = mount(FullCalendar, { propsData: { options: DEFAULT_OPTIONS } })
   expect(isSkeletonRendered(wrapper)).toBe(true)
 })
 
 it('unmounts and calls destroy', function() {
-  let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
+  let unmounted = false
+  let options = {
+    ...DEFAULT_OPTIONS,
+    viewWillUnmount() {
+      unmounted = true
+    }
+  }
+
+  let wrapper = mount(FullCalendar, { propsData: { options } })
   wrapper.destroy()
-  expect(wrapper.emitted()._destroyed).toBeTruthy()
+  expect(unmounted).toBeTruthy()
 })
 
 it('handles a single prop change', function() {
-  let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
+  let options = {
+    ...DEFAULT_OPTIONS,
+    weekends: true
+  }
+
+  let wrapper = mount(FullCalendar, { propsData: { options } })
   expect(isWeekendsRendered(wrapper)).toBe(true)
-  wrapper.setProps({ weekends: false }) // good idea to test a falsy prop
+
+  wrapper.setProps({
+    options: {
+      ...options,
+      weekends: false // good idea to test a falsy prop
+    }
+  })
   expect(isWeekendsRendered(wrapper)).toBe(false)
 })
 
-/*
-necessary to test copy util
-*/
-it('renders events with Date objects', function() {
+it('renders events with Date objects', function() { // necessary to test copy util
   let wrapper = mount(FullCalendar, {
     propsData: {
-      ...DEFAULT_PROPS,
-      events: [
-        { title: 'event', start: DEFAULT_PROPS.defaultDate },
-        { title: 'event', start: DEFAULT_PROPS.defaultDate }
-      ]
+      options: {
+        ...DEFAULT_OPTIONS,
+        events: [
+          { title: 'event', start: new Date(DEFAULT_OPTIONS.defaultDate) },
+          { title: 'event', start: new Date(DEFAULT_OPTIONS.defaultDate) }
+        ]
+      }
     }
   })
+
   expect(getRenderedEventCount(wrapper)).toBe(2)
 })
 
 it('handles multiple prop changes, include event reset', function() {
+  let viewMountCnt = 0
   let eventRenderCnt = 0
-  let viewSkeletonRenderCnt = 0
+  let options = {
+    ...DEFAULT_OPTIONS,
+    events: buildEvents(1),
+    viewDidMount() {
+      viewMountCnt++
+    },
+    eventContent() {
+      eventRenderCnt++
+    }
+  }
 
   let wrapper = mount(FullCalendar, {
     sync: false, // restore normal real-DOM batching
-    propsData: {
-      ...DEFAULT_PROPS,
-      events: buildEvents(1),
-      eventRender() {
-        eventRenderCnt++
-      },
-      viewSkeletonRender() {
-        viewSkeletonRenderCnt++
-      }
-    }
+    propsData: { options }
   })
 
   expect(getRenderedEventCount(wrapper)).toBe(1)
   expect(isWeekendsRendered(wrapper)).toBe(true)
+  expect(viewMountCnt).toBe(1)
   expect(eventRenderCnt).toBe(1)
-  expect(viewSkeletonRenderCnt).toBe(1)
 
   wrapper.setProps({
-    dir: 'rtl',
-    weekends: false,
-    events: buildEvents(2)
+    options: {
+      ...options,
+      dir: 'rtl',
+      weekends: false,
+      events: buildEvents(2)
+    }
   })
 
+  viewMountCnt = 0
   eventRenderCnt = 0
-  viewSkeletonRenderCnt = 0
 
   return Vue.nextTick().then(function() { // because of sync:false
     expect(getRenderedEventCount(wrapper)).toBe(2)
     expect(isWeekendsRendered(wrapper)).toBe(false)
-    expect(eventRenderCnt).toBe(2)
-    expect(viewSkeletonRenderCnt).toBeLessThanOrEqual(1)
+    expect(viewMountCnt).toBe(0)
+    expect(eventRenderCnt).toBe(2) // work on getttin gthis to 1
   })
-})
-
-it('emits an event', function() {
-  let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
-  expect(wrapper.emitted()._eventsPositioned).toBeTruthy()
-})
-
-// DEPRECATED behavior
-it('emits eventRender', function() {
-  let wrapper = mount(FullCalendar, {
-    propsData: {
-      ...DEFAULT_PROPS,
-      events: buildEvents(1)
-    },
-    listeners: {
-      // eventRender() {} // should do a console.warn
-    }
-  })
-  expect(wrapper.emitted().eventRender).toBeTruthy()
-})
-
-it('calls eventRender prop and can cancel rendering', function() {
-  let eventRenderCalled = false
-
-  let wrapper = mount(FullCalendar, {
-    propsData: {
-      ...DEFAULT_PROPS,
-      events: buildEvents(1),
-      eventRender() {
-        eventRenderCalled = true
-        return false
-      }
-    }
-  })
-
-  expect(eventRenderCalled).toBe(true)
-  expect(getRenderedEventCount(wrapper)).toBe(0) // all were cancelled
 })
 
 it('should expose an API', function() {
-  let wrapper = mount(FullCalendar, { propsData: DEFAULT_PROPS })
+  let wrapper = mount(FullCalendar, { propsData: { options: DEFAULT_OPTIONS } })
   let calendarApi = wrapper.vm.getApi()
   expect(calendarApi).toBeTruthy()
 
@@ -144,18 +130,12 @@ const COMPONENT_FOR_API = {
   },
   template: `
     <div>
-      <FullCalendar
-        :plugins='calendarPlugins'
-        defaultDate='${DEFAULT_PROPS.defaultDate}'
-        defaultView='${DEFAULT_PROPS.defaultView}'
-        timeZone='${DEFAULT_PROPS.timeZone}'
-        ref='fullCalendar'
-      />
+      <FullCalendar :options='calendarOptions' ref='fullCalendar' />
     </div>
   `,
   data() {
     return {
-      calendarPlugins: DEFAULT_PROPS.plugins
+      calendarOptions: DEFAULT_OPTIONS
     }
   },
   methods: {
@@ -182,65 +162,59 @@ it('should expose an API in $refs', function() {
 // toolbar/event non-reactivity
 
 const BORING_COMPONENT = {
-  props: [ 'calendarViewSkeletonRender', 'calendarEventRender' ],
+  props: [ 'calendarViewDidMount', 'calendarEventContent' ],
   components: {
     FullCalendar
   },
   template: `
     <div>
-      <div>calendarHeight: {{ calendarHeight }}</div>
-      <FullCalendar
-        defaultDate='${DEFAULT_PROPS.defaultDate}'
-        defaultView='${DEFAULT_PROPS.defaultView}'
-        timeZone='${DEFAULT_PROPS.timeZone}'
-        :plugins='calendarPlugins'
-        :height='calendarHeight'
-        :header='buildToolbar()'
-        :events='buildEvents(1)'
-        :viewSkeletonRender='calendarViewSkeletonRender'
-        :eventRender='calendarEventRender'
-      />
+      <div>calendarHeight: {{ calendarOptions.height }}</div>
+      <FullCalendar :options='calendarOptions' />
     </div>
   `,
   data() {
     return {
-      calendarPlugins: DEFAULT_PROPS.plugins,
-      calendarHeight: 400
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        viewDidMount: this.calendarViewDidMount, // pass the prop
+        eventContent: this.calendarEventContent, // pass the prop
+        header: buildToolbar(),
+        height: 400,
+        events: buildEvents(1)
+      }
     }
   },
   methods: {
-    buildToolbar,
-    buildEvents,
     changeHeight() {
-      this.calendarHeight = 500
+      this.calendarOptions.height = 500 // will this do anything??????
     }
   }
 }
 
 it('avoids rerendering unchanged toolbar/events', function() {
-  let viewSkeletonRenderCnt = 0
+  let viewMountCnt = 0
   let eventRenderCnt = 0
 
   let wrapper = mount(BORING_COMPONENT, {
     propsData: {
-      calendarViewSkeletonRender() {
-        viewSkeletonRenderCnt++
+      calendarViewDidMount() {
+        viewMountCnt++
       },
-      calendarEventRender() {
+      calendarEventContent() {
         eventRenderCnt++
       }
     }
   })
 
-  expect(viewSkeletonRenderCnt).toBe(1)
+  expect(viewMountCnt).toBe(1)
   expect(eventRenderCnt).toBe(1)
 
-  viewSkeletonRenderCnt = 0
+  viewMountCnt = 0
   eventRenderCnt = 0
 
   wrapper.vm.changeHeight()
-  expect(viewSkeletonRenderCnt).toBe(0)
-  expect(eventRenderCnt).toBeLessThanOrEqual(1) // TODO: tighten up later
+  expect(viewMountCnt).toBe(0)
+  expect(eventRenderCnt).toBe(0)
 })
 
 
@@ -251,26 +225,22 @@ const EVENT_MANIP_COMPONENT = {
     FullCalendar
   },
   template: `
-    <FullCalendar
-      defaultDate='${DEFAULT_PROPS.defaultDate}'
-      defaultView='${DEFAULT_PROPS.defaultView}'
-      timeZone='${DEFAULT_PROPS.timeZone}'
-      :plugins='calendarPlugins'
-      :events='calendarEvents'
-    />
+    <FullCalendar :options='calendarOptions' />
   `,
   data() {
     return {
-      calendarPlugins: DEFAULT_PROPS.plugins,
-      calendarEvents: buildEvents(1)
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        events: buildEvents(1)
+      }
     }
   },
   methods: {
     addEvent() {
-      this.calendarEvents.push(buildEvent(1))
+      this.calendarOptions.events.push(buildEvent(1)) // will this do anything??????
     },
     updateTitle(title) {
-      this.calendarEvents[0].title = title
+      this.calendarOptions.events[0].title = title
     }
   }
 }
@@ -297,17 +267,14 @@ const EVENT_FUNC_COMPONENT = {
     FullCalendar
   },
   template: `
-    <FullCalendar
-      defaultDate='${DEFAULT_PROPS.defaultDate}'
-      defaultView='${DEFAULT_PROPS.defaultView}'
-      timeZone='${DEFAULT_PROPS.timeZone}'
-      :plugins='calendarPlugins'
-      :events='fetchEvents'
-    />
+    <FullCalendar :options='calendarOptions' />
   `,
   data() {
     return {
-      calendarPlugins: DEFAULT_PROPS.plugins
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        events: this.fetchEvents
+      }
     }
   },
   methods: {
@@ -335,26 +302,18 @@ const EVENT_COMP_PROP_COMPONENT = {
     FullCalendar
   },
   template: `
-    <FullCalendar
-      defaultDate='${DEFAULT_PROPS.defaultDate}'
-      defaultView='${DEFAULT_PROPS.defaultView}'
-      timeZone='${DEFAULT_PROPS.timeZone}'
-      :plugins='calendarPlugins'
-      :events='computedEvents'
-    />
+    <FullCalendar :options='calendarOptions' />
   `,
   data() {
     return {
-      calendarPlugins: DEFAULT_PROPS.plugins,
       first: true
     }
   },
   computed: {
-    computedEvents() {
-      if (this.first) {
-        return []
-      } else {
-        return buildEvents(2)
+    calendarOptions() {
+      return {
+        ...DEFAULT_OPTIONS,
+        events: this.first ? [] : buildEvents(2)
       }
     }
   },
@@ -386,7 +345,7 @@ function buildEvents(length) {
 }
 
 function buildEvent(i) {
-  return { title: 'event' + i, start: DEFAULT_PROPS.defaultDate }
+  return { title: 'event' + i, start: DEFAULT_OPTIONS.defaultDate }
 }
 
 function buildToolbar() {
@@ -405,7 +364,7 @@ function isSkeletonRendered(wrapper) {
 }
 
 function isWeekendsRendered(wrapper) {
-  return wrapper.find('.fc-sat').exists()
+  return wrapper.find('.fc-day-sat').exists()
 }
 
 function getRenderedEventCount(wrapper) {
@@ -413,5 +372,5 @@ function getRenderedEventCount(wrapper) {
 }
 
 function getFirstEventTitle(wrapper) {
-  return wrapper.find('.fc-event .fc-title').text()
+  return wrapper.find('.fc-event-title').text()
 }
