@@ -44,6 +44,9 @@ it('handles a single prop change', function() {
   let wrapper = mount(FullCalendar, { propsData: { options } })
   expect(isWeekendsRendered(wrapper)).toBe(true)
 
+  // it's easy for the component to detect this change because the whole options object changes.
+  // a more difficult scenario is when a component updates its own nested prop.
+  // there's a test for that below (COMPONENT_FOR_OPTION_MANIP).
   wrapper.setProps({
     options: {
       ...options,
@@ -161,7 +164,7 @@ it('should expose an API in $refs', function() {
 
 // toolbar/event non-reactivity
 
-const BORING_COMPONENT = {
+const COMPONENT_FOR_OPTION_MANIP = {
   props: [ 'calendarViewDidMount', 'calendarEventContent' ],
   components: {
     FullCalendar
@@ -174,28 +177,40 @@ const BORING_COMPONENT = {
   `,
   data() {
     return {
+      something: 0,
       calendarOptions: {
         ...DEFAULT_OPTIONS,
         viewDidMount: this.calendarViewDidMount, // pass the prop
         eventContent: this.calendarEventContent, // pass the prop
         header: buildToolbar(),
-        height: 400,
-        events: buildEvents(1)
+        events: buildEvents(1),
+        weekends: true // needs to be initially present if we plan on changing it (a Vue concept)
       }
     }
   },
   methods: {
-    changeHeight() {
-      this.calendarOptions.height = 500 // will this do anything??????
+    changeSomething() {
+      this.something++
+    },
+    disableWeekends() {
+      this.calendarOptions.weekends = false
     }
   }
 }
+
+it('handles an object change when prop is reassigned', function() {
+  let wrapper = mount(COMPONENT_FOR_OPTION_MANIP)
+  expect(isWeekendsRendered(wrapper)).toBe(true)
+
+  wrapper.vm.disableWeekends()
+  expect(isWeekendsRendered(wrapper)).toBe(false)
+})
 
 it('avoids rerendering unchanged toolbar/events', function() {
   let viewMountCnt = 0
   let eventRenderCnt = 0
 
-  let wrapper = mount(BORING_COMPONENT, {
+  let wrapper = mount(COMPONENT_FOR_OPTION_MANIP, {
     propsData: {
       calendarViewDidMount() {
         viewMountCnt++
@@ -212,7 +227,7 @@ it('avoids rerendering unchanged toolbar/events', function() {
   viewMountCnt = 0
   eventRenderCnt = 0
 
-  wrapper.vm.changeHeight()
+  wrapper.vm.changeSomething()
   expect(viewMountCnt).toBe(0)
   expect(eventRenderCnt).toBe(0)
 })
@@ -220,7 +235,7 @@ it('avoids rerendering unchanged toolbar/events', function() {
 
 // event reactivity
 
-const EVENT_MANIP_COMPONENT = {
+const COMPONENT_FOR_EVENT_MANIP = {
   components: {
     FullCalendar
   },
@@ -237,7 +252,7 @@ const EVENT_MANIP_COMPONENT = {
   },
   methods: {
     addEvent() {
-      this.calendarOptions.events.push(buildEvent(1)) // will this do anything??????
+      this.calendarOptions.events.push(buildEvent(1))
     },
     updateTitle(title) {
       this.calendarOptions.events[0].title = title
@@ -246,14 +261,14 @@ const EVENT_MANIP_COMPONENT = {
 }
 
 it('reacts to event adding', function() {
-  let wrapper = mount(EVENT_MANIP_COMPONENT)
+  let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
   expect(getRenderedEventCount(wrapper)).toBe(1)
   wrapper.vm.addEvent()
   expect(getRenderedEventCount(wrapper)).toBe(2)
 })
 
 it('reacts to event property changes', function() {
-  let wrapper = mount(EVENT_MANIP_COMPONENT)
+  let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
   expect(getFirstEventTitle(wrapper)).toBe('event0')
   wrapper.vm.updateTitle('another title')
   expect(getFirstEventTitle(wrapper)).toBe('another title')
