@@ -17,8 +17,8 @@ const EXTERNAL_BROWSER_GLOBALS = {
   '@fullcalendar/core': 'FullCalendar',
   'vue': 'Vue'
 }
-const ESM_EXTERNALS = [ // only for ES build. UMD build will bundle these
-  'fast-deep-equal'
+const ESM_EXTERNALS = [
+  // put module names here that we DON'T want to bundle in the ES build
 ]
 const OUTPUT_SETTINGS = {
   umd: {
