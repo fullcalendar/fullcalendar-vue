@@ -1,4 +1,4 @@
-import Vue from 'vue' // TODO: global var for rollup
+import Vue from 'vue'
 import { createPlugin } from '@fullcalendar/core'
 
 
