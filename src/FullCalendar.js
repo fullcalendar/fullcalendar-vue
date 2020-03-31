@@ -1,5 +1,5 @@
 import { Calendar } from '@fullcalendar/core'
-import { OPTION_IS_COMPLEX } from './fullcalendar-options'
+import { OPTION_IS_COMPLEX } from './options'
 import { shallowCopy, diffProps, mapHash } from './utils'
 import { wrapVDomGenerator, VueContentTypePlugin } from './custom-content-type'
 
