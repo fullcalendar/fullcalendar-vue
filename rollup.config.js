@@ -14,8 +14,8 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
 
 const BROWSER_GLOBAL = 'FullCalendarVue'
 const EXTERNAL_BROWSER_GLOBALS = {
-  '@fullcalendar/core': 'FullCalendar'
-  // we don't need to define Vue. components are just objects
+  '@fullcalendar/core': 'FullCalendar',
+  'vue': 'Vue'
 }
 const ESM_EXTERNALS = [ // only for ES build. UMD build will bundle these
   'fast-deep-equal'

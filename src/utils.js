@@ -36,3 +36,16 @@ export function diffProps(oldProps, newProps) {
 
   return { updates, removals, anyChanges }
 }
+
+
+export function mapHash(input, func) {
+  const output = {}
+
+  for (const key in input) {
+    if (hasOwnProperty.call(input, key)) {
+      output[key] = func(input[key], key)
+    }
+  }
+
+  return output
+}

@@ -1,8 +1,13 @@
 import { Calendar } from '@fullcalendar/core'
 import { OPTION_IS_COMPLEX } from './fullcalendar-options'
-import { shallowCopy, diffProps } from './utils'
+import { shallowCopy, diffProps, mapHash } from './utils'
+import { wrapVDomGenerator, VueContentTypePlugin } from './custom-content-type'
 
 
+/*
+IMPORTANT NOTE: `this.$options` is merely a place to store state.
+The `this.options` prop holds the FullCalendar options.
+*/
 export default {
   props: [ 'options' ],
 
@@ -20,9 +25,14 @@ export default {
   },
 
   mounted() {
-    this.$options.calendar = new Calendar(this.$el, this.options)
+    let options = this.options || {}
+    this.$options.calendar = new Calendar(
+      this.$el,
+      // the snapshot will NOT use this transformed object, so it's okay to inject new values
+      buildInitialOptions(options, this.$scopedSlots)
+    )
     this.$options.calendar.render()
-    this.$options.optionSnapshot = shallowCopy(this.options) // for diffing of non-complex options only
+    this.$options.optionSnapshot = shallowCopy(options) // for diffing of non-complex options only
   },
 
   methods: {
@@ -102,4 +112,15 @@ function buildWatchers() {
   }
 
   return watchers
+}
+
+
+function buildInitialOptions(options, scopedSlots) {
+  return {
+    ...options,
+    plugins: (options.plugins || []).concat([
+      VueContentTypePlugin
+    ]),
+    ...mapHash(scopedSlots, wrapVDomGenerator)
+  }
 }
