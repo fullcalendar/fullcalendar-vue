@@ -182,7 +182,7 @@ const COMPONENT_FOR_OPTION_MANIP = {
         ...DEFAULT_OPTIONS,
         viewDidMount: this.calendarViewDidMount, // pass the prop
         eventContent: this.calendarEventContent, // pass the prop
-        header: buildToolbar(),
+        headerToolbar: buildToolbar(),
         events: buildEvents(1),
         weekends: true // needs to be initially present if we plan on changing it (a Vue concept)
       }
