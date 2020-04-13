@@ -9,8 +9,8 @@ weren't rendering changes synchronously
 */
 
 const DEFAULT_OPTIONS = {
-  defaultDate: '2019-05-15',
-  defaultView: 'dayGridMonth',
+  initialDate: '2019-05-15',
+  initialView: 'dayGridMonth',
   timeZone: 'UTC',
   plugins: [ dayGridPlugin ]
 }
@@ -62,8 +62,8 @@ it('renders events with Date objects', function() { // necessary to test copy ut
       options: {
         ...DEFAULT_OPTIONS,
         events: [
-          { title: 'event', start: new Date(DEFAULT_OPTIONS.defaultDate) },
-          { title: 'event', start: new Date(DEFAULT_OPTIONS.defaultDate) }
+          { title: 'event', start: new Date(DEFAULT_OPTIONS.initialDate) },
+          { title: 'event', start: new Date(DEFAULT_OPTIONS.initialDate) }
         ]
       }
     }
@@ -360,7 +360,7 @@ function buildEvents(length) {
 }
 
 function buildEvent(i) {
-  return { title: 'event' + i, start: DEFAULT_OPTIONS.defaultDate }
+  return { title: 'event' + i, start: DEFAULT_OPTIONS.initialDate }
 }
 
 function buildToolbar() {
