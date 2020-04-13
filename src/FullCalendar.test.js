@@ -99,7 +99,7 @@ it('handles multiple prop changes, include event reset', function() {
   wrapper.setProps({
     options: {
       ...options,
-      dir: 'rtl',
+      direction: 'rtl',
       weekends: false,
       events: buildEvents(2)
     }
