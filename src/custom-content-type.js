@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { createPlugin } from '@fullcalendar/core'
+import { createPlugin } from '@fullcalendar/preact'
 
 
 /*
