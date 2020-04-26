@@ -27,7 +27,7 @@
     "ci": "./scripts/ci.sh"
   },
   "dependencies": {
-    "@fullcalendar/preact": "5.0.0-beta.2"
+    "@fullcalendar/core": "5.0.0-beta.2"
   },
   "peerDependencies": {
     "vue": "^2.6.6"

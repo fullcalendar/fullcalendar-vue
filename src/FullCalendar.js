@@ -1,4 +1,4 @@
-import { Calendar } from '@fullcalendar/preact'
+import { Calendar } from '@fullcalendar/core'
 import { OPTION_IS_COMPLEX } from './options'
 import { shallowCopy, diffProps, mapHash } from './utils'
 import { wrapVDomGenerator, VueContentTypePlugin } from './custom-content-type'

@@ -14,7 +14,7 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
 
 const BROWSER_GLOBAL = 'FullCalendarVue'
 const EXTERNAL_BROWSER_GLOBALS = {
-  '@fullcalendar/preact': 'FullCalendar',
+  '@fullcalendar/core': 'FullCalendar',
   'vue': 'Vue'
 }
 const ESM_EXTERNALS = [
