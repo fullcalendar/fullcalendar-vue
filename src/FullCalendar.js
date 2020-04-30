@@ -1,6 +1,6 @@
 import { Calendar } from '@fullcalendar/core'
 import { OPTION_IS_COMPLEX } from './options'
-import { shallowCopy, diffProps, mapHash } from './utils'
+import { shallowCopy, mapHash } from './utils'
 import { wrapVDomGenerator, VueContentTypePlugin } from './custom-content-type'
 
 
@@ -29,10 +29,9 @@ export default {
     this.$options.calendar = new Calendar(
       this.$el,
       // the snapshot will NOT use this transformed object, so it's okay to inject new values
-      buildInitialOptions(options, this.$scopedSlots)
+      buildInitialOptions(options, this.$scopedSlots) // will pull out the values from the options getter functions
     )
     this.$options.calendar.render()
-    this.$options.optionSnapshot = shallowCopy(options) // for diffing of non-complex options only
   },
 
   methods: {
@@ -62,27 +61,10 @@ function buildWatchers() {
     options: {
       deep: true,
       handler(options) {
-        let { optionSnapshot } = this.$options
-        let diff = diffProps(optionSnapshot, options)
-
-        if (diff.anyChanges) {
-
-          // update optionSnapshot for next time
-          for (let optionName in diff.updates) {
-            if (!OPTION_IS_COMPLEX[optionName]) {
-              optionSnapshot[optionName] = options[optionName]
-            }
-          }
-          for (let optionName of diff.removals) {
-            delete optionSnapshot[optionName]
-          }
-
-          let calendar = this.getApi()
-          calendar.pauseRendering()
-          calendar.mutateOptions(diff.updates, diff.removals)
-
-          this.renderId++ // will queue a rerender
-        }
+        let calendar = this.getApi()
+        calendar.pauseRendering()
+        calendar.resetOptions(shallowCopy(options)) // pull out values from getters
+        this.renderId++ // will queue a rerender
       }
     }
   }
@@ -99,11 +81,11 @@ function buildWatchers() {
 
           let calendar = this.getApi()
           calendar.pauseRendering()
-          calendar.mutateOptions({
+          calendar.resetOptions({
             // the only reason we shallow-copy is to trick FC into knowing there's a nested change.
             // TODO: future versions of FC will more gracefully handle event option-changes that are same-reference.
             [complexOptionName]: shallowCopy(val)
-          })
+          }, true)
 
           this.renderId++ // will queue a rerender
         }
