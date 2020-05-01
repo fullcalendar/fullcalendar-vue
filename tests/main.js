@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { mount } from '@vue/test-utils'
-import FullCalendar from './install'
+import FullCalendar from '../src/install'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 /* NOTE:
