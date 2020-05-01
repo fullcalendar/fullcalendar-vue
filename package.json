@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@fullcalendar/vue",
   "version": "5.0.0-beta.2",
   "title": "FullCalendar Vue Component",
@@ -19,7 +18,6 @@
     "clean": "rm -rf dist",
     "watch": "rollup -c --environment BUILD:development --watch",
     "build": "rollup -c --environment BUILD:production",
-    "meta": "mkdir -p dist && cp README.* LICENSE.* dist && ./scripts/pkg-json.js",
     "test": "jest --watch",
     "test:single": "jest --no-cache",
     "test:inspect": "node --inspect-brk \"$(which jest)\" --runInBand",
@@ -52,5 +50,6 @@
     "rollup-plugin-sourcemaps": "^0.4.2",
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11"
-  }
+  },
+  "module": "dist/main.js"
 }
