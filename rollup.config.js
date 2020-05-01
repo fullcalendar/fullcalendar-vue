@@ -1,7 +1,9 @@
 import nodeResolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
 import babel from 'rollup-plugin-babel'
-import sourcemaps from 'rollup-plugin-sourcemaps'
+import json from 'rollup-plugin-json'
 import postcss from 'rollup-plugin-postcss'
+import replace from 'rollup-plugin-replace'
 import packageConfig from './package.json'
 
 let isDev
@@ -27,8 +29,7 @@ export default [
     }),
     plugins: [
       nodeResolve({ jail: 'src' }), // any files outside of here are considered external libs
-      babel(), // will automatically use babel.config.js
-      sourcemaps()
+      babel() // will automatically use babel.config.js
     ]
   },
   {
@@ -36,18 +37,22 @@ export default [
     output: {
       format: 'iife',
       file: 'tmp/tests.js',
-      sourcemap: true,
-      globals: {
-        '@vue/test-utils': 'VueTestUtils' // TODO: problems with rollup parsing cjs module. in karma, include with node_modules/@vue/test-utils/dist/vue-test-utils.umd.js
-      }
+      sourcemap: true
     },
-    external: [
-      '@vue/test-utils'
-    ],
     plugins: [
       nodeResolve(),
-      postcss({ extract: true }),
-      sourcemaps()
+      commonjs({ // for importing commonjs modules
+        namedExports: {
+          '@vue/test-utils': [ 'mount' ]
+        }
+      }),
+      replace({
+        values: {
+          'process.env.NODE_ENV': '"production"'
+        }
+      }),
+      json(), // for some reason vue-template-extractor needs to parse a json file
+      postcss({ extract: true })
     ]
   }
 ]

@@ -1,11 +1,15 @@
-import Vue from 'vue'
 import { mount } from '@vue/test-utils'
 import FullCalendar from '../src/install'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-/* NOTE:
+/*
+NOTE:
 had to hardcode @vue/test-utils at 1.0.0-beta.29 because later versions (1.0.0-beta.31 ?)
 weren't rendering changes synchronously
+CAN REMOVE HACK NOW?
+
+TODO: use attachToDocument/wrapper.destroy() for all tests. make a util func. better for debugging
+TODO: get karma-sourcmaps hooked up
 */
 
 const DEFAULT_OPTIONS = {
@@ -16,12 +20,12 @@ const DEFAULT_OPTIONS = {
 }
 
 
-it('renders', function() {
+it('renders', async () => {
   let wrapper = mount(FullCalendar, { propsData: { options: DEFAULT_OPTIONS } })
   expect(isSkeletonRendered(wrapper)).toBe(true)
 })
 
-it('unmounts and calls destroy', function() {
+it('unmounts and calls destroy', async () => {
   let unmounted = false
   let options = {
     ...DEFAULT_OPTIONS,
@@ -35,28 +39,33 @@ it('unmounts and calls destroy', function() {
   expect(unmounted).toBeTruthy()
 })
 
-it('handles a single prop change', function() {
+it('handles a single prop change', async () => {
   let options = {
     ...DEFAULT_OPTIONS,
     weekends: true
   }
 
-  let wrapper = mount(FullCalendar, { propsData: { options } })
+  let wrapper = mount(FullCalendar, {
+    propsData: { options },
+    attachToDocument: true
+  })
   expect(isWeekendsRendered(wrapper)).toBe(true)
 
   // it's easy for the component to detect this change because the whole options object changes.
   // a more difficult scenario is when a component updates its own nested prop.
   // there's a test for that below (COMPONENT_FOR_OPTION_MANIP).
-  wrapper.setProps({
+  await wrapper.setProps({
     options: {
       ...options,
       weekends: false // good idea to test a falsy prop
     }
   })
   expect(isWeekendsRendered(wrapper)).toBe(false)
+
+  wrapper.destroy()
 })
 
-it('renders events with Date objects', function() { // necessary to test copy util
+it('renders events with Date objects', async () => { // necessary to test copy util
   let wrapper = mount(FullCalendar, {
     propsData: {
       options: {
@@ -72,7 +81,7 @@ it('renders events with Date objects', function() { // necessary to test copy ut
   expect(getRenderedEventCount(wrapper)).toBe(2)
 })
 
-it('handles multiple prop changes, include event reset', function() {
+it('handles multiple prop changes, include event reset', async () => {
   let viewMountCnt = 0
   let eventRenderCnt = 0
   let options = {
@@ -87,7 +96,6 @@ it('handles multiple prop changes, include event reset', function() {
   }
 
   let wrapper = mount(FullCalendar, {
-    sync: false, // restore normal real-DOM batching
     propsData: { options }
   })
 
@@ -96,7 +104,10 @@ it('handles multiple prop changes, include event reset', function() {
   expect(viewMountCnt).toBe(1)
   expect(eventRenderCnt).toBe(1)
 
-  wrapper.setProps({
+  viewMountCnt = 0
+  eventRenderCnt = 0
+
+  await wrapper.setProps({
     options: {
       ...options,
       direction: 'rtl',
@@ -105,18 +116,13 @@ it('handles multiple prop changes, include event reset', function() {
     }
   })
 
-  viewMountCnt = 0
-  eventRenderCnt = 0
-
-  return Vue.nextTick().then(function() { // because of sync:false
-    expect(getRenderedEventCount(wrapper)).toBe(2)
-    expect(isWeekendsRendered(wrapper)).toBe(false)
-    expect(viewMountCnt).toBe(0)
-    expect(eventRenderCnt).toBe(2) // work on getttin gthis to 1
-  })
+  expect(getRenderedEventCount(wrapper)).toBe(2)
+  expect(isWeekendsRendered(wrapper)).toBe(false)
+  expect(viewMountCnt).toBe(0)
+  expect(eventRenderCnt).toBe(2) // work on getttin gthis to 1
 })
 
-it('should expose an API', function() {
+it('should expose an API', async () => {
   let wrapper = mount(FullCalendar, { propsData: { options: DEFAULT_OPTIONS } })
   let calendarApi = wrapper.vm.getApi()
   expect(calendarApi).toBeTruthy()
@@ -153,7 +159,7 @@ const COMPONENT_FOR_API = {
   }
 }
 
-it('should expose an API in $refs', function() {
+it('should expose an API in $refs', async () => {
   let wrapper = mount(COMPONENT_FOR_API)
   let newDate = new Date(Date.UTC(2000, 0, 1))
 
@@ -198,15 +204,15 @@ const COMPONENT_FOR_OPTION_MANIP = {
   }
 }
 
-it('handles an object change when prop is reassigned', function() {
+it('handles an object change when prop is reassigned', async () => {
   let wrapper = mount(COMPONENT_FOR_OPTION_MANIP)
   expect(isWeekendsRendered(wrapper)).toBe(true)
 
-  wrapper.vm.disableWeekends()
+  await wrapper.vm.disableWeekends()
   expect(isWeekendsRendered(wrapper)).toBe(false)
 })
 
-it('avoids rerendering unchanged toolbar/events', function() {
+it('avoids rerendering unchanged toolbar/events', async () => {
   let viewMountCnt = 0
   let eventRenderCnt = 0
 
@@ -260,17 +266,17 @@ const COMPONENT_FOR_EVENT_MANIP = {
   }
 }
 
-it('reacts to event adding', function() {
+it('reacts to event adding', async () => {
   let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
   expect(getRenderedEventCount(wrapper)).toBe(1)
-  wrapper.vm.addEvent()
+  await wrapper.vm.addEvent()
   expect(getRenderedEventCount(wrapper)).toBe(2)
 })
 
-it('reacts to event property changes', function() {
+it('reacts to event property changes', async () => {
   let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
   expect(getFirstEventTitle(wrapper)).toBe('event0')
-  wrapper.vm.updateTitle('another title')
+  await wrapper.vm.updateTitle('another title')
   expect(getFirstEventTitle(wrapper)).toBe('another title')
 })
 
@@ -294,7 +300,7 @@ const EVENT_FUNC_COMPONENT = {
   },
   methods: {
     fetchEvents(fetchInfo, successCallback) {
-      setTimeout(function() {
+      setTimeout(async () => {
         successCallback(buildEvents(2))
       }, 0)
     }
@@ -303,7 +309,7 @@ const EVENT_FUNC_COMPONENT = {
 
 it('can receive an async event function', function(done) {
   let wrapper = mount(EVENT_FUNC_COMPONENT)
-  setTimeout(function() {
+  setTimeout(async () => {
     expect(getRenderedEventCount(wrapper)).toBe(2)
     done()
   }, 100)
@@ -339,10 +345,10 @@ const EVENT_COMP_PROP_COMPONENT = {
   }
 }
 
-it('reacts to computed events prop', function() {
+it('reacts to computed events prop', async () => {
   let wrapper = mount(EVENT_COMP_PROP_COMPONENT)
   expect(getRenderedEventCount(wrapper)).toBe(0)
-  wrapper.vm.markNotFirst()
+  await wrapper.vm.markNotFirst()
   expect(getRenderedEventCount(wrapper)).toBe(2)
 })
 
