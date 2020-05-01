@@ -12,67 +12,24 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
   isDev = process.env.BUILD === 'development'
 }
 
-const BROWSER_GLOBAL = 'FullCalendarVue'
-const EXTERNAL_BROWSER_GLOBALS = {
-  '@fullcalendar/core': 'FullCalendar',
-  'vue': 'Vue'
-}
-const ESM_EXTERNALS = [
-  // put module names here that we DON'T want to bundle in the ES build
-]
-const OUTPUT_SETTINGS = {
-  umd: {
-    format: 'umd',
-    file: 'dist/main.umd.js',
-    exports: 'named',
-    name: BROWSER_GLOBAL,
-    globals: EXTERNAL_BROWSER_GLOBALS,
+export default {
+  input: 'src/install.js',
+  output: {
+    format: 'es',
+    file: 'dist/main.js',
     banner: buildBanner,
     sourcemap: isDev
   },
-  esm: {
-    format: 'es',
-    file: 'dist/main.esm.js',
-    banner: buildBanner,
-    sourcemap: isDev
-  }
-}
-
-export default [
-  buildSettings('umd'),
-  buildSettings('esm')
-]
-
-function buildSettings(format) {
-  let external = Object.keys(EXTERNAL_BROWSER_GLOBALS)
-  let plugins = []
-
-  if (format === 'esm') {
-    external = external.concat(ESM_EXTERNALS)
-    plugins.push(
-      nodeResolve({ jail: 'src' }) // any files outside of here are considered external libs
-    )
-  } else { // will bundle small dependencies like fast-deep-equal
-    plugins.push(
-      nodeResolve()
-    )
-  }
-
-  plugins.push(
+  external: Object.keys({
+    ...packageConfig.dependencies,
+    ...packageConfig.peerDependencies
+  }),
+  plugins: [
+    nodeResolve({ jail: 'src' }), // any files outside of here are considered external libs
     commonjs(), // allows importing of external cjs modules
-    babel() // will automatically use babel.config.js
-  )
-
-  if (isDev) {
-    plugins.push(sourcemaps())
-  }
-
-  return {
-    input: 'src/install.js',
-    output: OUTPUT_SETTINGS[format],
-    external,
-    plugins
-  }
+    babel(), // will automatically use babel.config.js
+    ...(isDev ? [ sourcemaps() ] : [])
+  ]
 }
 
 function buildBanner() {
