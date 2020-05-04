@@ -29,7 +29,9 @@ export default [
     }),
     plugins: [
       nodeResolve({ jail: 'src' }), // any files outside of here are considered external libs
-      babel() // will automatically use babel.config.js
+      babel({ // will automatically use babel.config.js
+        babelHelpers: 'bundled' // TODO: make this a dependency???
+      })
     ]
   },
   {
@@ -37,22 +39,22 @@ export default [
     output: {
       format: 'iife',
       file: 'tmp/tests.js',
-      sourcemap: true
+      sourcemap: 'inline'
     },
     plugins: [
+      replace({ // important to put first
+        values: {
+          'process.env.NODE_ENV': '"production"' // best???
+        }
+      }),
       nodeResolve(),
       commonjs({ // for importing commonjs modules
         namedExports: {
           '@vue/test-utils': [ 'mount' ]
         }
       }),
-      replace({
-        values: {
-          'process.env.NODE_ENV': '"production"'
-        }
-      }),
       json(), // for some reason vue-template-extractor needs to parse a json file
-      postcss({ extract: true })
+      postcss()
     ]
   }
 ]
