@@ -54,5 +54,8 @@
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11"
   },
-  "module": "dist/main.js"
+  "module": "dist/main.js",
+  "files": [
+    "dist"
+  ]
 }
