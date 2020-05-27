@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/vue",
-  "version": "5.0.0-beta.3",
+  "version": "5.0.0-beta.4",
   "title": "FullCalendar Vue Component",
   "description": "An official FullCalendar component for Vue",
   "keywords": [
@@ -24,15 +24,15 @@
     "ci": "./scripts/ci.sh"
   },
   "dependencies": {
-    "@fullcalendar/core": "5.0.0-beta.3",
-    "@fullcalendar/common": "5.0.0-beta.3"
+    "@fullcalendar/core": "5.0.0-beta.4",
+    "@fullcalendar/common": "5.0.0-beta.4"
   },
   "peerDependencies": {
     "vue": "^2.6.6"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.8.4",
-    "@fullcalendar/daygrid": "5.0.0-beta.3",
+    "@fullcalendar/daygrid": "5.0.0-beta.4",
     "@rollup/plugin-babel": "^5.0.0",
     "@rollup/plugin-commonjs": "^11.1.0",
     "@rollup/plugin-json": "^4.0.3",
