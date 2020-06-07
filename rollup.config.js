@@ -54,7 +54,9 @@ export default [
         }
       }),
       json(), // for some reason vue-template-extractor needs to parse a json file
-      postcss()
+      postcss({
+        config: false // don't look in current and parent dirs for a config
+      })
     ]
   }
 ]
