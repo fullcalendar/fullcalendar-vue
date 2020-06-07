@@ -24,13 +24,14 @@
     "ci": "./scripts/ci.sh"
   },
   "dependencies": {
-    "@fullcalendar/core": "5.0.0-beta.4",
-    "@fullcalendar/common": "5.0.0-beta.4"
+    "@fullcalendar/common": "5.0.0-beta.4",
+    "@fullcalendar/core": "5.0.0-beta.4"
   },
   "peerDependencies": {
     "vue": "^2.6.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.8.4",
     "@fullcalendar/daygrid": "5.0.0-beta.4",
     "@rollup/plugin-babel": "^5.0.0",
