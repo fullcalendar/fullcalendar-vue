@@ -2,6 +2,7 @@ import deepEqual from 'fast-deep-equal'
 import { Calendar } from '@fullcalendar/core'
 import { deepCopy, mapHash } from './utils'
 import { PROP_DEFS, PROP_IS_DEEP, EMISSION_NAMES, EMISSION_USE_PROP } from './fullcalendar-options'
+import humps from 'humps'
 
 /*
 VOCAB:
@@ -59,6 +60,8 @@ export default {
       for (let emissionName of EMISSION_NAMES) {
         options[emissionName] = (...args) => {
           this.$emit(emissionName, ...args)
+          let emissionNameKebab = humps.decamelize(emissionName, { separator: '-' })
+          this.$emit(emissionNameKebab, ...args)
         }
       }
 
