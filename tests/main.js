@@ -353,6 +353,45 @@ it('reacts to computed events prop', async () => {
 })
 
 
+// component with vue slots
+
+const COMPONENT_WITH_SLOTS = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <FullCalendar :options='calendarOptions'>
+      <template v-slot:eventContent="arg">
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </template>
+    </FullCalendar>
+  `,
+  data() {
+    return {
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        events: buildEvents(1)
+      }
+    }
+  },
+  methods: {
+    resetEvents() {
+      this.calendarOptions.events = buildEvents(1)
+    }
+  }
+}
+
+it('renders and rerenders a custom slot', async () => {
+  let wrapper = mount(COMPONENT_WITH_SLOTS)
+  let eventEl = getRenderedEventEls(wrapper).at(0)
+  expect(eventEl.findAll('b').length).toBe(1)
+  await wrapper.vm.resetEvents()
+  eventEl = getRenderedEventEls(wrapper).at(0)
+  expect(eventEl.findAll('b').length).toBe(1)
+})
+
+
 // FullCalendar options utils
 
 function buildEvents(length) {
@@ -388,8 +427,12 @@ function isWeekendsRendered(wrapper) {
   return wrapper.find('.fc-day-sat').exists()
 }
 
+function getRenderedEventEls(wrapper) {
+  return wrapper.findAll('.fc-event')
+}
+
 function getRenderedEventCount(wrapper) {
-  return wrapper.findAll('.fc-event').length
+  return getRenderedEventEls(wrapper).length
 }
 
 function getFirstEventTitle(wrapper) {

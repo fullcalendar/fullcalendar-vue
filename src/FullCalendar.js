@@ -5,7 +5,7 @@ import { wrapVDomGenerator, VueContentTypePlugin } from './custom-content-type'
 
 
 /*
-IMPORTANT NOTE: `this.$options` is merely a place to store state.
+IMPORTANT NOTE: `this.$options` is merely a place to store internal state.
 The `this.options` prop holds the FullCalendar options.
 */
 export default {
@@ -25,19 +25,28 @@ export default {
   },
 
   mounted() {
-    let options = this.options || {}
-    this.$options.calendar = new Calendar(
-      this.$el,
-      // the snapshot will NOT use this transformed object, so it's okay to inject new values
-      buildInitialOptions(options, this.$scopedSlots) // will pull out the values from the options getter functions
-    )
-    this.$options.calendar.render()
+    this.$options.scopedSlotOptions = mapHash(this.$scopedSlots, wrapVDomGenerator) // needed for buildOptions
+    let calendar = this.$options.calendar = new Calendar(this.$el, this.buildOptions(this.options))
+    calendar.render()
   },
 
   methods: {
+
+    buildOptions(suppliedOptions) {
+      suppliedOptions = suppliedOptions || {}
+      return {
+        ...this.$options.scopedSlotOptions,
+        ...suppliedOptions, // spread will pull out the values from the options getter functions
+        plugins: (suppliedOptions.plugins || []).concat([
+          VueContentTypePlugin
+        ])
+      }
+    },
+
     getApi() {
       return this.$options.calendar
     }
+
   },
 
   beforeUpdate() {
@@ -63,7 +72,7 @@ function buildWatchers() {
       handler(options) {
         let calendar = this.getApi()
         calendar.pauseRendering()
-        calendar.resetOptions(shallowCopy(options)) // pull out values from getters
+        calendar.resetOptions(this.buildOptions(options))
         this.renderId++ // will queue a rerender
       }
     }
@@ -94,15 +103,4 @@ function buildWatchers() {
   }
 
   return watchers
-}
-
-
-function buildInitialOptions(options, scopedSlots) {
-  return {
-    ...options,
-    plugins: (options.plugins || []).concat([
-      VueContentTypePlugin
-    ]),
-    ...mapHash(scopedSlots, wrapVDomGenerator)
-  }
 }
