@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
+    "@babel/plugin-transform-runtime": "^7.10.1",
     "@babel/preset-env": "^7.8.4",
     "@fullcalendar/daygrid": "5.0.0-beta.4",
     "@vue/test-utils": "1.0.0-beta.29",
@@ -54,6 +55,7 @@
     "karma-jasmine": "^3.1.1",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "^0.0.32",
+    "karma-webpack": "^4.0.2",
     "style-loader": "^1.2.1",
     "typescript": "^3.8.3",
     "vue": "^2.6.11",
