@@ -30,8 +30,10 @@ const FullCalendar = Vue.extend({
   mounted() {
     let internal = this.$options as FullCalendarInternal
     internal.scopedSlotOptions = mapHash(this.$scopedSlots, wrapVDomGenerator) // needed for buildOptions
-    (internal.calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options)))
-      .render()
+
+    let calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options))
+    internal.calendar = calendar
+    calendar.render()
   },
 
   methods: { // separate funcs b/c of type inferencing
