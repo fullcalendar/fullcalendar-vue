@@ -1,16 +1,7 @@
-import { mount } from '@vue/test-utils'
+import { mount as _mount } from '@vue/test-utils'
 import FullCalendar from '../dist/install'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-/*
-NOTE:
-had to hardcode @vue/test-utils at 1.0.0-beta.29 because later versions (1.0.0-beta.31 ?)
-weren't rendering changes synchronously
-CAN REMOVE HACK NOW?
-
-TODO: use attachToDocument/wrapper.destroy() for all tests. make a util func. better for debugging
-TODO: get karma-sourcmaps hooked up
-*/
 
 const DEFAULT_OPTIONS = {
   initialDate: '2019-05-15',
@@ -18,6 +9,24 @@ const DEFAULT_OPTIONS = {
   timeZone: 'UTC',
   plugins: [ dayGridPlugin ]
 }
+
+let currentWrapper
+
+function mount(component, options = {}) {
+  if (options.attachTo === undefined) {
+    let rootEl = document.body.appendChild(document.createElement('div')) // will be *replaced*
+    options = {...options, attachTo: rootEl}
+  }
+  currentWrapper = _mount(component, options)
+  return currentWrapper
+}
+
+afterEach(function() {
+  if (currentWrapper) {
+    currentWrapper.destroy()
+    currentWrapper = null
+  }
+})
 
 
 it('renders', async () => {
@@ -46,8 +55,7 @@ it('handles a single prop change', async () => {
   }
 
   let wrapper = mount(FullCalendar, {
-    propsData: { options },
-    attachToDocument: true
+    propsData: { options }
   })
   expect(isWeekendsRendered(wrapper)).toBe(true)
 
@@ -61,8 +69,6 @@ it('handles a single prop change', async () => {
     }
   })
   expect(isWeekendsRendered(wrapper)).toBe(false)
-
-  wrapper.destroy()
 })
 
 it('renders events with Date objects', async () => { // necessary to test copy util
@@ -119,7 +125,7 @@ it('handles multiple prop changes, include event reset', async () => {
   expect(getRenderedEventCount(wrapper)).toBe(2)
   expect(isWeekendsRendered(wrapper)).toBe(false)
   expect(viewMountCnt).toBe(0)
-  expect(eventRenderCnt).toBe(2) // work on getttin gthis to 1
+  expect(eventRenderCnt).toBe(2) // TODO: get this down to 1 (only 1 new event rendered)
 })
 
 it('should expose an API', async () => {

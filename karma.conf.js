@@ -18,8 +18,7 @@ module.exports = function(config) {
       module: {
         rules: [
           {
-            test: /[\/]dist[\/][^.]*\.js$/,
-            exclude: /node_modules/,
+            test: /\.js$/, // for fullcalendar lib files. TODO: exclude @vue/test-utils
             use: 'source-map-loader'
           },
           {
