@@ -11,14 +11,19 @@ module.exports = function(config) {
     },
     webpack: {
       mode: 'development',
-      devtool: 'inline-source-map', // TODO: only process for our files???
+      devtool: 'inline-source-map', // output an inline sourcemap. gets fed into karma-sourcemap-loader
       resolve: {
         extensions: [ '.js' ]
       },
       module: {
         rules: [
           {
-            test: /\.js$/,
+            test: /[\/]dist[\/][^.]*\.js$/,
+            exclude: /node_modules/,
+            use: 'source-map-loader'
+          },
+          {
+            test: /[\/]tests[\/][^.]*\.js$/,
             exclude: /node_modules/,
             use: {
               loader: 'babel-loader',
