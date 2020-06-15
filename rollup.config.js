@@ -4,6 +4,7 @@ import babel from '@rollup/plugin-babel'
 import json from '@rollup/plugin-json'
 import postcss from 'rollup-plugin-postcss'
 import replace from '@rollup/plugin-replace'
+import sourcemaps from 'rollup-plugin-sourcemaps'
 import packageConfig from './package.json'
 
 let isDev
@@ -42,6 +43,7 @@ export default [
       sourcemap: 'inline'
     },
     plugins: [
+      sourcemaps(),
       replace({ // important to put first
         values: {
           'process.env.NODE_ENV': '"production"' // best???
