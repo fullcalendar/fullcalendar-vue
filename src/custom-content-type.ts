@@ -1,13 +1,14 @@
-import Vue from 'vue'
+import Vue, { VNode, PropType } from 'vue'
+import { NormalizedScopedSlot } from 'vue/types/vnode'
 import { createPlugin } from '@fullcalendar/core'
 
 
 /*
 wrap it in an object with a `vue` key, which the custom content-type handler system will look for
 */
-export function wrapVDomGenerator(vDomGenerator) {
-  return function() {
-    return { vue: vDomGenerator.apply(this, arguments) }
+export function wrapVDomGenerator(vDomGenerator: NormalizedScopedSlot) {
+  return function(props: any) {
+    return { vue: vDomGenerator(props) }
   }
 }
 
@@ -20,10 +21,10 @@ export const VueContentTypePlugin = createPlugin({
 
 
 function buildVDomHandler() {
-  let currentEl
-  let v // the Vue instance
+  let currentEl: HTMLElement
+  let v: ReturnType<typeof initVue> // the Vue instance
 
-  return function(el, vDomContent) { // the handler
+  return function(el: HTMLElement, vDomContent: VNode[]) { // the handler
 
     if (currentEl !== el) {
       if (currentEl && v) { // if changing elements, recreate the vue
@@ -47,9 +48,11 @@ function buildVDomHandler() {
 }
 
 
-function initVue(initialContent) {
+function initVue(initialContent: VNode[]) {
   return new Vue({
-    props: [ 'content' ],
+    props: {
+      content: Array as PropType<VNode[]>
+    },
     propsData: {
       content: initialContent
     },
@@ -61,7 +64,7 @@ function initVue(initialContent) {
       if (content.length === 1) {
         return content[0]
 
-      } else if (content.length) {
+      } else {
         return h('span', {}, content)
       }
     }

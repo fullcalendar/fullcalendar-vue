@@ -1,8 +1,11 @@
 
+// TODO: add types!
+
+
 /*
 works with objects and arrays
 */
-export function shallowCopy(val) {
+export function shallowCopy(val: any) {
   if (typeof val === 'object') {
     if (Array.isArray(val)) {
       val = Array.prototype.slice.call(val)
@@ -15,11 +18,11 @@ export function shallowCopy(val) {
 }
 
 
-export function mapHash(input, func) {
-  const output = {}
+export function mapHash(input: any, func: any) {
+  const output: any = {}
 
   for (const key in input) {
-    if (hasOwnProperty.call(input, key)) {
+    if (input.hasOwnProperty(key)) {
       output[key] = func(input[key], key)
     }
   }

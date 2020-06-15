@@ -1,21 +1,24 @@
-import { Calendar } from '@fullcalendar/core'
+import Vue, { PropType } from 'vue'
+import { NormalizedScopedSlot } from 'vue/types/vnode'
+import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { OPTION_IS_COMPLEX } from './options'
 import { shallowCopy, mapHash } from './utils'
 import { wrapVDomGenerator, VueContentTypePlugin } from './custom-content-type'
 
 
-/*
-IMPORTANT NOTE: `this.$options` is merely a place to store internal state.
-The `this.options` prop holds the FullCalendar options.
-*/
-export default {
-  props: [ 'options' ],
+interface FullCalendarInternal {
+  calendar: Calendar
+  scopedSlotOptions: { [name: string]: NormalizedScopedSlot }
+}
 
-  data() {
-    return {
-      renderId: 0
-    }
+
+const FullCalendar = Vue.extend({
+
+  props: {
+    options: Object as PropType<CalendarOptions>
   },
+
+  data: initData, // separate func b/c of type inferencing
 
   render(createElement) {
     return createElement('div', {
@@ -25,28 +28,15 @@ export default {
   },
 
   mounted() {
-    this.$options.scopedSlotOptions = mapHash(this.$scopedSlots, wrapVDomGenerator) // needed for buildOptions
-    let calendar = this.$options.calendar = new Calendar(this.$el, this.buildOptions(this.options))
-    calendar.render()
+    let internal = this.$options as FullCalendarInternal
+    internal.scopedSlotOptions = mapHash(this.$scopedSlots, wrapVDomGenerator) // needed for buildOptions
+    (internal.calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options)))
+      .render()
   },
 
-  methods: {
-
-    buildOptions(suppliedOptions) {
-      suppliedOptions = suppliedOptions || {}
-      return {
-        ...this.$options.scopedSlotOptions,
-        ...suppliedOptions, // spread will pull out the values from the options getter functions
-        plugins: (suppliedOptions.plugins || []).concat([
-          VueContentTypePlugin
-        ])
-      }
-    },
-
-    getApi() {
-      return this.$options.calendar
-    }
-
+  methods: { // separate funcs b/c of type inferencing
+    getApi,
+    buildOptions,
   },
 
   beforeUpdate() {
@@ -58,18 +48,47 @@ export default {
   },
 
   watch: buildWatchers()
+})
+
+
+function initData() {
+  return {
+    renderId: 0
+  }
 }
+
+
+function buildOptions(this: { $options: any }, suppliedOptions: CalendarOptions): CalendarOptions {
+  let internal = this.$options as FullCalendarInternal
+  suppliedOptions = suppliedOptions || {}
+  return {
+    ...internal.scopedSlotOptions,
+    ...suppliedOptions, // spread will pull out the values from the options getter functions
+    plugins: (suppliedOptions.plugins || []).concat([
+      VueContentTypePlugin
+    ])
+  }
+}
+
+
+function getApi(this: { $options: any }) {
+  let internal = this.$options as FullCalendarInternal
+  return internal.calendar
+}
+
+
+type FullCalendarInstance = InstanceType<typeof FullCalendar>
 
 
 function buildWatchers() {
 
-  let watchers = {
+  let watchers: { [member: string]: any } = {
 
     // watches changes of ALL options and their nested objects,
     // but this is only a means to be notified of top-level non-complex options changes.
     options: {
       deep: true,
-      handler(options) {
+      handler(this: FullCalendarInstance, options: CalendarOptions) {
         let calendar = this.getApi()
         calendar.pauseRendering()
         calendar.resetOptions(this.buildOptions(options))
@@ -83,7 +102,7 @@ function buildWatchers() {
     // handlers called when nested objects change
     watchers[`options.${complexOptionName}`] = {
       deep: true,
-      handler(val) {
+      handler(this: FullCalendarInstance, val: any) {
 
         // unfortunately the handler is called with undefined if new props were set, but the complex one wasn't ever set
         if (val !== undefined) {
@@ -104,3 +123,6 @@ function buildWatchers() {
 
   return watchers
 }
+
+
+export default FullCalendar

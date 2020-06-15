@@ -1,3 +1,4 @@
+import { VueConstructor } from 'vue'
 import FullCalendarComponent from './FullCalendar'
 
 /*
@@ -11,7 +12,7 @@ https://vuejs.org/v2/cookbook/packaging-sfc-for-npm.html
 let installed = false
 
 // declare install function executed by Vue.use()
-export function install(Vue) {
+export function install(Vue: VueConstructor) {
   if (!installed) {
     installed = true
     Vue.component('FullCalendar', FullCalendarComponent)
@@ -19,11 +20,11 @@ export function install(Vue) {
 }
 
 // detect a globally availble version of Vue (eg. in browser via <script> tag)
-let GlobalVue
+let GlobalVue: VueConstructor | undefined
 if (typeof window !== 'undefined') {
   GlobalVue = window.Vue
 } else if (typeof global !== 'undefined') {
-  GlobalVue = global.Vue
+  GlobalVue = (global as any).Vue
 }
 
 // auto-install if possible

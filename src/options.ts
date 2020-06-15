@@ -1,5 +1,5 @@
 
-export const OPTION_IS_COMPLEX = {
+export const OPTION_IS_COMPLEX: { [name: string]: boolean } = {
   headerToolbar: true,
   footerToolbar: true,
   events: true,

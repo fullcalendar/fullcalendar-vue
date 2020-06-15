@@ -15,11 +15,16 @@
     "url": "https://github.com/fullcalendar/fullcalendar-vue.git"
   },
   "scripts": {
+    "tsc": "tsc -p tsconfig.json",
     "clean": "rm -rf dist tmp",
-    "watch": "rollup -c --environment BUILD:development --watch",
-    "build": "rollup -c --environment BUILD:production",
-    "test": "karma start --browsers ChromeHeadless --single-run --no-auto-watch",
-    "test:watch": "karma start",
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json --watch",
+    "test:ci": "npm run test:src:build && npm run test:karma:ci",
+    "test": "concurrently npm:test:src:watch npm:test:karma:watch",
+    "test:src:build": "rollup -c --environment BUILD:production",
+    "test:src:watch": "rollup -c --environment BUILD:development --watch",
+    "test:karma:ci": "karma start --browsers ChromeHeadless --single-run --no-auto-watch",
+    "test:karma:watch": "karma start",
     "lint": "eslint src tests *.js",
     "ci": "./scripts/ci.sh"
   },
@@ -55,6 +60,7 @@
     "rollup": "^1.31.0",
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-sourcemaps": "^0.6.2",
+    "typescript": "^3.8.3",
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11"
   },
