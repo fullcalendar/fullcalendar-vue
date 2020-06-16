@@ -38,4 +38,4 @@ if (GlobalVue) {
 export default FullCalendarComponent
 
 // so can access any of the utils/types from this lib
-export * from '@fullcalendar/common'
+export * from '@fullcalendar/core'
