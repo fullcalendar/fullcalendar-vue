@@ -28,7 +28,7 @@
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "vue": "^2.6.6"
+    "vue": "^2.6.11"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
