@@ -19,8 +19,8 @@
     "clean": "rm -rf dist",
     "build": "tsc -p tsconfig.json",
     "watch": "tsc -p tsconfig.json --watch",
-    "test": "karma start",
-    "test:ci": "karma start --browsers ChromeHeadless --single-run --no-auto-watch",
+    "test": "karma start karma.config.cjs",
+    "test:ci": "karma start karma.config.cjs --browsers ChromeHeadless --single-run --no-auto-watch",
     "ci": "./scripts/ci.sh"
   },
   "dependencies": {
