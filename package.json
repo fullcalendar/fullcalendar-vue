@@ -51,6 +51,7 @@
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0"
   },
+  "type": "module",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "files": [
