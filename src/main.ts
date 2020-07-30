@@ -21,10 +21,10 @@ export function install(Vue: VueConstructor) {
 
 // detect a globally availble version of Vue (eg. in browser via <script> tag)
 let GlobalVue: VueConstructor | undefined
-if (typeof window !== 'undefined') {
+if (typeof globalThis !== 'undefined') {
+  GlobalVue = globalThis.Vue
+} else {
   GlobalVue = window.Vue
-} else if (typeof global !== 'undefined') {
-  GlobalVue = (global as any).Vue
 }
 
 // auto-install if possible
