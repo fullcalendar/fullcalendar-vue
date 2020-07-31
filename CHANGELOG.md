@@ -1,4 +1,12 @@
 
+v5.2.0 (2020-07-30)
+-------------------
+
+- pre-built release of the Vue component (#61)
+- using the component through a CDN (#28)
+- Build errors due to missing types in main.ts (#101)
+
+
 4.3.1 (2019-08-12)
 ------------------
 fix regression where object props wrongly forcing rerenders (#11, #34)
