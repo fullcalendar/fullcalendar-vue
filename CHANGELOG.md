@@ -5,6 +5,7 @@ v5.2.0 (2020-07-30)
 - pre-built release of the Vue component (#61)
 - using the component through a CDN (#28)
 - Build errors due to missing types in main.ts (#101)
+- when appropriate, expose as 'fullcalendar' component, for DOM templates
 
 
 4.3.1 (2019-08-12)
