@@ -16,6 +16,7 @@ export function install(Vue: VueConstructor) {
   if (!installed) {
     installed = true
     Vue.component('FullCalendar', FullCalendarComponent)
+    Vue.component('fullcalendar', FullCalendarComponent) // for when using embedded HTML templates, must be lowercase
   }
 }
 
