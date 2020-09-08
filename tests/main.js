@@ -397,6 +397,35 @@ it('renders and rerenders a custom slot', async () => {
   expect(eventEl.findAll('b').length).toBe(1)
 })
 
+const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
+  components: {
+    FullCalendar,
+  },
+  template: `
+    <FullCalendar :options='calendarOptions'>
+      <template v-slot:eventContent="arg">this is an event</template>
+    </FullCalendar>
+  `,
+  data() {
+    return {
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        events: buildEvents(1)
+      }
+    }
+  },
+}
+
+/**
+ * Ensures we can use plugins and emit events from within the slots just
+ * like any other place.
+ */
+it('adds slots as child components.', async () => {
+  let wrapper = mount(COMPONENT_USING_ROOT_OPTIONS_IN_SLOT)
+
+  expect(wrapper.findComponent(FullCalendar).vm.$children.length).toBe(1);
+});
+
 
 // FullCalendar options utils
 

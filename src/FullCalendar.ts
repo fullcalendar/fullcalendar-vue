@@ -3,7 +3,7 @@ import { NormalizedScopedSlot } from 'vue/types/vnode'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { OPTION_IS_COMPLEX } from './options'
 import { shallowCopy, mapHash } from './utils'
-import { wrapVDomGenerator, VueContentTypePlugin } from './custom-content-type'
+import { wrapVDomGenerator, createVueContentTypePlugin } from './custom-content-type'
 
 
 interface FullCalendarInternal {
@@ -31,7 +31,7 @@ const FullCalendar = Vue.extend({
     let internal = this.$options as FullCalendarInternal
     internal.scopedSlotOptions = mapHash(this.$scopedSlots, wrapVDomGenerator) // needed for buildOptions
 
-    let calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options))
+    let calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options, this))
     internal.calendar = calendar
     calendar.render()
   },
@@ -60,14 +60,14 @@ function initData() {
 }
 
 
-function buildOptions(this: { $options: any }, suppliedOptions: CalendarOptions): CalendarOptions {
+function buildOptions(this: { $options: any }, suppliedOptions: CalendarOptions, parent: Vue): CalendarOptions {
   let internal = this.$options as FullCalendarInternal
   suppliedOptions = suppliedOptions || {}
   return {
     ...internal.scopedSlotOptions,
     ...suppliedOptions, // spread will pull out the values from the options getter functions
     plugins: (suppliedOptions.plugins || []).concat([
-      VueContentTypePlugin
+      createVueContentTypePlugin(parent)
     ])
   }
 }
@@ -93,7 +93,7 @@ function buildWatchers() {
       handler(this: FullCalendarInstance, options: CalendarOptions) {
         let calendar = this.getApi()
         calendar.pauseRendering()
-        calendar.resetOptions(this.buildOptions(options))
+        calendar.resetOptions(this.buildOptions(options, this))
         this.renderId++ // will queue a rerender
       }
     }

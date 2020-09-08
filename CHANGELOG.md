@@ -3,6 +3,7 @@ next
 ----
 
 - no longer expose component as 'fullcalendar' when used globally
+- global mixins, directives, filters & components work inside slots
 
 
 v5.2.0 (2020-07-30)
