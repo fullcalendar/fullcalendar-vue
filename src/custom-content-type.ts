@@ -51,11 +51,8 @@ function buildVDomHandler(parent: Vue) {
 function initVue(initialContent: VNode[], parent: Vue) {
   return new Vue({
     parent,
-    props: {
-      content: Array as PropType<VNode[]>
-    },
-    propsData: {
-      content: initialContent
+    data: {
+      content: initialContent,
     },
     render(h) {
       let { content } = this
