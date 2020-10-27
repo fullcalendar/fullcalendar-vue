@@ -53,7 +53,7 @@
     "typescript": "^3.8.3",
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11",
-    "webpack": "^5.3.0"
+    "webpack": "^4.44.2"
   },
   "type": "module",
   "main": "dist/main.js",
