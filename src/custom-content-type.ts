@@ -12,15 +12,16 @@ export function wrapVDomGenerator(vDomGenerator: NormalizedScopedSlot) {
   }
 }
 
+export function createVueContentTypePlugin(parent: Vue) {
+  return createPlugin({
+    contentTypeHandlers: {
+      vue: function() { return buildVDomHandler(parent); }, // looks for the `vue` key
+    }
+  });
+}
 
-export const VueContentTypePlugin = createPlugin({
-  contentTypeHandlers: {
-    vue: buildVDomHandler // looks for the `vue` key
-  }
-})
 
-
-function buildVDomHandler() {
+function buildVDomHandler(parent: Vue) {
   let currentEl: HTMLElement
   let v: ReturnType<typeof initVue> // the Vue instance
 
@@ -34,7 +35,7 @@ function buildVDomHandler() {
     }
 
     if (!v) {
-      v = initVue(vDomContent)
+      v = initVue(vDomContent, parent)
 
       // vue's mount method *replaces* the given element. create an artificial inner el
       let innerEl = document.createElement('span')
@@ -47,14 +48,11 @@ function buildVDomHandler() {
   }
 }
 
-
-function initVue(initialContent: VNode[]) {
+function initVue(initialContent: VNode[], parent: Vue) {
   return new Vue({
-    props: {
-      content: Array as PropType<VNode[]>
-    },
-    propsData: {
-      content: initialContent
+    parent,
+    data: {
+      content: initialContent,
     },
     render(h) {
       let { content } = this
