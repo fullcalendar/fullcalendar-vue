@@ -398,6 +398,42 @@ it('renders and rerenders a custom slot', async () => {
 })
 
 
+// dynamic events
+
+const DynamicEvent = () => import('./DynamicEvent.vue')
+
+const COMPONENT_WITH_DYNAMIC_SLOTS = {
+  components: {
+    FullCalendar,
+    DynamicEvent
+  },
+  template: `
+    <FullCalendar :options='calendarOptions'>
+      <template v-slot:eventContent="arg">
+        <dynamic-event :event="arg.event" />
+      </template>
+    </FullCalendar>
+  `,
+  data() {
+    return {
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        events: buildEvents(1)
+      }
+    }
+  }
+}
+
+// https://github.com/fullcalendar/fullcalendar-vue/issues/122
+xit('renders dynamically imported event', async () => {
+  let wrapper = mount(COMPONENT_WITH_DYNAMIC_SLOTS)
+  debugger
+  let eventEl = getRenderedEventEls(wrapper).at(0)
+  expect(eventEl.findAll('.dynamic-event').length).toBe(1)
+})
+
+
+
 // FullCalendar options utils
 
 function buildEvents(length) {

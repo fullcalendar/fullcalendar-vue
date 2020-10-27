@@ -1,3 +1,4 @@
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = function(config) {
   config.set({
@@ -18,6 +19,10 @@ module.exports = function(config) {
       module: {
         rules: [
           {
+            test: /\.vue$/,
+            use: 'vue-loader'
+          },
+          {
             test: /\.js$/, // for fullcalendar lib files. TODO: exclude @vue/test-utils
             use: 'source-map-loader'
           },
@@ -37,7 +42,10 @@ module.exports = function(config) {
             use: [ 'style-loader', 'css-loader' ]
           }
         ]
-      }
+      },
+      plugins: [
+        new VueLoaderPlugin()
+      ]
     },
     logLevel: config.LOG_INFO,
     reporters: [ 'spec' ]

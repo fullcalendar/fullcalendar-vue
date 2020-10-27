@@ -52,6 +52,7 @@
     "terser": "^4.8.0",
     "typescript": "^3.8.3",
     "vue": "^2.6.11",
+    "vue-loader": "^15.9.4",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.44.2"
   },
