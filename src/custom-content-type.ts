@@ -1,6 +1,6 @@
-import Vue, { VNode, PropType } from 'vue'
+import Vue, { VNode } from 'vue'
 import { NormalizedScopedSlot } from 'vue/types/vnode'
-import { createPlugin } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@fullcalendar/core'
 
 
 /*
@@ -12,7 +12,7 @@ export function wrapVDomGenerator(vDomGenerator: NormalizedScopedSlot) {
   }
 }
 
-export function createVueContentTypePlugin(parent: Vue) {
+export function createVueContentTypePlugin(parent: Vue): PluginDef {
   return createPlugin({
     contentTypeHandlers: {
       vue: function() { return buildVDomHandler(parent); }, // looks for the `vue` key
