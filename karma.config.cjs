@@ -4,10 +4,10 @@ module.exports = function(config) {
   config.set({
     basePath: '.',
     plugins: [
-      'karma-jasmine',
-      'karma-sourcemap-loader',
-      'karma-spec-reporter',
-      'karma-chrome-launcher'
+      require('karma-jasmine'),
+      require('karma-sourcemap-loader'),
+      require('karma-spec-reporter'),
+      require('karma-chrome-launcher')
     ],
     frameworks: [ 'jasmine' ],
     files: [
