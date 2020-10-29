@@ -56,7 +56,8 @@
     "vue": "^2.6.11",
     "vue-loader": "^15.9.4",
     "vue-template-compiler": "^2.6.11",
-    "webpack": "^4.44.2"
+    "webpack": "^5.3.2",
+    "webpack-cli": "^4.1.0"
   },
   "type": "module",
   "main": "dist/main.js",
