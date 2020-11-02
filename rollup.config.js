@@ -22,5 +22,14 @@ export default [
     plugins: [
       nodeResolve() // for resolving tslib
     ]
+  },
+  {
+    input: 'dist/main.js',
+    output: {
+      format: 'cjs',
+      file: 'dist/main.cjs.js',
+      exports: 'named'
+    },
+    external: Object.keys(EXTERNAL_GLOBALS).concat([ 'tslib' ])
   }
 ]
