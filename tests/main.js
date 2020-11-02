@@ -1,10 +1,9 @@
-import vueTestUtils from '@vue/test-utils'
+import { mount as _mount } from '@vue/test-utils'
 import FullCalendar from '../dist/main'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import Vue from 'vue'
 
 
-const _mount = vueTestUtils.mount
 const DEFAULT_OPTIONS = {
   initialDate: '2019-05-15',
   initialView: 'dayGridMonth',
