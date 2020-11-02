@@ -53,9 +53,9 @@
     "style-loader": "^2.0.0",
     "terser": "^4.8.0",
     "typescript": "^3.8.3",
-    "vue": "^2.6.11",
-    "vue-loader": "^15.9.4",
-    "vue-template-compiler": "^2.6.11",
+    "vue": "^2.6.12",
+    "vue-loader": "^15.9.5",
+    "vue-template-compiler": "^2.6.12",
     "webpack": "^5.3.2",
     "webpack-cli": "^4.1.0"
   },
