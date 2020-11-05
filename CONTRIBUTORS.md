@@ -40,5 +40,10 @@ For publishing to NPM/Github, run something like this:
 This will create a detached+tagged release commit.
 
 
+## Dependency Quirks
+
+The `@types/estree` package is not explicitly used by this repo. It is a transitive dependency with two competing versions.
+
+
 [example project]: https://github.com/fullcalendar/fullcalendar-example-projects/tree/master/vue
 [npm link]: https://docs.npmjs.com/cli/link.html
