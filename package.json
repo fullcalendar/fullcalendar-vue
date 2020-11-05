@@ -20,8 +20,8 @@
     "watch": "tsc -p tsconfig.json --watch",
     "build": "tsc -p tsconfig.json && rollup -c && npm run minify",
     "minify": "npx terser --compress --mangle --comments false --output dist/main.global.min.js -- dist/main.global.js",
-    "test": "concurrently 'webpack --watch' 'karma start karma.config.cjs'",
-    "test:ci": "webpack && karma start karma.config.cjs --browsers ChromeHeadless --single-run --no-auto-watch",
+    "test": "concurrently 'webpack --watch' 'karma start karma.config.js'",
+    "test:ci": "webpack && karma start karma.config.js --browsers ChromeHeadless --single-run --no-auto-watch",
     "ci": "./scripts/ci.sh"
   },
   "dependencies": {
