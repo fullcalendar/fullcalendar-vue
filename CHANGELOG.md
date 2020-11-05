@@ -6,6 +6,7 @@ v5.4.0
 - global mixins, directives, filters & components work inside slots ([#105])
 - better compatibility with Webpack 5, deeming `resolve.fullySpecified` unnecessary ([core-5822])
 - dist files now include a CJS file. ESM is still used by default in most environments ([core-5929])
+- webpack upgrade note: use style-loader instead of vue-style-loader
 
 [core-5822]: https://github.com/fullcalendar/fullcalendar/issues/5822
 [core-5929]: https://github.com/fullcalendar/fullcalendar/issues/5929
