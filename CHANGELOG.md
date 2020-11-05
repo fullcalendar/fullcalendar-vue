@@ -1,9 +1,20 @@
 
-next
-----
+v5.4.0
+------
 
 - no longer expose component as 'fullcalendar' when used globally
-- global mixins, directives, filters & components work inside slots
+- global mixins, directives, filters & components work inside slots ([#105])
+- better compatibility with Webpack 5, deeming `resolve.fullySpecified` unnecessary ([core-5822])
+- dist files now include a CJS file. ESM is still used by default in most environments ([core-5929])
+
+[core-5822]: https://github.com/fullcalendar/fullcalendar/issues/5822
+[core-5929]: https://github.com/fullcalendar/fullcalendar/issues/5929
+
+
+...
+... this changelog does not mention all releases.
+... visit the github releases page as well as the main fullcalendar repo.
+...
 
 
 v5.2.0 (2020-07-30)
