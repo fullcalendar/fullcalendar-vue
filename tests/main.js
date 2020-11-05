@@ -447,7 +447,7 @@ const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
  * Ensures we can use plugins and emit events from within the slots just
  * like any other place.
  */
-xit('adds slots as child components', async () => {
+it('adds slots as child components', async () => {
   let wrapper = mount(COMPONENT_USING_ROOT_OPTIONS_IN_SLOT)
   let component = wrapper.findComponent(FullCalendar)
 
