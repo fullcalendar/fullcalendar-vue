@@ -25,7 +25,7 @@ function buildVDomHandler(parent: Vue) {
   let currentEl: HTMLElement
   let v: ReturnType<typeof initVue> // the Vue instance
 
-  return function(el: HTMLElement, vDomContent: VNode[]) { // the handler
+  return function(el: HTMLElement, vDomContent: VNode[] | null) { // the handler
 
     if (currentEl !== el) {
       if (currentEl && v) { // if changing elements, recreate the vue
@@ -34,16 +34,17 @@ function buildVDomHandler(parent: Vue) {
       currentEl = el
     }
 
-    if (!v) {
-      v = initVue(vDomContent, parent)
+    if (vDomContent) {
+      if (!v) {
+        v = initVue(vDomContent, parent)
 
-      // vue's mount method *replaces* the given element. create an artificial inner el
-      let innerEl = document.createElement('span')
-      el.appendChild(innerEl)
-      v.$mount(innerEl)
-
-    } else {
-      v.content = vDomContent
+        // vue's mount method *replaces* the given element. create an artificial inner el
+        let innerEl = document.createElement('span')
+        el.appendChild(innerEl)
+        v.$mount(innerEl)
+      } else {
+        v.content = vDomContent
+      }
     }
   }
 }

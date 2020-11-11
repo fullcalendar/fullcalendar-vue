@@ -424,6 +424,59 @@ it('renders and rerenders a custom slot', (done) => {
   })
 })
 
+it('calls nested vue lifecycle methods when in custom content', (done) => {
+  let mountCalled = false
+  let beforeDestroyCalled = false
+  let destroyCalled = false
+  let wrapper = mount({
+    components: {
+      FullCalendar,
+      EventContent: {
+        props: {
+          event: { type: Object, required: true }
+        },
+        template: `
+          <div>{{ event.title }}</div>
+        `,
+        mounted() {
+          mountCalled = true
+        },
+        beforeDestroy() {
+          beforeDestroyCalled = true
+        },
+        destroyed() {
+          destroyCalled = true
+        },
+      }
+    },
+    template: `
+      <FullCalendar :options='calendarOptions'>
+        <template v-slot:eventContent="arg">
+          <EventContent :event="arg.event" />
+        </template>
+      </FullCalendar>
+    `,
+    data() {
+      return {
+        calendarOptions: {
+          ...DEFAULT_OPTIONS,
+          events: buildEvents(1)
+        }
+      }
+    }
+  })
+  Vue.nextTick().then(() => {
+    expect(mountCalled).toBe(true)
+    wrapper.destroy()
+
+    Vue.nextTick().then(() => {
+      expect(beforeDestroyCalled).toBe(true)
+      expect(destroyCalled).toBe(true)
+      done()
+    })
+  })
+})
+
 const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
   components: {
     FullCalendar
