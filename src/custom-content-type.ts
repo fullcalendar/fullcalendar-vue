@@ -15,7 +15,7 @@ export function wrapVDomGenerator(vDomGenerator: NormalizedScopedSlot) {
 export function createVueContentTypePlugin(parent: Vue): PluginDef {
   return createPlugin({
     contentTypeHandlers: {
-      vue: function() { return buildVDomHandler(parent); }, // looks for the `vue` key
+      vue: () => buildVDomHandler(parent), // looks for the `vue` key
     }
   });
 }
@@ -25,8 +25,7 @@ function buildVDomHandler(parent: Vue) {
   let currentEl: HTMLElement
   let v: ReturnType<typeof initVue> // the Vue instance
 
-  return function(el: HTMLElement, vDomContent: VNode[] | null) { // the handler
-
+  function render(el: HTMLElement, vDomContent: VNode[]) { // the handler
     if (currentEl !== el) {
       if (currentEl && v) { // if changing elements, recreate the vue
         v.$destroy()
@@ -34,19 +33,25 @@ function buildVDomHandler(parent: Vue) {
       currentEl = el
     }
 
-    if (vDomContent) {
-      if (!v) {
-        v = initVue(vDomContent, parent)
+    if (!v) {
+      v = initVue(vDomContent, parent)
 
-        // vue's mount method *replaces* the given element. create an artificial inner el
-        let innerEl = document.createElement('span')
-        el.appendChild(innerEl)
-        v.$mount(innerEl)
-      } else {
-        v.content = vDomContent
-      }
+      // vue's mount method *replaces* the given element. create an artificial inner el
+      let innerEl = document.createElement('span')
+      el.appendChild(innerEl)
+      v.$mount(innerEl)
+    } else {
+      v.content = vDomContent
     }
   }
+
+  function destroy() {
+    if (v) { // needed?
+      v.$destroy()
+    }
+  }
+
+  return { render, destroy }
 }
 
 function initVue(initialContent: VNode[], parent: Vue) {
