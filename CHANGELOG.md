@@ -1,8 +1,9 @@
 
-v5.4.0
-------
+v5.4.0 (2020-11-11)
+-------------------
 
 - no longer expose component as 'fullcalendar' when used globally
+- eventContent slot doesn't properly destroy the Vue components inside ([#111])
 - global mixins, directives, filters & components work inside slots ([#105])
 - better compatibility with Webpack 5, deeming `resolve.fullySpecified` unnecessary ([core-5822])
 - dist files now include a CJS file. ESM is still used by default in most environments ([core-5929])
