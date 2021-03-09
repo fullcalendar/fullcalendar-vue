@@ -12,7 +12,7 @@ interface FullCalendarInternal {
 }
 
 
-const FullCalendar = Vue.extend{
+const FullCalendar = {
 
   props: {
     options: Object as PropType<CalendarOptions>
