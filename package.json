@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/vue",
-  "version": "5.5.0",
+  "version": "5.6.0",
   "title": "FullCalendar Vue Component",
   "description": "An official FullCalendar component for Vue",
   "keywords": [
@@ -25,7 +25,7 @@
     "ci": "./scripts/ci.sh"
   },
   "dependencies": {
-    "@fullcalendar/core": "~5.5.0",
+    "@fullcalendar/core": "~5.6.0",
     "tslib": "^2.0.3"
   },
   "peerDependencies": {
@@ -36,7 +36,7 @@
     "@babel/plugin-transform-runtime": "^7.10.1",
     "@babel/preset-env": "^7.8.4",
     "@babel/runtime": "^7.12.1",
-    "@fullcalendar/daygrid": "~5.5.0",
+    "@fullcalendar/daygrid": "~5.6.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@types/estree": "^0.0.45",
     "@types/node": "14.10.0",
@@ -57,7 +57,7 @@
     "vue": "^2.6.12",
     "vue-loader": "^15.9.5",
     "vue-template-compiler": "^2.6.12",
-    "webpack": "^5.5.0",
+    "webpack": "^5.6.0",
     "webpack-cli": "^4.1.0"
   },
   "main": "dist/main.cjs.js",
