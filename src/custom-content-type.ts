@@ -1,66 +1,73 @@
-import Vue, { VNode } from 'vue'
-import { NormalizedScopedSlot } from 'vue/types/vnode'
+import { App, createApp, ComponentPublicInstance, VNode, Slot, h } from 'vue'
 import { createPlugin, PluginDef } from '@fullcalendar/core'
 
+interface RootComponentData {
+  content: VNode[]
+}
+type RootComponentInstance = ComponentPublicInstance<{}, {}, RootComponentData>
 
 /*
 wrap it in an object with a `vue` key, which the custom content-type handler system will look for
 */
-export function wrapVDomGenerator(vDomGenerator: NormalizedScopedSlot) {
+export function wrapVDomGenerator(vDomGenerator: Slot) {
   return function(props: any) {
     return { vue: vDomGenerator(props) }
   }
 }
 
-export function createVueContentTypePlugin(parent: Vue): PluginDef {
+export function createVueContentTypePlugin(parentApp: App): PluginDef {
   return createPlugin({
     contentTypeHandlers: {
-      vue: () => buildVDomHandler(parent), // looks for the `vue` key
+      vue: () => buildVDomHandler(parentApp), // looks for the `vue` key
     }
   });
 }
 
-
-function buildVDomHandler(parent: Vue) {
+function buildVDomHandler(parentApp: App) {
   let currentEl: HTMLElement
-  let v: ReturnType<typeof initVue> // the Vue instance
+  let app: App
+  let componentInstance: RootComponentInstance
 
   function render(el: HTMLElement, vDomContent: VNode[]) { // the handler
     if (currentEl !== el) {
-      if (currentEl && v) { // if changing elements, recreate the vue
-        v.$destroy()
+      if (currentEl && app) { // if changing elements, recreate the vue
+        app.unmount()
       }
       currentEl = el
     }
 
-    if (!v) {
-      v = initVue(vDomContent, parent)
+    if (!app) {
+      app = initApp(vDomContent, parentApp)
 
       // vue's mount method *replaces* the given element. create an artificial inner el
       let innerEl = document.createElement('span')
       el.appendChild(innerEl)
-      v.$mount(innerEl)
+
+      componentInstance = app.mount(innerEl) as RootComponentInstance
     } else {
-      v.content = vDomContent
+      componentInstance.content = vDomContent
     }
   }
 
   function destroy() {
-    if (v) { // needed?
-      v.$destroy()
+    if (app) { // needed?
+      app.unmount()
     }
   }
 
   return { render, destroy }
 }
 
-function initVue(initialContent: VNode[], parent: Vue) {
-  return new Vue({
-    parent,
-    data: {
-      content: initialContent,
+function initApp(initialContent: VNode[], parentApp: App): App {
+  // TODO: use parentApp
+
+  return createApp({
+    data() {
+      return {
+        content: initialContent,
+      } as RootComponentData
     },
-    render(h) {
+    render() {
       let { content } = this
 
       // the slot result can be an array, but the returned value of a vue component's

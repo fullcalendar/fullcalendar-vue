@@ -1,5 +1,4 @@
-import { PropType, defineComponent, h } from 'vue'
-import { NormalizedScopedSlot } from 'vue/types/vnode'
+import { PropType, defineComponent, h, Slots, App } from 'vue'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { OPTION_IS_COMPLEX } from './options'
 import { shallowCopy, mapHash } from './utils'
@@ -8,11 +7,11 @@ import { wrapVDomGenerator, createVueContentTypePlugin } from './custom-content-
 
 interface FullCalendarInternal {
   calendar: Calendar
-  scopedSlotOptions: { [name: string]: NormalizedScopedSlot }
+  slotOptions: Slots
 }
 
 
-const FullCalendar = {
+const FullCalendar = defineComponent({
 
   props: {
     options: Object as PropType<CalendarOptions>
@@ -29,9 +28,12 @@ const FullCalendar = {
 
   mounted() {
     let internal = this.$options as FullCalendarInternal
-    internal.scopedSlotOptions = mapHash(this.$scopedSlots, wrapVDomGenerator) // needed for buildOptions
+    internal.slotOptions = mapHash(this.$slots, wrapVDomGenerator) // needed for buildOptions
 
-    let calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options, this))
+    let parentApp: App = null as any as App // TODO!!!
+    console.log(this)
+
+    let calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options, parentApp))
     internal.calendar = calendar
     calendar.render()
   },
@@ -50,7 +52,9 @@ const FullCalendar = {
   },
 
   watch: buildWatchers()
-}
+})
+
+export default FullCalendar
 
 
 function initData() {
@@ -60,14 +64,14 @@ function initData() {
 }
 
 
-function buildOptions(this: { $options: any }, suppliedOptions: CalendarOptions, parent: Vue): CalendarOptions {
+function buildOptions(this: { $options: any }, suppliedOptions: CalendarOptions | undefined, app: App): CalendarOptions {
   let internal = this.$options as FullCalendarInternal
   suppliedOptions = suppliedOptions || {}
   return {
-    ...internal.scopedSlotOptions,
+    ...internal.slotOptions,
     ...suppliedOptions, // spread will pull out the values from the options getter functions
     plugins: (suppliedOptions.plugins || []).concat([
-      createVueContentTypePlugin(parent)
+      createVueContentTypePlugin(app)
     ])
   }
 }
@@ -93,7 +97,11 @@ function buildWatchers() {
       handler(this: FullCalendarInstance, options: CalendarOptions) {
         let calendar = this.getApi()
         calendar.pauseRendering()
-        calendar.resetOptions(this.buildOptions(options, this))
+
+        let parentApp: App = null as any as App // TODO!!!
+        console.log(this)
+
+        calendar.resetOptions(this.buildOptions(options, parentApp))
         this.renderId++ // will queue a rerender
       }
     }
@@ -125,6 +133,3 @@ function buildWatchers() {
 
   return watchers
 }
-
-
-export default defineComponent(FullCalendar)
