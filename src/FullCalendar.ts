@@ -1,4 +1,4 @@
-import Vue, { PropType } from 'vue'
+import { PropType, defineComponent, h } from 'vue'
 import { NormalizedScopedSlot } from 'vue/types/vnode'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { OPTION_IS_COMPLEX } from './options'
@@ -12,7 +12,7 @@ interface FullCalendarInternal {
 }
 
 
-const FullCalendar = Vue.extend({
+const FullCalendar = {
 
   props: {
     options: Object as PropType<CalendarOptions>
@@ -20,8 +20,8 @@ const FullCalendar = Vue.extend({
 
   data: initData, // separate func b/c of type inferencing
 
-  render(createElement) {
-    return createElement('div', {
+  render() {
+    return h('div', {
       // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
       attrs: { 'data-fc-render-id': this.renderId }
     })
@@ -45,12 +45,12 @@ const FullCalendar = Vue.extend({
     this.getApi().resumeRendering() // the watcher handlers paused it
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.getApi().destroy()
   },
 
   watch: buildWatchers()
-})
+}
 
 
 function initData() {
@@ -127,4 +127,4 @@ function buildWatchers() {
 }
 
 
-export default FullCalendar
+export default defineComponent(FullCalendar)
