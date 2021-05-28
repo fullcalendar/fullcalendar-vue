@@ -29,7 +29,7 @@
     "tslib": "^2.0.3"
   },
   "peerDependencies": {
-    "vue": "^2.6.12"
+    "vue": "^3.0.11"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
@@ -54,9 +54,8 @@
     "style-loader": "^2.0.0",
     "terser": "^4.8.0",
     "typescript": "^4.0.5",
-    "vue": "^2.6.12",
-    "vue-loader": "^15.9.5",
-    "vue-template-compiler": "^2.6.12",
+    "vue": "^3.0.11",
+    "vue-loader": "^15.9.7",
     "webpack": "^5.7.0",
     "webpack-cli": "^4.1.0"
   },
