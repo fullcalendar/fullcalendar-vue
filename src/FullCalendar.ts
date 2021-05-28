@@ -31,7 +31,7 @@ const FullCalendar = defineComponent({
     internal.slotOptions = mapHash(this.$slots, wrapVDomGenerator) // needed for buildOptions
 
     let parentApp: App = null as any as App // TODO!!!
-    console.log(this)
+    // console.log(this)
 
     let calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options, parentApp))
     internal.calendar = calendar
@@ -99,7 +99,7 @@ function buildWatchers() {
         calendar.pauseRendering()
 
         let parentApp: App = null as any as App // TODO!!!
-        console.log(this)
+        // console.log(this)
 
         calendar.resetOptions(this.buildOptions(options, parentApp))
         this.renderId++ // will queue a rerender
