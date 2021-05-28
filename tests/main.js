@@ -1,7 +1,7 @@
 import { mount as _mount } from '@vue/test-utils'
 import FullCalendar from '../dist/main'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import Vue from 'vue'
+import { nextTick } from 'vue'
 
 
 const DEFAULT_OPTIONS = {
@@ -24,7 +24,7 @@ function mount(component, options = {}) {
 
 afterEach(function() {
   if (currentWrapper) {
-    currentWrapper.destroy()
+    currentWrapper.unmount()
     currentWrapper = null
   }
 })
@@ -45,7 +45,7 @@ it('unmounts and calls destroy', async () => {
   }
 
   let wrapper = mount(FullCalendar, { propsData: { options } })
-  wrapper.destroy()
+  wrapper.unmount()
   expect(unmounted).toBeTruthy()
 })
 
@@ -70,7 +70,7 @@ it('handles a single prop change', (done) => {
     }
   })
 
-  Vue.nextTick().then(() => {
+  nextTick().then(() => {
     expect(isWeekendsRendered(wrapper)).toBe(false)
     done()
   })
@@ -127,7 +127,7 @@ it('handles multiple prop changes, include event reset', (done) => {
     }
   })
 
-  Vue.nextTick().then(() => {
+  nextTick().then(() => {
     expect(getRenderedEventCount(wrapper)).toBe(2)
     expect(isWeekendsRendered(wrapper)).toBe(false)
     expect(viewMountCnt).toBe(0)
@@ -224,7 +224,7 @@ it('handles an object change when prop is reassigned', (done) => {
 
   wrapper.vm.disableWeekends()
 
-  Vue.nextTick().then(() => {
+  nextTick().then(() => {
     expect(isWeekendsRendered(wrapper)).toBe(false)
     done()
   })
@@ -289,7 +289,7 @@ it('reacts to event adding', (done) => {
   expect(getRenderedEventCount(wrapper)).toBe(1)
 
   wrapper.vm.addEvent()
-  Vue.nextTick().then(() => {
+  nextTick().then(() => {
     expect(getRenderedEventCount(wrapper)).toBe(2)
     done()
   })
@@ -299,7 +299,7 @@ it('reacts to event property changes', (done) => {
   let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
   expect(getFirstEventTitle(wrapper)).toBe('event0')
   wrapper.vm.updateTitle('another title')
-  Vue.nextTick().then(() => {
+  nextTick().then(() => {
     expect(getFirstEventTitle(wrapper)).toBe('another title')
     done()
   })
@@ -334,10 +334,10 @@ const EVENT_FUNC_COMPONENT = {
 
 it('can receive an async event function', function(done) {
   let wrapper = mount(EVENT_FUNC_COMPONENT)
-  setTimeout(() => {
+  nextTick().then(() => {
     expect(getRenderedEventCount(wrapper)).toBe(2)
     done()
-  }, 100)
+  })
 })
 
 
@@ -375,7 +375,7 @@ it('reacts to computed events prop', (done) => {
   expect(getRenderedEventCount(wrapper)).toBe(0)
 
   wrapper.vm.markNotFirst()
-  Vue.nextTick().then(() => {
+  nextTick().then(() => {
     expect(getRenderedEventCount(wrapper)).toBe(2)
     done()
   })
@@ -417,7 +417,7 @@ it('renders and rerenders a custom slot', (done) => {
   expect(eventEl.findAll('b').length).toBe(1)
 
   wrapper.vm.resetEvents()
-  Vue.nextTick().then(() => {
+  nextTick().then(() => {
     eventEl = getRenderedEventEls(wrapper).at(0)
     expect(eventEl.findAll('b').length).toBe(1)
     done()
@@ -465,11 +465,11 @@ it('calls nested vue lifecycle methods when in custom content', (done) => {
       }
     }
   })
-  Vue.nextTick().then(() => {
+  nextTick().then(() => {
     expect(mountCalled).toBe(true)
-    wrapper.destroy()
+    wrapper.unmount()
 
-    Vue.nextTick().then(() => {
+    nextTick().then(() => {
       expect(beforeDestroyCalled).toBe(true)
       expect(destroyCalled).toBe(true)
       done()
