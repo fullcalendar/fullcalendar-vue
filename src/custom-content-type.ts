@@ -74,7 +74,6 @@ function initApp(initialContent: VNode[], parentApp: App): App {
       // render method must be a single node.
       if (content.length === 1) {
         return content[0]
-
       } else {
         return h('span', {}, content)
       }

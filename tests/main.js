@@ -482,13 +482,20 @@ it('calls nested vue lifecycle methods when in custom content', (done) => {
   })
 })
 
+const OTHER_COMPONENT = {
+  template: '<i>other component</i>'
+}
+
 const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
   components: {
-    FullCalendar
+    FullCalendar,
+    OtherComponent: OTHER_COMPONENT
   },
   template: `
     <FullCalendar :options='calendarOptions'>
-      <template v-slot:eventContent="arg">this is an event</template>
+      <template v-slot:eventContent="arg">
+        <OtherComponent />
+      </template>
     </FullCalendar>
   `,
   data() {
@@ -501,15 +508,15 @@ const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
   },
 }
 
-/**
- * Ensures we can use plugins and emit events from within the slots just
- * like any other place.
- */
-it.skip('adds slots as child components', async () => { // !!!!!!!
+it('can use component defined in higher contexts', (done) => {
   let wrapper = mount(COMPONENT_USING_ROOT_OPTIONS_IN_SLOT)
-  let component = wrapper.findComponent(FullCalendar)
+  let eventEl = getRenderedEventEls(wrapper)[0]
 
-  expect(component.vm.$children.length).to.equal(1); // not working anymore!!!!!!
+  // nextTick().then(() => {
+  setTimeout(() => {
+    expect(eventEl.findAll('i').length).to.equal(1)
+    done()
+  })
 });
 
 
