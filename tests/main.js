@@ -14,12 +14,17 @@ const DEFAULT_OPTIONS = {
 }
 
 let currentWrapper
+let currentContainerEl
 
 function mount(component, options = {}) {
   if (options.attachTo === undefined) {
-    let rootEl = document.body.appendChild(document.createElement('div')) // will be *replaced*
-    options = {...options, attachTo: rootEl}
+    currentContainerEl = document.body.appendChild(document.createElement('div'))
+    options = {
+      ...options,
+      attachTo: currentContainerEl
+    }
   }
+
   currentWrapper = _mount(component, options)
   return currentWrapper
 }
@@ -28,6 +33,10 @@ afterEach(function() {
   if (currentWrapper) {
     currentWrapper.unmount()
     currentWrapper = null
+  }
+  if (currentContainerEl) {
+    currentContainerEl.remove()
+    currentContainerEl = null
   }
 })
 
@@ -51,12 +60,11 @@ it('unmounts and calls destroy', async () => {
   expect(unmounted).to.be.ok
 })
 
-it('handles a single prop change', (done) => {
+it('handles a single prop change', async () => {
   let options = {
     ...DEFAULT_OPTIONS,
     weekends: true
   }
-
   let wrapper = mount(FullCalendar, {
     propsData: { options }
   })
@@ -71,11 +79,8 @@ it('handles a single prop change', (done) => {
       weekends: false // good idea to test a falsy prop
     }
   })
-
-  nextTick().then(() => {
-    expect(isWeekendsRendered(wrapper)).to.equal(false)
-    done()
-  })
+  await nextTick()
+  expect(isWeekendsRendered(wrapper)).to.equal(false)
 })
 
 it('renders events with Date objects', async () => { // necessary to test copy util
@@ -94,7 +99,7 @@ it('renders events with Date objects', async () => { // necessary to test copy u
   expect(getRenderedEventCount(wrapper)).to.equal(2)
 })
 
-it('handles multiple prop changes, include event reset', (done) => {
+it('handles multiple prop changes, include event reset', async () => {
   let viewMountCnt = 0
   let eventRenderCnt = 0
   let options = {
@@ -129,13 +134,11 @@ it('handles multiple prop changes, include event reset', (done) => {
     }
   })
 
-  nextTick().then(() => {
-    expect(getRenderedEventCount(wrapper)).to.equal(2)
-    expect(isWeekendsRendered(wrapper)).to.equal(false)
-    expect(viewMountCnt).to.equal(0)
-    expect(eventRenderCnt).to.equal(2) // TODO: get this down to 1 (only 1 new event rendered)
-    done()
-  })
+  await nextTick()
+  expect(getRenderedEventCount(wrapper)).to.equal(2)
+  expect(isWeekendsRendered(wrapper)).to.equal(false)
+  expect(viewMountCnt).to.equal(0)
+  expect(eventRenderCnt).to.equal(2) // TODO: get this down to 1 (only 1 new event rendered)
 })
 
 it('should expose an API', async () => {
@@ -220,16 +223,13 @@ const COMPONENT_FOR_OPTION_MANIP = {
   }
 }
 
-it('handles an object change when prop is reassigned', (done) => {
+it('handles an object change when prop is reassigned', async () => {
   let wrapper = mount(COMPONENT_FOR_OPTION_MANIP)
   expect(isWeekendsRendered(wrapper)).to.equal(true)
 
   wrapper.vm.disableWeekends()
-
-  nextTick().then(() => {
-    expect(isWeekendsRendered(wrapper)).to.equal(false)
-    done()
-  })
+  await nextTick()
+  expect(isWeekendsRendered(wrapper)).to.equal(false)
 })
 
 it('avoids rerendering unchanged toolbar/events', async () => {
@@ -286,25 +286,22 @@ const COMPONENT_FOR_EVENT_MANIP = {
   }
 }
 
-it('reacts to event adding', (done) => {
+it('reacts to event adding', async () => {
   let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
   expect(getRenderedEventCount(wrapper)).to.equal(1)
 
   wrapper.vm.addEvent()
-  nextTick().then(() => {
-    expect(getRenderedEventCount(wrapper)).to.equal(2)
-    done()
-  })
+  await nextTick()
+  expect(getRenderedEventCount(wrapper)).to.equal(2)
 })
 
-it('reacts to event property changes', (done) => {
+it('reacts to event property changes', async () => {
   let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
   expect(getFirstEventTitle(wrapper)).to.equal('event0')
   wrapper.vm.updateTitle('another title')
-  nextTick().then(() => {
-    expect(getFirstEventTitle(wrapper)).to.equal('another title')
-    done()
-  })
+
+  await nextTick()
+  expect(getFirstEventTitle(wrapper)).to.equal('another title')
 })
 
 
@@ -372,15 +369,13 @@ const EVENT_COMP_PROP_COMPONENT = {
   }
 }
 
-it('reacts to computed events prop', (done) => {
+it('reacts to computed events prop', async () => {
   let wrapper = mount(EVENT_COMP_PROP_COMPONENT)
   expect(getRenderedEventCount(wrapper)).to.equal(0)
 
   wrapper.vm.markNotFirst()
-  nextTick().then(() => {
-    expect(getRenderedEventCount(wrapper)).to.equal(2)
-    done()
-  })
+  await nextTick()
+  expect(getRenderedEventCount(wrapper)).to.equal(2)
 })
 
 
@@ -413,22 +408,18 @@ const COMPONENT_WITH_SLOTS = {
   }
 }
 
-it('renders and rerenders a custom slot', (done) => {
+it('renders and rerenders a custom slot', async () => {
   let wrapper = mount(COMPONENT_WITH_SLOTS)
   let eventEl = getRenderedEventEls(wrapper)[0]
   expect(eventEl.findAll('b').length).to.equal(1)
 
   wrapper.vm.resetEvents()
-
-  // nextTick().then(() => {
-  setTimeout(() => {
-    eventEl = getRenderedEventEls(wrapper)[0]
-    expect(eventEl.findAll('b').length).to.equal(1)
-    done()
-  })
+  await nextTick()
+  eventEl = getRenderedEventEls(wrapper)[0]
+  expect(eventEl.findAll('b').length).to.equal(1)
 })
 
-it('calls nested vue lifecycle methods when in custom content', (done) => {
+it('calls nested vue lifecycle methods when in custom content', async () => {
   let mountedCalled = false
   let beforeUnmountCalled = false
   let unmountedCalled = false
@@ -469,18 +460,13 @@ it('calls nested vue lifecycle methods when in custom content', (done) => {
       }
     }
   })
-  // nextTick().then(() => {
-  setTimeout(() => {
-    expect(mountedCalled).to.equal(true)
-    wrapper.unmount()
+  await nextTick()
+  expect(mountedCalled).to.equal(true)
 
-    // nextTick().then(() => {
-    setTimeout(() => {
-      expect(beforeUnmountCalled).to.equal(true)
-      expect(unmountedCalled).to.equal(true)
-      done()
-    })
-  })
+  wrapper.unmount()
+  await nextTick()
+  expect(beforeUnmountCalled).to.equal(true)
+  expect(unmountedCalled).to.equal(true)
 })
 
 const OTHER_COMPONENT = {
@@ -509,19 +495,16 @@ const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
   },
 }
 
-it('can use component defined in higher contexts', (done) => {
+it('can use component defined in higher contexts', async () => {
   let wrapper = mount(COMPONENT_USING_ROOT_OPTIONS_IN_SLOT)
   let eventEl = getRenderedEventEls(wrapper)[0]
 
-  // nextTick().then(() => {
-  setTimeout(() => {
-    expect(eventEl.findAll('i').length).to.equal(1)
-    done()
-  })
+  await nextTick()
+  expect(eventEl.findAll('i').length).to.equal(1)
 })
 
 
-it('allows plugin access for slots', (done) => {
+it('allows plugin access for slots', async () => {
   let helloJp = 'こんにちは、世界'
   let i18n = createI18n({
     locale: 'ja',
@@ -558,12 +541,10 @@ it('allows plugin access for slots', (done) => {
       plugins: [i18n]
     }
   })
-  // nextTick().then(() => {
-  setTimeout(() => {
-    let eventEl = getRenderedEventEls(wrapper)[0]
-    expect(eventEl.text()).to.equal(helloJp)
-    done()
-  })
+
+  await nextTick()
+  let eventEl = getRenderedEventEls(wrapper)[0]
+  expect(eventEl.text()).to.equal(helloJp)
 })
 
 
