@@ -1,4 +1,4 @@
-import { App, createApp, ComponentPublicInstance, VNode, Slot, h } from 'vue'
+import { App, createApp, ComponentPublicInstance, VNode, Slot, h, AppContext } from 'vue'
 import { createPlugin, PluginDef } from '@fullcalendar/core'
 
 interface RootComponentData {
@@ -15,15 +15,15 @@ export function wrapVDomGenerator(vDomGenerator: Slot) {
   }
 }
 
-export function createVueContentTypePlugin(): PluginDef {
+export function createVueContentTypePlugin(appContext: AppContext): PluginDef {
   return createPlugin({
     contentTypeHandlers: {
-      vue: () => buildVDomHandler(), // looks for the `vue` key
+      vue: () => buildVDomHandler(appContext), // looks for the `vue` key
     }
   })
 }
 
-function buildVDomHandler() {
+function buildVDomHandler(appContext: AppContext) {
   let currentEl: HTMLElement
   let app: App
   let componentInstance: RootComponentInstance
@@ -37,7 +37,7 @@ function buildVDomHandler() {
     }
 
     if (!app) {
-      app = initApp(vDomContent)
+      app = initApp(vDomContent, appContext)
 
       // vue's mount method *replaces* the given element. create an artificial inner el
       let innerEl = document.createElement('span')
@@ -58,7 +58,8 @@ function buildVDomHandler() {
   return { render, destroy }
 }
 
-function initApp(initialContent: VNode[]): App {
+function initApp(initialContent: VNode[], appContext: AppContext): App {
+  // TODO: do something with appContext
   return createApp({
     data() {
       return {

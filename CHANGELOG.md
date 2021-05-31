@@ -1,4 +1,11 @@
 
+@fullcalendar/vue3 v5.7.0
+-------------------------
+support for Vue 3
+KNOWN BUG: templates within slots do not inherit App's
+  mixins, directives, filters, and components (like #123)
+
+
 v5.4.0 (2020-11-11)
 -------------------
 

@@ -24,14 +24,14 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify('development'),
       'process.env.VUE_ENV': JSON.stringify('browser'),
 
-      // recommended build flags. also, when defined, quiets template warning
+      // recommended build flags. also, when defined, silences template warning
       // https://github.com/vuejs/vue-next/tree/master/packages/vue#bundler-build-feature-flags
       __VUE_OPTIONS_API__: true,
       __VUE_PROD_DEVTOOLS__: false,
 
-      // build flags for i18n plugin. doesn't quiet all warnings unfortunately
+      // build flags for i18n plugin. doesn't silence all warnings unfortunately
       __VUE_I18N_FULL_INSTALL__: true,
-      __VUE_I18N_LEGACY_API__: true, // TODO: flip off!!! fix!!!
+      __VUE_I18N_LEGACY_API__: true, // TODO: flip to false, but having Vue3 problems
       __VUE_I18N_PROD_DEVTOOLS__: false,
     }),
     postcss({
