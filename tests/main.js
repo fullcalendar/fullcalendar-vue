@@ -3,6 +3,7 @@ import { mount as _mount } from '@vue/test-utils'
 import FullCalendar from '../dist/main'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import { nextTick } from 'vue'
+import { createI18n } from 'vue-i18n'
 
 
 const DEFAULT_OPTIONS = {
@@ -517,7 +518,53 @@ it('can use component defined in higher contexts', (done) => {
     expect(eventEl.findAll('i').length).to.equal(1)
     done()
   })
-});
+})
+
+
+it('allows plugin access for slots', (done) => {
+  let helloJp = 'こんにちは、世界'
+  let i18n = createI18n({
+    locale: 'ja',
+    messages: {
+      ja: {
+        message: {
+          hello: helloJp
+        }
+      }
+    }
+  })
+  let Component = {
+    components: {
+      FullCalendar,
+    },
+    template: `
+      <FullCalendar :options='calendarOptions'>
+        <template v-slot:eventContent="arg">
+          <b>{{ $t("message.hello") }}</b>
+        </template>
+      </FullCalendar>
+    `,
+    data() {
+      return {
+        calendarOptions: {
+          ...DEFAULT_OPTIONS,
+          events: buildEvents(1)
+        }
+      }
+    },
+  }
+  let wrapper = mount(Component, {
+    global: {
+      plugins: [i18n]
+    }
+  })
+  // nextTick().then(() => {
+  setTimeout(() => {
+    let eventEl = getRenderedEventEls(wrapper)[0]
+    expect(eventEl.text()).to.equal(helloJp)
+    done()
+  })
+})
 
 
 // dynamic events

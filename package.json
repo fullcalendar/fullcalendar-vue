@@ -66,6 +66,7 @@
     "terser": "^4.8.0",
     "typescript": "^4.0.5",
     "vue": "^3.0.11",
+    "vue-i18n": "next",
     "vue-loader": "^16.2.0",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.1.0"
