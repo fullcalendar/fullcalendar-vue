@@ -15,15 +15,15 @@ export function wrapVDomGenerator(vDomGenerator: Slot) {
   }
 }
 
-export function createVueContentTypePlugin(parentApp: App): PluginDef {
+export function createVueContentTypePlugin(): PluginDef {
   return createPlugin({
     contentTypeHandlers: {
-      vue: () => buildVDomHandler(parentApp), // looks for the `vue` key
+      vue: () => buildVDomHandler(), // looks for the `vue` key
     }
-  });
+  })
 }
 
-function buildVDomHandler(parentApp: App) {
+function buildVDomHandler() {
   let currentEl: HTMLElement
   let app: App
   let componentInstance: RootComponentInstance
@@ -37,7 +37,7 @@ function buildVDomHandler(parentApp: App) {
     }
 
     if (!app) {
-      app = initApp(vDomContent, parentApp)
+      app = initApp(vDomContent)
 
       // vue's mount method *replaces* the given element. create an artificial inner el
       let innerEl = document.createElement('span')
@@ -58,9 +58,7 @@ function buildVDomHandler(parentApp: App) {
   return { render, destroy }
 }
 
-function initApp(initialContent: VNode[], parentApp: App): App {
-  // TODO: use parentApp
-
+function initApp(initialContent: VNode[]): App {
   return createApp({
     data() {
       return {

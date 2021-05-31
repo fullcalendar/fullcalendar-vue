@@ -30,10 +30,7 @@ const FullCalendar = defineComponent({
     let internal = this.$options as FullCalendarInternal
     internal.slotOptions = mapHash(this.$slots, wrapVDomGenerator) // needed for buildOptions
 
-    let parentApp: App = null as any as App // TODO!!!
-    // console.log(this)
-
-    let calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options, parentApp))
+    let calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options))
     internal.calendar = calendar
     calendar.render()
   },
@@ -64,14 +61,14 @@ function initData() {
 }
 
 
-function buildOptions(this: { $options: any }, suppliedOptions: CalendarOptions | undefined, app: App): CalendarOptions {
+function buildOptions(this: { $options: any }, suppliedOptions: CalendarOptions | undefined): CalendarOptions {
   let internal = this.$options as FullCalendarInternal
   suppliedOptions = suppliedOptions || {}
   return {
     ...internal.slotOptions,
     ...suppliedOptions, // spread will pull out the values from the options getter functions
     plugins: (suppliedOptions.plugins || []).concat([
-      createVueContentTypePlugin(app)
+      createVueContentTypePlugin()
     ])
   }
 }
@@ -97,11 +94,7 @@ function buildWatchers() {
       handler(this: FullCalendarInstance, options: CalendarOptions) {
         let calendar = this.getApi()
         calendar.pauseRendering()
-
-        let parentApp: App = null as any as App // TODO!!!
-        // console.log(this)
-
-        calendar.resetOptions(this.buildOptions(options, parentApp))
+        calendar.resetOptions(this.buildOptions(options))
         this.renderId++ // will queue a rerender
       }
     }
