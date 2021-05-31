@@ -5,9 +5,8 @@ const replace = fromRollup(require('rollup-plugin-replace'))
 const alias = fromRollup(require('@rollup/plugin-alias')) // TODO: have other plugins use new
 
 module.exports = {
-  watch: true,
-  preserveSymlinks: true,
   nodeResolve: true,
+  preserveSymlinks: true,
   files: [
     './tests/main.js',
   ],
