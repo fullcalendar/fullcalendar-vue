@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/vue",
-  "version": "5.7.0",
+  "version": "5.7.1",
   "title": "FullCalendar Vue 2 Component",
   "description": "An official FullCalendar component for Vue 2",
   "keywords": [
