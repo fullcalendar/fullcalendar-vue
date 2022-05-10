@@ -1,6 +1,11 @@
 
-@fullcalendar/vue3 v5.7.0
--------------------------
+v5.11.1 (2022-05-10)
+--------------------
+FIX: Cannot target calendar api with several instances (#155)
+
+
+v5.7.1 (2021-06-02)
+-------------------
 support for Vue 3
 KNOWN BUG: templates within slots do not inherit App's
   mixins, directives, filters, and components (like #123)

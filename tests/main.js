@@ -187,6 +187,40 @@ it('should expose an API in $refs', async () => {
 })
 
 
+it('should handle multiple refs $refs', async () => {
+  let wrapper = mount({
+    components: {
+      FullCalendar
+    },
+    template: `
+      <div>
+        <FullCalendar :options='calendarOptions0' ref='fullCalendar0' />
+        <FullCalendar :options='calendarOptions1' ref='fullCalendar1' />
+        <FullCalendar :options='calendarOptions2' ref='fullCalendar2' />
+      </div>
+    `,
+    data() {
+      return {
+        calendarOptions0: DEFAULT_OPTIONS,
+        calendarOptions1: DEFAULT_OPTIONS,
+        calendarOptions2: DEFAULT_OPTIONS,
+      }
+    },
+    methods: {
+      check() {
+        let ref0 = this.$refs.fullCalendar0.getApi()
+        let ref1 = this.$refs.fullCalendar1.getApi()
+        let ref2 = this.$refs.fullCalendar2.getApi()
+        expect(ref0).to.not.equal(ref1)
+        expect(ref1).to.not.equal(ref2)
+        expect(ref2).to.not.equal(ref0)
+      }
+    }
+  })
+  wrapper.vm.check()
+})
+
+
 // toolbar/event non-reactivity
 
 const COMPONENT_FOR_OPTION_MANIP = {

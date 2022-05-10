@@ -4,13 +4,6 @@ import { OPTION_IS_COMPLEX } from './options'
 import { shallowCopy, mapHash } from './utils'
 import { wrapVDomGenerator, createVueContentTypePlugin } from './custom-content-type'
 
-
-interface FullCalendarInternal {
-  calendar: Calendar
-  slotOptions: Slots
-}
-
-
 const FullCalendar = defineComponent({
 
   props: {
@@ -27,12 +20,12 @@ const FullCalendar = defineComponent({
   },
 
   mounted() {
-    let internal = this.$options as FullCalendarInternal
-    internal.slotOptions = mapHash(this.$slots, wrapVDomGenerator) // needed for buildOptions
-
+    // store internal data (slotOptions, calendar)
+    // https://github.com/vuejs/vue/issues/1988#issuecomment-163013818
+    (this as any).slotOptions = mapHash(this.$slots, wrapVDomGenerator) // needed for buildOptions
     let calendarOptions = this.buildOptions(this.options, this.$.appContext)
     let calendar = new Calendar(this.$el as HTMLElement, calendarOptions)
-    internal.calendar = calendar
+    ;(this as any).calendar = calendar
     calendar.render()
   },
 
@@ -63,14 +56,13 @@ function initData() {
 
 
 function buildOptions(
-  this: { $options: any },
+  this: any,
   suppliedOptions: CalendarOptions | undefined,
   appContext: AppContext,
 ): CalendarOptions {
-  let internal = this.$options as FullCalendarInternal
   suppliedOptions = suppliedOptions || {}
   return {
-    ...internal.slotOptions,
+    ...this.slotOptions,
     ...suppliedOptions, // spread will pull out the values from the options getter functions
     plugins: (suppliedOptions.plugins || []).concat([
       createVueContentTypePlugin(appContext)
@@ -79,9 +71,8 @@ function buildOptions(
 }
 
 
-function getApi(this: { $options: any }) {
-  let internal = this.$options as FullCalendarInternal
-  return internal.calendar
+function getApi(this: any) {
+  return this.calendar
 }
 
 
