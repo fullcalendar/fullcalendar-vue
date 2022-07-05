@@ -1,10 +1,5 @@
-import { App, createApp, ComponentPublicInstance, VNode, Slot, h, AppContext } from 'vue'
+import { VNode, Slot, AppContext, render as vueRender } from 'vue'
 import { createPlugin, PluginDef } from '@fullcalendar/core'
-
-interface RootComponentData {
-  content: VNode[]
-}
-type RootComponentInstance = ComponentPublicInstance<{}, {}, RootComponentData>
 
 /*
 wrap it in an object with a `vue` key, which the custom content-type handler system will look for
@@ -25,57 +20,25 @@ export function createVueContentTypePlugin(appContext: AppContext): PluginDef {
 
 function buildVDomHandler(appContext: AppContext) {
   let currentEl: HTMLElement
-  let app: App
-  let componentInstance: RootComponentInstance
 
   function render(el: HTMLElement, vDomContent: VNode[]) { // the handler
     if (currentEl !== el) {
-      if (currentEl && app) { // if changing elements, recreate the vue
-        app.unmount()
+      if (currentEl) { // if changing elements, recreate the vue
+        vueRender(null, currentEl)
       }
       currentEl = el
     }
 
-    if (!app) {
-      app = initApp(vDomContent, appContext)
-
-      // vue's mount method *replaces* the given element. create an artificial inner el
-      let innerEl = document.createElement('span')
-      el.appendChild(innerEl)
-
-      componentInstance = app.mount(innerEl) as RootComponentInstance
-    } else {
-      componentInstance.content = vDomContent
-    }
+    const vnode = vDomContent[0]
+    vnode.appContext = appContext
+    vueRender(vnode, el)
   }
 
   function destroy() {
-    if (app) { // needed?
-      app.unmount()
+    if (currentEl) {
+      vueRender(null, currentEl)
     }
   }
 
   return { render, destroy }
-}
-
-function initApp(initialContent: VNode[], appContext: AppContext): App {
-  // TODO: do something with appContext
-  return createApp({
-    data() {
-      return {
-        content: initialContent,
-      } as RootComponentData
-    },
-    render() {
-      let { content } = this
-
-      // the slot result can be an array, but the returned value of a vue component's
-      // render method must be a single node.
-      if (content.length === 1) {
-        return content[0]
-      } else {
-        return h('span', {}, content)
-      }
-    }
-  })
 }
