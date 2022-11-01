@@ -6,7 +6,6 @@ const postcss = fromRollup(require('rollup-plugin-postcss'))
 
 module.exports = {
   nodeResolve: true,
-  preserveSymlinks: true,
   files: [
     './tests/main.js',
   ],

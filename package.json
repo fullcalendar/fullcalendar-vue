@@ -20,8 +20,8 @@
     "watch": "tsc -p tsconfig.json --watch",
     "build": "tsc -p tsconfig.json && rollup -c && npm run minify",
     "minify": "terser --compress --mangle --comments false --output dist/main.global.min.js -- dist/main.global.js",
-    "test": "wtr --watch",
-    "test:ci": "wtr",
+    "test:dev": "wtr --watch",
+    "test": "wtr",
     "ci": "./scripts/ci.sh"
   },
   "dependencies": {
