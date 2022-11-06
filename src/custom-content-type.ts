@@ -17,9 +17,9 @@ export function wrapVDomGenerator(vDomGenerator: Slot) {
 
 export function createVueContentTypePlugin(appContext: AppContext): PluginDef {
   return createPlugin({
-    contentTypeHandlers: {
-      vue: () => buildVDomHandler(appContext), // looks for the `vue` key
-    }
+    // contentTypeHandlers: {
+    //   vue: () => buildVDomHandler(appContext), // looks for the `vue` key
+    // }
   })
 }
 
