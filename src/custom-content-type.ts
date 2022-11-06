@@ -14,9 +14,9 @@ export function wrapVDomGenerator(vDomGenerator: NormalizedScopedSlot) {
 
 export function createVueContentTypePlugin(parent: Vue): PluginDef {
   return createPlugin({
-    contentTypeHandlers: {
-      vue: () => buildVDomHandler(parent), // looks for the `vue` key
-    }
+    // contentTypeHandlers: {
+    //   vue: () => buildVDomHandler(parent), // looks for the `vue` key
+    // }
   });
 }
 
