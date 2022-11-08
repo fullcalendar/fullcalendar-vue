@@ -1,37 +1,71 @@
-import { PropType, defineComponent, h, Slots, AppContext } from 'vue'
-import { Calendar, CalendarOptions } from '@fullcalendar/core'
+import { PropType, defineComponent, h, Fragment, Teleport } from 'vue'
+import { Calendar, CalendarOptions, CustomRenderingStore, CustomRendering } from '@fullcalendar/core'
 import { OPTION_IS_COMPLEX } from './options'
-import { shallowCopy, mapHash } from './utils'
-import { wrapVDomGenerator, createVueContentTypePlugin } from './custom-content-type'
+import { shallowCopy } from './utils'
 
 const FullCalendar = defineComponent({
-
   props: {
     options: Object as PropType<CalendarOptions>
   },
 
-  data: initData, // separate func b/c of type inferencing
+  data() {
+    return {
+      renderId: 0,
+      customRenderings: [] as Iterable<CustomRendering<any>>
+    }
+  },
+
+  methods: {
+    getApi(): Calendar {
+      return getSecret(this).calendar
+    },
+
+    buildOptions(suppliedOptions: CalendarOptions | undefined): CalendarOptions {
+      return {
+        ...suppliedOptions,
+        customRenderingMetaMap: this.$slots,
+        handleCustomRendering: getSecret(this).handleCustomRendering,
+      }
+    },
+  },
 
   render() {
-    return h('div', {
-      // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
-      attrs: { 'data-fc-render-id': this.renderId }
-    })
+    return h(
+      'div',
+      {
+        // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
+        attrs: { 'data-fc-render-id': this.renderId }
+      },
+      h(
+        Fragment, // for containing Teleport keys
+        Array.from(this.customRenderings).map((customRendering) => {
+          return h(
+            Teleport,
+            {
+              key: customRendering.id,
+              to: customRendering.containerEl
+            },
+            customRendering.generatorMeta( // a slot-render-function
+              customRendering.renderProps
+            )
+          )
+        })
+      )
+    )
   },
 
   mounted() {
-    // store internal data (slotOptions, calendar)
-    // https://github.com/vuejs/vue/issues/1988#issuecomment-163013818
-    (this as any).slotOptions = mapHash(this.$slots, wrapVDomGenerator) // needed for buildOptions
-    let calendarOptions = this.buildOptions(this.options, this.$.appContext)
-    let calendar = new Calendar(this.$el as HTMLElement, calendarOptions)
-    ;(this as any).calendar = calendar
-    calendar.render()
-  },
+    const customRenderingStore = new CustomRenderingStore<any>()
+    getSecret(this).handleCustomRendering = customRenderingStore.handle.bind(customRenderingStore)
 
-  methods: { // separate funcs b/c of type inferencing
-    getApi,
-    buildOptions,
+    const calendarOptions = this.buildOptions(this.options)
+    const calendar = new Calendar(this.$el as HTMLElement, calendarOptions)
+    getSecret(this).calendar = calendar
+
+    calendar.render()
+    customRenderingStore.subscribe((customRenderings) => {
+      this.customRenderings = customRenderings
+    })
   },
 
   beforeUpdate() {
@@ -47,37 +81,20 @@ const FullCalendar = defineComponent({
 
 export default FullCalendar
 
-
-function initData() {
-  return {
-    renderId: 0
-  }
-}
-
-
-function buildOptions(
-  this: any,
-  suppliedOptions: CalendarOptions | undefined,
-  appContext: AppContext,
-): CalendarOptions {
-  suppliedOptions = suppliedOptions || {}
-  return {
-    ...this.slotOptions,
-    ...suppliedOptions, // spread will pull out the values from the options getter functions
-    plugins: (suppliedOptions.plugins || []).concat([
-      createVueContentTypePlugin(appContext)
-    ])
-  }
-}
-
-
-function getApi(this: any) {
-  return this.calendar
-}
-
+// Internals
 
 type FullCalendarInstance = InstanceType<typeof FullCalendar>
 
+interface FullCalendarSecret {
+  calendar: Calendar
+  handleCustomRendering: (customRendering: CustomRendering<any>) => void
+}
+
+// storing internal state:
+// https://github.com/vuejs/vue/issues/1988#issuecomment-163013818
+function getSecret(inst: FullCalendarInstance): FullCalendarSecret {
+  return inst as any as FullCalendarSecret
+}
 
 function buildWatchers() {
 
@@ -91,7 +108,7 @@ function buildWatchers() {
         let calendar = this.getApi()
         calendar.pauseRendering()
 
-        let calendarOptions = this.buildOptions(options, this.$.appContext)
+        let calendarOptions = this.buildOptions(options)
         calendar.resetOptions(calendarOptions)
 
         this.renderId++ // will queue a rerender

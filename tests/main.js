@@ -444,13 +444,15 @@ const COMPONENT_WITH_SLOTS = {
 
 it('renders and rerenders a custom slot', async () => {
   let wrapper = mount(COMPONENT_WITH_SLOTS)
+  await nextTick()
+
   let eventEl = getRenderedEventEls(wrapper)[0]
-  expect(eventEl.findAll('b').length).to.equal(1)
+  expect(eventEl.findAll('i').length).to.equal(1)
 
   wrapper.vm.resetEvents()
   await nextTick()
   eventEl = getRenderedEventEls(wrapper)[0]
-  expect(eventEl.findAll('b').length).to.equal(1)
+  expect(eventEl.findAll('i').length).to.equal(1)
 })
 
 it('calls nested vue lifecycle methods when in custom content', async () => {

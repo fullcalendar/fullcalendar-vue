@@ -1,7 +1,6 @@
 
 // TODO: add types!
 
-
 /*
 works with objects and arrays
 */
@@ -15,17 +14,4 @@ export function shallowCopy(val: any) {
   }
 
   return val
-}
-
-
-export function mapHash(input: any, func: any) {
-  const output: any = {}
-
-  for (const key in input) {
-    if (input.hasOwnProperty(key)) {
-      output[key] = func(input[key], key)
-    }
-  }
-
-  return output
 }
