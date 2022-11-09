@@ -1,5 +1,6 @@
 
 Rendering of custom events happens asynchronously
+TODO: write tests for custom templates working with binding
 
 
 v5.11.1 (2022-05-10)
