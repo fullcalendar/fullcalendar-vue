@@ -391,8 +391,10 @@ const COMPONENT_WITH_SLOTS = {
   template: `
     <FullCalendar :options='calendarOptions'>
       <template v-slot:eventContent="arg">
-        <b>{{ arg.timeText }}</b>
-        <i>{{ arg.event.title }}</i>
+        <span>
+          <b>{{ arg.timeText }}</b>
+          <i>{{ arg.event.title }}</i>
+        </span>
       </template>
     </FullCalendar>
   `,
@@ -413,14 +415,17 @@ const COMPONENT_WITH_SLOTS = {
 
 it('renders and rerenders a custom slot', (done) => {
   let wrapper = mount(COMPONENT_WITH_SLOTS)
-  let eventEl = getRenderedEventEls(wrapper).at(0)
-  expect(eventEl.findAll('b').length).toBe(1)
 
-  wrapper.vm.resetEvents()
   Vue.nextTick().then(() => {
-    eventEl = getRenderedEventEls(wrapper).at(0)
+    let eventEl = getRenderedEventEls(wrapper).at(0)
     expect(eventEl.findAll('b').length).toBe(1)
-    done()
+
+    wrapper.vm.resetEvents()
+    Vue.nextTick().then(() => {
+      eventEl = getRenderedEventEls(wrapper).at(0)
+      expect(eventEl.findAll('b').length).toBe(1)
+      done()
+    })
   })
 })
 
@@ -466,19 +471,14 @@ it('calls nested vue lifecycle methods when in custom content', (done) => {
     }
   })
   Vue.nextTick().then(() => {
-    // expect(mountCalled).toBe(true)
-    // wrapper.destroy()
+    expect(mountCalled).toBe(true)
+    wrapper.destroy()
 
-    // Vue.nextTick().then(() => {
-    //   expect(beforeDestroyCalled).toBe(true)
-    //   expect(destroyCalled).toBe(true)
-    //   done()
-    // })
-
-    console.error('!!!!!')
-    console.error('!!!!!', 'TODO: fix content-slot test', '!!!!!')
-    console.error('!!!!!')
-    done()
+    Vue.nextTick().then(() => {
+      expect(beforeDestroyCalled).toBe(true)
+      expect(destroyCalled).toBe(true)
+      done()
+    })
   })
 })
 
@@ -505,11 +505,14 @@ const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
  * Ensures we can use plugins and emit events from within the slots just
  * like any other place.
  */
-it('adds slots as child components', async () => {
+it('adds slots as child components', (done) => {
   let wrapper = mount(COMPONENT_USING_ROOT_OPTIONS_IN_SLOT)
-  let component = wrapper.findComponent(FullCalendar)
 
-  expect(component.vm.$children.length).toBe(1);
+  Vue.nextTick().then(() => {
+    let component = wrapper.findComponent(FullCalendar)
+    expect(component.vm.$children.length).toBe(1);
+    done()
+  })
 });
 
 
