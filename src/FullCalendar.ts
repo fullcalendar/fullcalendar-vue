@@ -1,5 +1,6 @@
 import { PropType, defineComponent, h, Fragment, Teleport } from 'vue'
-import { Calendar, CalendarOptions, CustomRenderingStore, CustomRendering } from '@fullcalendar/core'
+import { Calendar, CalendarOptions } from '@fullcalendar/core'
+import { CustomRenderingStore, CustomRendering } from '@fullcalendar/core/internal'
 import { OPTION_IS_COMPLEX } from './options'
 import { shallowCopy } from './utils'
 
