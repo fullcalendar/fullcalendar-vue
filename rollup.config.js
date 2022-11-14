@@ -5,7 +5,8 @@ import nodeResolve from '@rollup/plugin-node-resolve'
 
 const EXTERNAL_GLOBALS = {
   vue: 'Vue',
-  '@fullcalendar/core': 'FullCalendar'
+  '@fullcalendar/core': 'FullCalendar',
+  '@fullcalendar/core/internal': 'FullCalendar.Internal'
 }
 
 export default [
