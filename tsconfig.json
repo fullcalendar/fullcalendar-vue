@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "target": "es5",
-    "module": "es6",
-    "moduleResolution": "node",
+    "target": "es2015",
+    "module": "es2015",
+    "moduleResolution": "node16",
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
     "rootDir": "src",
     "outDir": "dist"
   },
-  "files": [
-    "src/main.ts"
+  "index": [
+    "./src/**/*"
   ]
 }

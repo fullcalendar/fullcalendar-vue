@@ -14,19 +14,6 @@
     "type": "git",
     "url": "https://github.com/fullcalendar/fullcalendar-vue.git"
   },
-  "scripts": {
-    "tsc": "tsc -p tsconfig.json",
-    "clean": "rm -rf dist tmp",
-    "watch": "tsc -p tsconfig.json --watch",
-    "build": "tsc -p tsconfig.json && rollup -c && npm run minify",
-    "minify": "terser --compress --mangle --comments false --output dist/main.global.min.js -- dist/main.global.js",
-    "test:dev": "concurrently 'webpack --watch' 'karma start karma.config.js'",
-    "test": "webpack && karma start karma.config.js --browsers ChromeHeadless --single-run --no-auto-watch",
-    "ci": "./scripts/ci.sh"
-  },
-  "dependencies": {
-    "tslib": "^2.1.0"
-  },
   "peerDependencies": {
     "@fullcalendar/core": "6.0.0-beta.1",
     "vue": "^2.6.12"
@@ -38,7 +25,6 @@
     "@babel/runtime": "^7.12.1",
     "@fullcalendar/core": "6.0.0-beta.1",
     "@fullcalendar/daygrid": "6.0.0-beta.1",
-    "@rollup/plugin-node-resolve": "^8.4.0",
     "@types/estree": "^0.0.45",
     "@types/node": "14.10.0",
     "@vue/test-utils": "^1.0.3",
@@ -61,10 +47,21 @@
     "webpack": "^5.7.0",
     "webpack-cli": "^4.1.0"
   },
-  "main": "dist/main.cjs.js",
-  "module": "dist/main.js",
-  "types": "dist/main.d.ts",
-  "jsdelivr": "dist/main.global.min.js",
+  "scripts": {
+    "tsc": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist tmp",
+    "watch": "tsc -p tsconfig.json --watch",
+    "build": "tsc -p tsconfig.json && rollup -c && npm run minify",
+    "minify": "terser --compress --mangle --comments false --output dist/main.global.min.js -- dist/main.global.js",
+    "test:dev": "concurrently 'webpack --watch' 'karma start karma.config.js'",
+    "test": "webpack && karma start karma.config.js --browsers ChromeHeadless --single-run --no-auto-watch"
+  },
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "unpkg": "dist/index.global.min.js",
+  "jsdelivr": "dist/index.global.min.js",
   "files": [
     "dist",
     "src"
