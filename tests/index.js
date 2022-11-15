@@ -42,7 +42,7 @@ afterEach(function() {
 
 it('renders', async () => {
   let wrapper = mount(FullCalendar, { propsData: { options: DEFAULT_OPTIONS } })
-  expect(isSkeletonRendered(wrapper)).to.equal(true)
+  expect(isSkeletonRendered(wrapper)).toEqual(true)
 })
 
 it('unmounts and calls destroy', async () => {
@@ -56,7 +56,7 @@ it('unmounts and calls destroy', async () => {
 
   let wrapper = mount(FullCalendar, { propsData: { options } })
   wrapper.unmount()
-  expect(unmounted).to.be.ok
+  expect(unmounted).toBeTruthy()
 })
 
 it('handles a single prop change', async () => {
@@ -67,7 +67,7 @@ it('handles a single prop change', async () => {
   let wrapper = mount(FullCalendar, {
     propsData: { options }
   })
-  expect(isWeekendsRendered(wrapper)).to.equal(true)
+  expect(isWeekendsRendered(wrapper)).toEqual(true)
 
   // it's easy for the component to detect this change because the whole options object changes.
   // a more difficult scenario is when a component updates its own nested prop.
@@ -79,7 +79,7 @@ it('handles a single prop change', async () => {
     }
   })
   await nextTick()
-  expect(isWeekendsRendered(wrapper)).to.equal(false)
+  expect(isWeekendsRendered(wrapper)).toEqual(false)
 })
 
 it('renders events with Date objects', async () => { // necessary to test copy util
@@ -95,7 +95,7 @@ it('renders events with Date objects', async () => { // necessary to test copy u
     }
   })
 
-  expect(getRenderedEventCount(wrapper)).to.equal(2)
+  expect(getRenderedEventCount(wrapper)).toEqual(2)
 })
 
 it('handles multiple prop changes, include event reset', async () => {
@@ -116,10 +116,10 @@ it('handles multiple prop changes, include event reset', async () => {
     propsData: { options }
   })
 
-  expect(getRenderedEventCount(wrapper)).to.equal(1)
-  expect(isWeekendsRendered(wrapper)).to.equal(true)
-  expect(viewMountCnt).to.equal(1)
-  expect(eventRenderCnt).to.equal(1)
+  expect(getRenderedEventCount(wrapper)).toEqual(1)
+  expect(isWeekendsRendered(wrapper)).toEqual(true)
+  expect(viewMountCnt).toEqual(1)
+  expect(eventRenderCnt).toEqual(1)
 
   viewMountCnt = 0
   eventRenderCnt = 0
@@ -134,20 +134,20 @@ it('handles multiple prop changes, include event reset', async () => {
   })
 
   await nextTick()
-  expect(getRenderedEventCount(wrapper)).to.equal(2)
-  expect(isWeekendsRendered(wrapper)).to.equal(false)
-  expect(viewMountCnt).to.equal(0)
-  expect(eventRenderCnt).to.equal(2) // TODO: get this down to 1 (only 1 new event rendered)
+  expect(getRenderedEventCount(wrapper)).toEqual(2)
+  expect(isWeekendsRendered(wrapper)).toEqual(false)
+  expect(viewMountCnt).toEqual(0)
+  expect(eventRenderCnt).toEqual(2) // TODO: get this down to 1 (only 1 new event rendered)
 })
 
 it('should expose an API', async () => {
   let wrapper = mount(FullCalendar, { propsData: { options: DEFAULT_OPTIONS } })
   let calendarApi = wrapper.vm.getApi()
-  expect(calendarApi).to.be.ok
+  expect(calendarApi).toBeTruthy()
 
   let newDate = new Date(Date.UTC(2000, 0, 1))
   calendarApi.gotoDate(newDate)
-  expect(calendarApi.getDate().valueOf()).to.equal(newDate.valueOf())
+  expect(calendarApi.getDate().valueOf()).toEqual(newDate.valueOf())
 })
 
 
@@ -182,7 +182,7 @@ it('should expose an API in $refs', async () => {
   let newDate = new Date(Date.UTC(2000, 0, 1))
 
   wrapper.vm.gotoDate(newDate)
-  expect(wrapper.vm.getDate().valueOf()).to.equal(newDate.valueOf())
+  expect(wrapper.vm.getDate().valueOf()).toEqual(newDate.valueOf())
 })
 
 
@@ -210,9 +210,9 @@ it('should handle multiple refs $refs', async () => {
         let ref0 = this.$refs.fullCalendar0.getApi()
         let ref1 = this.$refs.fullCalendar1.getApi()
         let ref2 = this.$refs.fullCalendar2.getApi()
-        expect(ref0).to.not.equal(ref1)
-        expect(ref1).to.not.equal(ref2)
-        expect(ref2).to.not.equal(ref0)
+        expect(ref0).not.toEqual(ref1)
+        expect(ref1).not.toEqual(ref2)
+        expect(ref2).not.toEqual(ref0)
       }
     }
   })
@@ -258,11 +258,11 @@ const COMPONENT_FOR_OPTION_MANIP = {
 
 it('handles an object change when prop is reassigned', async () => {
   let wrapper = mount(COMPONENT_FOR_OPTION_MANIP)
-  expect(isWeekendsRendered(wrapper)).to.equal(true)
+  expect(isWeekendsRendered(wrapper)).toEqual(true)
 
   wrapper.vm.disableWeekends()
   await nextTick()
-  expect(isWeekendsRendered(wrapper)).to.equal(false)
+  expect(isWeekendsRendered(wrapper)).toEqual(false)
 })
 
 it('avoids rerendering unchanged toolbar/events', async () => {
@@ -280,15 +280,15 @@ it('avoids rerendering unchanged toolbar/events', async () => {
     }
   })
 
-  expect(viewMountCnt).to.equal(1)
-  expect(eventRenderCnt).to.equal(1)
+  expect(viewMountCnt).toEqual(1)
+  expect(eventRenderCnt).toEqual(1)
 
   viewMountCnt = 0
   eventRenderCnt = 0
 
   wrapper.vm.changeSomething()
-  expect(viewMountCnt).to.equal(0)
-  expect(eventRenderCnt).to.equal(0)
+  expect(viewMountCnt).toEqual(0)
+  expect(eventRenderCnt).toEqual(0)
 })
 
 
@@ -321,20 +321,20 @@ const COMPONENT_FOR_EVENT_MANIP = {
 
 it('reacts to event adding', async () => {
   let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
-  expect(getRenderedEventCount(wrapper)).to.equal(1)
+  expect(getRenderedEventCount(wrapper)).toEqual(1)
 
   wrapper.vm.addEvent()
   await nextTick()
-  expect(getRenderedEventCount(wrapper)).to.equal(2)
+  expect(getRenderedEventCount(wrapper)).toEqual(2)
 })
 
 it('reacts to event property changes', async () => {
   let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
-  expect(getFirstEventTitle(wrapper)).to.equal('event0')
+  expect(getFirstEventTitle(wrapper)).toEqual('event0')
   wrapper.vm.updateTitle('another title')
 
   await nextTick()
-  expect(getFirstEventTitle(wrapper)).to.equal('another title')
+  expect(getFirstEventTitle(wrapper)).toEqual('another title')
 })
 
 
@@ -367,7 +367,7 @@ const EVENT_FUNC_COMPONENT = {
 it('can receive an async event function', function(done) {
   let wrapper = mount(EVENT_FUNC_COMPONENT)
   setTimeout(() => {
-    expect(getRenderedEventCount(wrapper)).to.equal(2)
+    expect(getRenderedEventCount(wrapper)).toEqual(2)
     done()
   }, 100) // more than event function's setTimeout
 })
@@ -404,11 +404,11 @@ const EVENT_COMP_PROP_COMPONENT = {
 
 it('reacts to computed events prop', async () => {
   let wrapper = mount(EVENT_COMP_PROP_COMPONENT)
-  expect(getRenderedEventCount(wrapper)).to.equal(0)
+  expect(getRenderedEventCount(wrapper)).toEqual(0)
 
   wrapper.vm.markNotFirst()
   await nextTick()
-  expect(getRenderedEventCount(wrapper)).to.equal(2)
+  expect(getRenderedEventCount(wrapper)).toEqual(2)
 })
 
 
@@ -446,12 +446,12 @@ it('renders and rerenders a custom slot', async () => {
   await nextTick()
 
   let eventEl = getRenderedEventEls(wrapper)[0]
-  expect(eventEl.findAll('i').length).to.equal(1)
+  expect(eventEl.findAll('i').length).toEqual(1)
 
   wrapper.vm.resetEvents()
   await nextTick()
   eventEl = getRenderedEventEls(wrapper)[0]
-  expect(eventEl.findAll('i').length).to.equal(1)
+  expect(eventEl.findAll('i').length).toEqual(1)
 })
 
 it('calls nested vue lifecycle methods when in custom content', async () => {
@@ -496,12 +496,12 @@ it('calls nested vue lifecycle methods when in custom content', async () => {
     }
   })
   await nextTick()
-  expect(mountedCalled).to.equal(true)
+  expect(mountedCalled).toEqual(true)
 
   wrapper.unmount()
   await nextTick()
-  expect(beforeUnmountCalled).to.equal(true)
-  expect(unmountedCalled).to.equal(true)
+  expect(beforeUnmountCalled).toEqual(true)
+  expect(unmountedCalled).toEqual(true)
 })
 
 const OTHER_COMPONENT = {
@@ -535,7 +535,7 @@ it('can use component defined in higher contexts', async () => {
   let eventEl = getRenderedEventEls(wrapper)[0]
 
   await nextTick()
-  expect(eventEl.findAll('i').length).to.equal(1)
+  expect(eventEl.findAll('i').length).toEqual(1)
 })
 
 
@@ -579,7 +579,7 @@ it('allows plugin access for slots', async () => {
 
   await nextTick()
   let eventEl = getRenderedEventEls(wrapper)[0]
-  expect(eventEl.text()).to.equal(helloJp)
+  expect(eventEl.text()).toEqual(helloJp)
 })
 
 
@@ -613,7 +613,7 @@ const COMPONENT_WITH_DYNAMIC_SLOTS = {
 xit('renders dynamically imported event', async () => {
   let wrapper = mount(COMPONENT_WITH_DYNAMIC_SLOTS)
   let eventEl = getRenderedEventEls(wrapper).at(0)
-  expect(eventEl.findAll('.dynamic-event').length).to.equal(1)
+  expect(eventEl.findAll('.dynamic-event').length).toEqual(1)
 })
 
 
