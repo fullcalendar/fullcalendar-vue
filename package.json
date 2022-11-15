@@ -48,7 +48,7 @@
   "scripts": {
     "build": "pnpm run tsc && pnpm run rollup && pnpm run webpack && pnpm run minify",
     "dev": "pnpm run tsc && concurrently 'npm:tsc:dev' 'npm:rollup:dev' 'npm:webpack:dev'",
-    "clean": "rm -rf dist tmp",
+    "clean": "rm -rf dist tests/dist",
     "tsc": "tsc -p .",
     "tsc:dev": "tsc -p . --watch --preserveWatchOutput --pretty",
     "rollup": "rollup -c",

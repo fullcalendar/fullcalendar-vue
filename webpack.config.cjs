@@ -42,7 +42,7 @@ module.exports = () => ({
     new VueLoaderPlugin()
   ],
   output: {
-    path: path.join(__dirname, 'tmp/tests'), // directory
+    path: path.join(__dirname, 'tests/dist'), // directory
     filename: 'index.js'
   }
 })
