@@ -6,7 +6,7 @@ Tests
 */
 module.exports = () => ({
   mode: 'development',
-  devtool: 'inline-source-map', // output an inline sourcemap. gets fed into karma-sourcemap-loader
+  devtool: 'inline-source-map', // gets fed into karma-sourcemap-loader
   resolve: {
     extensions: ['.js']
   },
