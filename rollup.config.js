@@ -23,7 +23,7 @@ export default [
     output: {
       file: 'dist/index.global.js',
       format: 'iife',
-      name: 'FullCalendarVue',
+      name: 'FullCalendar.Vue',
       exports: 'named',
       globals: EXTERNAL_GLOBALS
     },

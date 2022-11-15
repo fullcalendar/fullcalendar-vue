@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "jsx": "react",
     "target": "es2015",
     "module": "es2015",
     "moduleResolution": "node",
@@ -11,7 +10,7 @@
     "rootDir": "src",
     "outDir": "dist"
   },
-  "index": [
+  "include": [
     "./src/**/*"
   ]
 }
