@@ -1,7 +1,7 @@
 import { nextTick } from 'vue'
 import { createI18n } from 'vue-i18n'
 import { mount as _mount } from '@vue/test-utils'
-import FullCalendar from '../dist/main'
+import FullCalendar from '../dist/index.js'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 
