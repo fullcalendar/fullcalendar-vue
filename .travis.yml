@@ -1,8 +1,0 @@
-
-language: node_js
-node_js: node # the latest stable
-
-cache:
-  npm: false # don't do node_modules for now
-
-script: npm run ci

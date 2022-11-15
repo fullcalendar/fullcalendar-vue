@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
-    "jsx": "react",
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
-    "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
     "rootDir": "src",
     "outDir": "dist"
   },
-  "files": [
-    "src/main.ts"
+  "include": [
+    "./src/**/*"
   ]
 }
