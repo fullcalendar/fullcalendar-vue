@@ -48,13 +48,19 @@
     "webpack-cli": "^4.1.0"
   },
   "scripts": {
-    "tsc": "tsc -p tsconfig.json",
+    "build": "pnpm run tsc && pnpm run rollup && pnpm run webpack && pnpm run minify",
+    "dev": "pnpm run tsc && concurrently 'npm:tsc:dev' 'npm:rollup:dev' 'npm:webpack:dev'",
     "clean": "rm -rf dist tmp",
-    "watch": "tsc -p tsconfig.json --watch",
-    "build": "tsc -p tsconfig.json && rollup -c && npm run minify",
-    "minify": "terser --compress --mangle --comments false --output dist/main.global.min.js -- dist/main.global.js",
-    "test:dev": "concurrently 'webpack --watch' 'karma start karma.config.js'",
-    "test": "webpack && karma start karma.config.js --browsers ChromeHeadless --single-run --no-auto-watch"
+    "tsc": "tsc -p .",
+    "tsc:dev": "tsc -p . --watch --preserveWatchOutput --pretty",
+    "rollup": "rollup -c",
+    "rollup:dev": "rollup -c --watch",
+    "webpack": "webpack",
+    "webpack:dev": "webpack --watch",
+    "test": "karma start karma.config.cjs --browsers ChromeHeadless --single-run --no-auto-watch",
+    "test:dev": "karma start karma.config.cjs",
+    "minify": "terser --compress --mangle --comments false --output dist/index.global.min.js -- dist/index.global.js",
+    "ci": "pnpm run clean && pnpm run build && pnpm run test"
   },
   "type": "module",
   "main": "dist/index.cjs",
@@ -62,6 +68,15 @@
   "types": "dist/index.d.ts",
   "unpkg": "dist/index.global.min.js",
   "jsdelivr": "dist/index.global.min.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.global.js"
+    }
+  },
   "files": [
     "dist",
     "src"

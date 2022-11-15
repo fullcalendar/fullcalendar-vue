@@ -10,11 +10,11 @@ module.exports = function(config) {
     ],
     frameworks: ['jasmine'],
     files: [
-      'tmp/compiled-tests/main.js',
-      'tmp/compiled-tests/*.js'
+      'tmp/tests/index.js',
+      'tmp/tests/*.js'
     ],
     preprocessors: {
-      'tmp/compiled-tests/*.js': ['sourcemap']
+      'tmp/tests/*.js': ['sourcemap']
     },
     logLevel: config.LOG_INFO,
     reporters: ['spec']

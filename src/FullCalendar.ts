@@ -1,9 +1,9 @@
 import Vue, { PropType } from 'vue'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { CustomRendering, CustomRenderingStore } from '@fullcalendar/core/internal'
-import { OPTION_IS_COMPLEX } from './options'
-import { shallowCopy } from './utils'
-import Teleport from './Teleport'
+import { OPTION_IS_COMPLEX } from './options.js'
+import { shallowCopy } from './utils.js'
+import Teleport from './Teleport.js'
 
 const FullCalendar = Vue.extend({
   props: {

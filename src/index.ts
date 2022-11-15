@@ -1,5 +1,5 @@
 import { VueConstructor } from 'vue'
-import FullCalendarComponent from './FullCalendar'
+import FullCalendarComponent from './FullCalendar.js'
 
 /*
 Registers the component globally if appropriate.
