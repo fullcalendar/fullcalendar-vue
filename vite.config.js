@@ -18,9 +18,9 @@ export default {
     sourcemap: 'inline', // gets fed into karma-sourcemap-loader
     lib: {
       entry: 'index.js',
-      name: 'FullCalendarVueTests', // necessary, but not used
+      fileName: 'index',
       formats: ['iife'], // produces .iife.js
-      fileName: 'index'
+      name: 'FullCalendarVueTests' // necessary, but not used
     },
     minify: false
   },
