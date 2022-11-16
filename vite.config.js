@@ -1,4 +1,5 @@
 import vue from '@vitejs/plugin-vue'
+import sourcemaps from 'rollup-plugin-sourcemaps'
 
 /*
 Tests
@@ -24,6 +25,7 @@ export default {
     minify: false
   },
   plugins: [
-    vue()
+    vue(),
+    sourcemaps() // for READING sourcemaps
   ]
 }

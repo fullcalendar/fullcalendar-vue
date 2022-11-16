@@ -30,6 +30,7 @@
     "karma-sourcemap-loader": "^0.3.8",
     "karma-spec-reporter": "^0.0.32",
     "rollup": "^2.21.0",
+    "rollup-plugin-sourcemaps": "^0.6.3",
     "terser": "^5.4.0",
     "typescript": "^4.0.5",
     "vite": "^3.2.3",
