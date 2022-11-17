@@ -13,7 +13,7 @@ const FullCalendar = Vue.extend({
   data() {
     return {
       renderId: 0,
-      customRenderingMap: new Map() as Map<string, CustomRendering<any>>
+      customRenderingMap: new Map<string, CustomRendering<any>>()
     }
   },
 
@@ -31,38 +31,31 @@ const FullCalendar = Vue.extend({
     },
   },
 
-  render(createElement) {
+  render(h) {
     const teleportNodes: VNode[] = []
 
     for (const customRendering of this.customRenderingMap.values()) {
       teleportNodes.push(
-        createElement(
-          Teleport,
-          {
-            key: customRendering.id,
-            props: {
-              to: customRendering.containerEl
-            }
-          },
-          customRendering.generatorMeta( // a slot-render-function
-            customRendering.renderProps
-          )
-        )
+        h(Teleport, {
+          key: customRendering.id,
+          props: {
+            to: customRendering.containerEl
+          }
+        }, customRendering.generatorMeta( // a slot-render-function
+          customRendering.renderProps
+        ))
       )
     }
 
-    return createElement(
-      'div',
-      {
-        // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
-        attrs: { 'data-fc-render-id': this.renderId }
-      },
-      [createElement(
-        'div', // for containing Teleport keys
-        { style: { display: 'none' } },
-        teleportNodes,
-      )],
-    )
+    return h('div', {
+      // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
+      attrs: { 'data-fc-render-id': this.renderId }
+    }, [
+      // for containing Teleport keys
+      h('div', {
+        style: { display: 'none' }
+      }, teleportNodes)
+    ])
   },
 
   mounted() {
