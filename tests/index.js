@@ -523,12 +523,12 @@ const DynamicEvent = () => import('./DynamicEvent.vue')
 const COMPONENT_WITH_DYNAMIC_SLOTS = {
   components: {
     FullCalendar,
-    DynamicEvent
+    DynamicEvent,
   },
   template: `
     <FullCalendar :options='calendarOptions'>
       <template v-slot:eventContent="arg">
-        <dynamic-event :event="arg.event" />
+        <DynamicEvent :event="arg.event" />
       </template>
     </FullCalendar>
   `,
@@ -543,12 +543,15 @@ const COMPONENT_WITH_DYNAMIC_SLOTS = {
 }
 
 // https://github.com/fullcalendar/fullcalendar-vue/issues/122
-xit('renders dynamically imported event', async () => {
+it('renders dynamically imported event', (done) => {
   let wrapper = mount(COMPONENT_WITH_DYNAMIC_SLOTS)
   let eventEl = getRenderedEventEls(wrapper).at(0)
-  expect(eventEl.findAll('.dynamic-event').length).toBe(1)
-})
 
+  setTimeout(() => {
+    expect(eventEl.findAll('.dynamic-event').length).toBe(1)
+    done()
+  }, 100)
+})
 
 
 // FullCalendar options utils

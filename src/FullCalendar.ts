@@ -1,4 +1,4 @@
-import Vue, { PropType } from 'vue'
+import Vue, { PropType, VNode } from 'vue'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { CustomRendering, CustomRenderingStore } from '@fullcalendar/core/internal'
 import { OPTION_IS_COMPLEX } from './options.js'
@@ -13,7 +13,7 @@ const FullCalendar = Vue.extend({
   data() {
     return {
       renderId: 0,
-      customRenderings: [] as Iterable<CustomRendering<any>>
+      customRenderingMap: new Map() as Map<string, CustomRendering<any>>
     }
   },
 
@@ -32,32 +32,36 @@ const FullCalendar = Vue.extend({
   },
 
   render(createElement) {
+    const teleportNodes: VNode[] = []
+
+    for (const customRendering of this.customRenderingMap.values()) {
+      teleportNodes.push(
+        createElement(
+          Teleport,
+          {
+            key: customRendering.id,
+            props: {
+              to: customRendering.containerEl
+            }
+          },
+          customRendering.generatorMeta( // a slot-render-function
+            customRendering.renderProps
+          )
+        )
+      )
+    }
+
     return createElement(
       'div',
       {
         // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
         attrs: { 'data-fc-render-id': this.renderId }
       },
-      [
-        createElement(
-          'div', // for containing Teleport keys
-          { style: { display: 'none' } },
-          Array.from(this.customRenderings).map((customRendering) => {
-            return createElement(
-              Teleport,
-              {
-                key: customRendering.id,
-                props: {
-                  to: customRendering.containerEl
-                }
-              },
-              customRendering.generatorMeta( // a slot-render-function
-                customRendering.renderProps
-              )
-            )
-          }),
-        )
-      ]
+      [createElement(
+        'div', // for containing Teleport keys
+        { style: { display: 'none' } },
+        teleportNodes,
+      )],
     )
   },
 
@@ -70,8 +74,8 @@ const FullCalendar = Vue.extend({
     getSecret(this).calendar = calendar
 
     calendar.render()
-    customRenderingStore.subscribe((customRenderings) => {
-      this.customRenderings = customRenderings
+    customRenderingStore.subscribe((customRenderingMap) => {
+      this.customRenderingMap = customRenderingMap
     })
   },
 
