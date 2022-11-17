@@ -47,10 +47,7 @@ const FullCalendar = defineComponent({
     return h('div', {
       // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
       attrs: { 'data-fc-render-id': this.renderId }
-    }, [
-      // for containing Teleport keys
-      h(Fragment, teleportNodes)
-    ])
+    }, h(Fragment, teleportNodes)) // for containing Teleport keys
   },
 
   mounted() {
