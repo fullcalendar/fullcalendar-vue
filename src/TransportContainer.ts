@@ -31,6 +31,10 @@ const TransportContainer = Vue.extend({
     if (this.inPlaceOf.parentNode !== dummyContainer) {
       replaceEl(this.$el, this.inPlaceOf)
     }
+  },
+
+  destroyed() {
+    dummyContainer.removeChild(this.inPlaceOf)
   }
 })
 
