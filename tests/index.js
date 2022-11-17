@@ -554,6 +554,50 @@ it('renders dynamically imported event', (done) => {
 })
 
 
+// slots data binding
+
+it('slot rendering reacts to bound parent state', async () => {
+  let wrapper = mount({
+    components: {
+      FullCalendar,
+    },
+    template: `
+      <FullCalendar :options='calendarOptions'>
+        <template v-slot:eventContent="arg">
+          <b v-if="isBold">Event:</b>
+          <i v-else>Event:</i>
+          {{ arg.event.title }}
+        </template>
+      </FullCalendar>
+    `,
+    data() {
+      return {
+        isBold: false,
+        calendarOptions: {
+          ...DEFAULT_OPTIONS,
+          events: buildEvents(1)
+        }
+      }
+    },
+    methods: {
+      turnBold() {
+        this.isBold = true
+      }
+    }
+  })
+  let eventEl = getRenderedEventEls(wrapper).at(0)
+
+  await Vue.nextTick()
+  expect(eventEl.findAll('b').length).toEqual(0)
+  expect(eventEl.findAll('i').length).toEqual(1)
+  wrapper.vm.turnBold()
+
+  await Vue.nextTick()
+  expect(eventEl.findAll('b').length).toEqual(1)
+  expect(eventEl.findAll('i').length).toEqual(0)
+})
+
+
 // FullCalendar options utils
 
 function buildEvents(length) {
