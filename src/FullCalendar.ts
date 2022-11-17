@@ -1,4 +1,4 @@
-import { PropType, defineComponent, h, Fragment, Teleport } from 'vue'
+import { PropType, defineComponent, h, Fragment, Teleport, VNode } from 'vue'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { CustomRenderingStore, CustomRendering } from '@fullcalendar/core/internal'
 import { OPTION_IS_COMPLEX } from './options'
@@ -12,7 +12,7 @@ const FullCalendar = defineComponent({
   data() {
     return {
       renderId: 0,
-      customRenderings: [] as Iterable<CustomRendering<any>>
+      customRenderingMap: new Map<string, CustomRendering<any>>()
     }
   },
 
@@ -31,28 +31,26 @@ const FullCalendar = defineComponent({
   },
 
   render() {
-    return h(
-      'div',
-      {
-        // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
-        attrs: { 'data-fc-render-id': this.renderId }
-      },
-      h(
-        Fragment, // for containing Teleport keys
-        Array.from(this.customRenderings).map((customRendering) => {
-          return h(
-            Teleport,
-            {
-              key: customRendering.id,
-              to: customRendering.containerEl
-            },
-            customRendering.generatorMeta( // a slot-render-function
-              customRendering.renderProps
-            )
-          )
-        })
+    const teleportNodes: VNode[] = []
+
+    for (const customRendering of this.customRenderingMap.values()) {
+      teleportNodes.push(
+        h(Teleport, {
+          key: customRendering.id,
+          to: customRendering.containerEl
+        }, customRendering.generatorMeta( // a slot-render-function
+          customRendering.renderProps
+        ))
       )
-    )
+    }
+
+    return h('div', {
+      // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
+      attrs: { 'data-fc-render-id': this.renderId }
+    }, [
+      // for containing Teleport keys
+      h(Fragment, teleportNodes)
+    ])
   },
 
   mounted() {
@@ -64,8 +62,8 @@ const FullCalendar = defineComponent({
     getSecret(this).calendar = calendar
 
     calendar.render()
-    customRenderingStore.subscribe((customRenderings) => {
-      this.customRenderings = customRenderings
+    customRenderingStore.subscribe((customRenderingMap) => {
+      this.customRenderingMap = customRenderingMap
     })
   },
 
