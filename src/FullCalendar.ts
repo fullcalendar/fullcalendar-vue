@@ -3,7 +3,8 @@ import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { CustomRendering, CustomRenderingStore } from '@fullcalendar/core/internal'
 import { OPTION_IS_COMPLEX } from './options.js'
 import { shallowCopy } from './utils.js'
-import Teleport from './Teleport.js'
+import OffscreenFragment from './OffscreenFragment.js'
+import TransportContainer from './TransportContainer.js'
 
 const FullCalendar = Vue.extend({
   props: {
@@ -32,14 +33,18 @@ const FullCalendar = Vue.extend({
   },
 
   render(h) {
-    const teleportNodes: VNode[] = []
+    const transportContainerNodes: VNode[] = []
 
     for (const customRendering of this.customRenderingMap.values()) {
-      teleportNodes.push(
-        h(Teleport, {
+      transportContainerNodes.push(
+        h(TransportContainer, {
           key: customRendering.id,
           props: {
-            to: customRendering.containerEl
+            inPlaceOf: customRendering.containerEl,
+            elTag: customRendering.elTag,
+            elClasses: customRendering.elClasses,
+            elStyle: customRendering.elStyle,
+            elAttrs: customRendering.elAttrs,
           }
         }, customRendering.generatorMeta( // a slot-render-function
           customRendering.renderProps
@@ -51,10 +56,8 @@ const FullCalendar = Vue.extend({
       // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
       attrs: { 'data-fc-render-id': this.renderId }
     }, [
-      // for containing Teleport keys
-      h('div', {
-        style: { display: 'none' }
-      }, teleportNodes)
+      // for containing TransportContainer keys
+      h(OffscreenFragment, transportContainerNodes)
     ])
   },
 
@@ -68,6 +71,7 @@ const FullCalendar = Vue.extend({
 
     calendar.render()
     customRenderingStore.subscribe((customRenderingMap) => {
+      this.renderId++ // because below line won't trigger if reference is same
       this.customRenderingMap = customRenderingMap
     })
   },

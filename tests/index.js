@@ -555,6 +555,7 @@ it('renders dynamically imported event', (done) => {
 
 
 // slots data binding
+// (also test slots in combination with prev/next)
 
 it('slot rendering reacts to bound parent state', async () => {
   let wrapper = mount({
@@ -562,7 +563,7 @@ it('slot rendering reacts to bound parent state', async () => {
       FullCalendar,
     },
     template: `
-      <FullCalendar :options='calendarOptions'>
+      <FullCalendar :options='calendarOptions' ref='fullCalendar'>
         <template v-slot:eventContent="arg">
           <b v-if="isBold">Event:</b>
           <i v-else>Event:</i>
@@ -578,21 +579,28 @@ it('slot rendering reacts to bound parent state', async () => {
           events: buildEvents(1)
         }
       }
-    },
-    methods: {
-      turnBold() {
-        this.isBold = true
-      }
     }
   })
-  let eventEl = getRenderedEventEls(wrapper).at(0)
+  const calendarApi = wrapper.vm.$refs.fullCalendar.getApi()
 
   await Vue.nextTick()
+  let eventEl = getRenderedEventEls(wrapper).at(0)
+  expect(eventEl.findAll('.fc-event-main').length).toBe(1)
   expect(eventEl.findAll('b').length).toEqual(0)
   expect(eventEl.findAll('i').length).toEqual(1)
-  wrapper.vm.turnBold()
 
+  wrapper.vm.isBold = true
   await Vue.nextTick()
+  expect(eventEl.findAll('b').length).toEqual(1)
+  expect(eventEl.findAll('i').length).toEqual(0)
+
+  calendarApi.next()
+  await Vue.nextTick()
+  expect(getRenderedEventEls(wrapper).length).toBe(0)
+
+  calendarApi.prev()
+  await Vue.nextTick()
+  eventEl = getRenderedEventEls(wrapper).at(0)
   expect(eventEl.findAll('b').length).toEqual(1)
   expect(eventEl.findAll('i').length).toEqual(0)
 })
