@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/vue3",
-  "version": "5.11.2",
+  "version": "5.11.3",
   "title": "FullCalendar Vue 3 Component",
   "description": "An official FullCalendar component for Vue 3",
   "keywords": [
@@ -25,7 +25,7 @@
     "ci": "./scripts/ci.sh"
   },
   "dependencies": {
-    "@fullcalendar/core": "~5.11.2",
+    "@fullcalendar/core": "~5.11.3",
     "tslib": "^2.1.0"
   },
   "peerDependencies": {
@@ -37,7 +37,7 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/runtime": "^7.12.1",
     "@esm-bundle/chai": "^4.3.4",
-    "@fullcalendar/daygrid": "~5.11.2",
+    "@fullcalendar/daygrid": "~5.11.3",
     "@rollup/plugin-alias": "^3.1.2",
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@rollup/plugin-replace": "^2.4.2",
