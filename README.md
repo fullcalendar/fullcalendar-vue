@@ -10,7 +10,7 @@ This project provides an official Vue component for FullCalendar, with all the s
 This package supports Vue 3. It can be installed like this:
 
 ```
-npm install @fullcalendar/vue3
+npm install @fullcalendar/core @fullcalendar/vue3
 ```
 
 For view Vue 2, visit the [master branch](https://github.com/fullcalendar/fullcalendar-vue).
