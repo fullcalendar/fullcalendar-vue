@@ -46,7 +46,7 @@
     "webpack-cli": "^4.1.0"
   },
   "scripts": {
-    "build": "pnpm run tsc && pnpm run rollup && pnpm run webpack && pnpm run minify",
+    "build": "pnpm run tsc && pnpm run rollup && pnpm run webpack && pnpm run minify && pnpm run meta",
     "dev": "pnpm run tsc && concurrently 'npm:tsc:dev' 'npm:rollup:dev' 'npm:webpack:dev'",
     "clean": "rm -rf dist tests/dist",
     "tsc": "tsc -p .",
@@ -58,6 +58,7 @@
     "test": "karma start karma.config.cjs --browsers ChromeHeadless --single-run --no-auto-watch",
     "test:dev": "karma start karma.config.cjs",
     "minify": "terser --compress --mangle --comments false --output dist/index.global.min.js -- dist/index.global.js",
+    "meta": "mkdir -p dist && cp README.md LICENSE.txt dist",
     "ci": "pnpm run clean && pnpm run build && pnpm run test"
   },
   "type": "module",
