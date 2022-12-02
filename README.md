@@ -13,4 +13,4 @@ This package supports Vue 2. It can be installed like this:
 npm install @fullcalendar/core @fullcalendar/vue
 ```
 
-For view Vue 3, visit the [vue3 branch](https://github.com/fullcalendar/fullcalendar-vue/tree/vue3).
+For Vue 3, visit the [vue3 branch](https://github.com/fullcalendar/fullcalendar-vue/tree/vue3).
