@@ -5,6 +5,7 @@ const dummyContainer = document.createDocumentFragment()
 const TransportContainer = Vue.extend({
   props: {
     inPlaceOf: Element,
+    reportEl: Function, // TODO: better type
     elTag: String,
     elClasses: Array,
     elStyle: Object,
@@ -21,6 +22,7 @@ const TransportContainer = Vue.extend({
 
   mounted() {
     replaceEl(this.$el, this.inPlaceOf)
+    this.reportEl(this.$el)
   },
 
   updated() {
@@ -30,11 +32,13 @@ const TransportContainer = Vue.extend({
     */
     if (this.inPlaceOf.parentNode !== dummyContainer) {
       replaceEl(this.$el, this.inPlaceOf)
+      this.reportEl(this.$el)
     }
   },
 
-  destroyed() {
+  beforeDestroy() {
     dummyContainer.removeChild(this.inPlaceOf)
+    this.reportEl(null)
   }
 })
 
