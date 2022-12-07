@@ -28,27 +28,33 @@ const FullCalendar = Vue.extend({
         ...suppliedOptions,
         customRenderingMetaMap: this.$scopedSlots,
         handleCustomRendering: getSecret(this).handleCustomRendering,
+        customRenderingReplacesEl: true,
       }
     },
   },
 
   render(h) {
-    const transportContainerNodes: VNode[] = []
+    const customRenderingNodes: VNode[] = []
 
     for (const customRendering of this.customRenderingMap.values()) {
-      transportContainerNodes.push(
-        h(TransportContainer, {
-          key: customRendering.id,
-          props: {
-            inPlaceOf: customRendering.containerEl,
-            elTag: customRendering.elTag,
-            elClasses: customRendering.elClasses,
-            elStyle: customRendering.elStyle,
-            elAttrs: customRendering.elAttrs,
-          }
-        }, customRendering.generatorMeta( // a slot-render-function
-          customRendering.renderProps
-        ))
+      customRenderingNodes.push(
+        // need stable element reference for list-diffing
+        // TODO: move this functionality within TransportContainer
+        h('div', { key: customRendering.id}, [
+          h(TransportContainer, {
+            key: customRendering.id,
+            props: {
+              inPlaceOf: customRendering.containerEl,
+              reportEl: customRendering.reportNewContainerEl,
+              elTag: customRendering.elTag,
+              elClasses: customRendering.elClasses,
+              elStyle: customRendering.elStyle,
+              elAttrs: customRendering.elAttrs,
+            }
+          }, customRendering.generatorMeta( // a slot-render-function
+            customRendering.renderProps
+          ))
+        ])
       )
     }
 
@@ -57,7 +63,7 @@ const FullCalendar = Vue.extend({
       attrs: { 'data-fc-render-id': this.renderId }
     }, [
       // for containing TransportContainer keys
-      h(OffscreenFragment, transportContainerNodes)
+      h(OffscreenFragment, customRenderingNodes)
     ])
   },
 
