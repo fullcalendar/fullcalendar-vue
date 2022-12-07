@@ -71,10 +71,9 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js",
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.global.js"
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
     }
   },
   "files": [
