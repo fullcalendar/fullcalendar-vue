@@ -60,7 +60,8 @@ const FullCalendar = defineComponent({
 
     calendar.render()
     customRenderingStore.subscribe((customRenderingMap) => {
-      this.customRenderingMap = customRenderingMap
+      this.customRenderingMap = customRenderingMap // likely same reference, so won't rerender
+      this.renderId++ // force rerender
     })
   },
 
