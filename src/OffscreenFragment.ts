@@ -17,7 +17,7 @@ const OffscreenFragment = Vue.extend({
     dummyContainer.appendChild(this.$el)
   },
 
-  destroyed() {
+  beforeDestroy() {
     dummyContainer.removeChild(this.$el)
   }
 })
