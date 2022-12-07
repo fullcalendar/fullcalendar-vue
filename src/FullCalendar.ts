@@ -71,8 +71,8 @@ const FullCalendar = Vue.extend({
 
     calendar.render()
     customRenderingStore.subscribe((customRenderingMap) => {
-      this.renderId++ // because below line won't trigger if reference is same
-      this.customRenderingMap = customRenderingMap
+      this.customRenderingMap = customRenderingMap // likely same reference, so won't rerender
+      this.renderId++ // force rerender
     })
   },
 
