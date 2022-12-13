@@ -2,17 +2,20 @@
   "name": "@fullcalendar/vue",
   "version": "6.0.0-beta.4",
   "title": "FullCalendar Vue 2 Component",
-  "description": "An official FullCalendar component for Vue 2",
+  "description": "The official Vue 2 component for FullCalendar",
   "keywords": [
-    "vue",
     "calendar",
-    "fullcalendar"
+    "event",
+    "full-sized",
+    "fullcalendar",
+    "vue",
+    "vue2"
   ],
-  "docs": "https://fullcalendar.io/docs/vue",
+  "homepage": "https://fullcalendar.io/docs/vue",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar-vue.git"
+    "url": "https://github.com/fullcalendar/fullcalendar-vue2.git"
   },
   "peerDependencies": {
     "@fullcalendar/core": "6.0.0-beta.4",
