@@ -13,7 +13,7 @@ npm install @fullcalendar/vue3 @fullcalendar/core @fullcalendar/daygrid
 
 ## Usage
 
-Render a `FullCalendar` component, passing-in an [options](https://fullcalendar.io/docs#toc) object:
+Render a `FullCalendar` component, supplying an [options](https://fullcalendar.io/docs#toc) object:
 
 ```vue
 <script>
@@ -45,7 +45,7 @@ export default {
 </template>
 ```
 
-You can even pass in [named-slot](https://vuejs.org/guide/components/slots.html#named-slots) templates:
+You can even supply [named-slot](https://vuejs.org/guide/components/slots.html#named-slots) templates:
 
 ```vue
 <template>
@@ -64,3 +64,19 @@ You can even pass in [named-slot](https://vuejs.org/guide/components/slots.html#
 - [Documentation](https://fullcalendar.io/docs/vue)
 - [Example Project](https://github.com/fullcalendar/fullcalendar-example-projects/tree/master/vue3)
 - [Contributor Guide](CONTRIBUTORS.md)
+
+## Development
+
+You must install this repo with [PNPM](https://pnpm.io/):
+
+```
+pnpm install
+```
+
+Available scripts (via `pnpm run <script>`):
+
+- `build` - build production-ready dist files
+- `dev` - build & watch development dist files
+- `test` - test headlessly
+- `test:dev` - test interactively
+- `clean`
