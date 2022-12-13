@@ -62,7 +62,7 @@ You can even supply [named-slot](https://vuejs.org/guide/components/slots.html#n
 # Links
 
 - [Documentation](https://fullcalendar.io/docs/vue)
-- [Example Project](https://github.com/fullcalendar/fullcalendar-example-projects/tree/master/vue3)
+- [Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/vue3)
 - [Contributor Guide](CONTRIBUTORS.md)
 
 ## Development
