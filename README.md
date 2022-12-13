@@ -59,11 +59,10 @@ You can even supply [named-slot](https://vuejs.org/guide/components/slots.html#n
 </template>
 ```
 
-# Links
+## Links
 
 - [Documentation](https://fullcalendar.io/docs/vue)
 - [Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/vue3)
-- [Contributor Guide](CONTRIBUTORS.md)
 
 ## Development
 
