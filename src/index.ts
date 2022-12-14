@@ -1,5 +1,5 @@
 import { VueConstructor } from 'vue'
-import FullCalendarComponent from './FullCalendar'
+import FullCalendarComponent from './FullCalendar.js'
 
 /*
 Registers the component globally if appropriate.
@@ -36,6 +36,3 @@ if (GlobalVue) {
 
 // to allow use as module (npm/webpack/etc.) export component
 export default FullCalendarComponent
-
-// so can access any of the utils/types from this lib
-export * from '@fullcalendar/core'

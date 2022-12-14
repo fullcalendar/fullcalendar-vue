@@ -1,13 +1,16 @@
 const path = require('path')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
-module.exports = (env) => ({
+/*
+Tests
+*/
+module.exports = () => ({
   mode: 'development',
-  devtool: 'inline-source-map', // output an inline sourcemap. gets fed into karma-sourcemap-loader
+  devtool: 'inline-source-map', // gets fed into karma-sourcemap-loader
   resolve: {
-    extensions: [ '.js' ]
+    extensions: ['.js']
   },
-  entry: './tests/main.js',
+  entry: './tests/index.js',
   module: {
     rules: [
       {
@@ -24,14 +27,14 @@ module.exports = (env) => ({
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [ '@babel/preset-env' ],
-            plugins: [ '@babel/plugin-transform-runtime' ] // for async keyword
+            presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-transform-runtime'] // for async keyword
           }
         }
       },
       {
         test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ]
+        use: ['style-loader', 'css-loader']
       }
     ]
   },
@@ -39,6 +42,7 @@ module.exports = (env) => ({
     new VueLoaderPlugin()
   ],
   output: {
-    path: path.join(__dirname, 'tmp/compiled-tests')
+    path: path.join(__dirname, 'tests/dist'), // directory
+    filename: 'index.js'
   }
 })

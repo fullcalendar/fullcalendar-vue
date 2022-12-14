@@ -1,4 +1,9 @@
 
+custom-content-generators can only return single-root-element,
+  or else content will automatically be wrapped in a span and warning will show
+TODO: write tests for custom templates working with binding
+
+
 v5.4.0 (2020-11-11)
 -------------------
 

@@ -1,7 +1,9 @@
 
-/dist
-/tmp
+# Package manager
+node_modules
 
-/node_modules
-npm-debug.log
-yarn-error.log
+# Generated
+dist
+
+# Outer monorepo
+.turbo

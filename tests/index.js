@@ -1,6 +1,7 @@
 import { mount as _mount } from '@vue/test-utils'
-import FullCalendar from '../dist/main'
+import FullCalendar from '../dist/index.js'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
 import Vue from 'vue'
 
 
@@ -8,7 +9,8 @@ const DEFAULT_OPTIONS = {
   initialDate: '2019-05-15',
   initialView: 'dayGridMonth',
   timeZone: 'UTC',
-  plugins: [ dayGridPlugin ]
+  plugins: [dayGridPlugin, interactionPlugin],
+  editable: true,
 }
 
 let currentWrapper
@@ -389,10 +391,12 @@ const COMPONENT_WITH_SLOTS = {
     FullCalendar
   },
   template: `
-    <FullCalendar :options='calendarOptions'>
+    <FullCalendar ref='fullCalendar' :options='calendarOptions'>
       <template v-slot:eventContent="arg">
-        <b>{{ arg.timeText }}</b>
-        <i>{{ arg.event.title }}</i>
+        <span>
+          <b>{{ arg.timeText }}</b>
+          <i>{{ arg.event.title }}</i>
+        </span>
       </template>
     </FullCalendar>
   `,
@@ -400,7 +404,7 @@ const COMPONENT_WITH_SLOTS = {
     return {
       calendarOptions: {
         ...DEFAULT_OPTIONS,
-        events: buildEvents(1)
+        events: buildEvents(1, true) // timed=true
       }
     }
   },
@@ -413,16 +417,50 @@ const COMPONENT_WITH_SLOTS = {
 
 it('renders and rerenders a custom slot', (done) => {
   let wrapper = mount(COMPONENT_WITH_SLOTS)
-  let eventEl = getRenderedEventEls(wrapper).at(0)
-  expect(eventEl.findAll('b').length).toBe(1)
 
-  wrapper.vm.resetEvents()
   Vue.nextTick().then(() => {
-    eventEl = getRenderedEventEls(wrapper).at(0)
+    let eventEl = getRenderedEventEls(wrapper).at(0)
     expect(eventEl.findAll('b').length).toBe(1)
+
+    wrapper.vm.resetEvents()
+    Vue.nextTick().then(() => {
+      eventEl = getRenderedEventEls(wrapper).at(0)
+      expect(eventEl.findAll('b').length).toBe(1)
+      done()
+    })
+  })
+})
+
+it('renders a custom slot on next/prev', (done) => {
+  let wrapper = mount(COMPONENT_WITH_SLOTS)
+
+  Vue.nextTick().then(() => {
+    let eventEl = getRenderedEventEls(wrapper).at(0)
+    expect(eventEl.findAll('b').length).toBe(1)
+
+    let calendar = wrapper.vm.$refs.fullCalendar.getApi()
+    calendar.next()
+    calendar.prev()
+
+    Vue.nextTick().then(() => {
+      eventEl = getRenderedEventEls(wrapper).at(0)
+      expect(eventEl.findAll('b').length).toBe(1)
+      done()
+    })
+  })
+})
+
+it('renders a DnD-able timed event in daygrid', (done) => {
+  let wrapper = mount(COMPONENT_WITH_SLOTS)
+
+  Vue.nextTick().then(() => {
+    let eventEl = getRenderedEventEls(wrapper).at(0).element
+    expect(eventEl).toHaveClass('fc-daygrid-dot-event')
+    expect(typeof eventEl.fcSeg).toBe('object')
     done()
   })
 })
+
 
 it('calls nested vue lifecycle methods when in custom content', (done) => {
   let mountCalled = false
@@ -477,36 +515,6 @@ it('calls nested vue lifecycle methods when in custom content', (done) => {
   })
 })
 
-const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
-  components: {
-    FullCalendar
-  },
-  template: `
-    <FullCalendar :options='calendarOptions'>
-      <template v-slot:eventContent="arg">this is an event</template>
-    </FullCalendar>
-  `,
-  data() {
-    return {
-      calendarOptions: {
-        ...DEFAULT_OPTIONS,
-        events: buildEvents(1)
-      }
-    }
-  },
-}
-
-/**
- * Ensures we can use plugins and emit events from within the slots just
- * like any other place.
- */
-it('adds slots as child components', async () => {
-  let wrapper = mount(COMPONENT_USING_ROOT_OPTIONS_IN_SLOT)
-  let component = wrapper.findComponent(FullCalendar)
-
-  expect(component.vm.$children.length).toBe(1);
-});
-
 
 // dynamic events
 
@@ -515,12 +523,12 @@ const DynamicEvent = () => import('./DynamicEvent.vue')
 const COMPONENT_WITH_DYNAMIC_SLOTS = {
   components: {
     FullCalendar,
-    DynamicEvent
+    DynamicEvent,
   },
   template: `
     <FullCalendar :options='calendarOptions'>
       <template v-slot:eventContent="arg">
-        <dynamic-event :event="arg.event" />
+        <DynamicEvent :event="arg.event" />
       </template>
     </FullCalendar>
   `,
@@ -535,28 +543,87 @@ const COMPONENT_WITH_DYNAMIC_SLOTS = {
 }
 
 // https://github.com/fullcalendar/fullcalendar-vue/issues/122
-xit('renders dynamically imported event', async () => {
+it('renders dynamically imported event', (done) => {
   let wrapper = mount(COMPONENT_WITH_DYNAMIC_SLOTS)
   let eventEl = getRenderedEventEls(wrapper).at(0)
-  expect(eventEl.findAll('.dynamic-event').length).toBe(1)
+
+  setTimeout(() => {
+    expect(eventEl.findAll('.dynamic-event').length).toBe(1)
+    done()
+  }, 100)
 })
 
+
+// slots data binding
+// (also test slots in combination with prev/next)
+
+it('slot rendering reacts to bound parent state', async () => {
+  let wrapper = mount({
+    components: {
+      FullCalendar,
+    },
+    template: `
+      <FullCalendar :options='calendarOptions' ref='fullCalendar'>
+        <template v-slot:eventContent="arg">
+          <b v-if="isBold">Event:</b>
+          <i v-else>Event:</i>
+          {{ arg.event.title }}
+        </template>
+      </FullCalendar>
+    `,
+    data() {
+      return {
+        isBold: false,
+        calendarOptions: {
+          ...DEFAULT_OPTIONS,
+          events: buildEvents(1)
+        }
+      }
+    }
+  })
+  const calendarApi = wrapper.vm.$refs.fullCalendar.getApi()
+
+  await Vue.nextTick()
+  let eventEl = getRenderedEventEls(wrapper).at(0)
+  expect(eventEl.findAll('.fc-event-main').length).toBe(1)
+  expect(eventEl.findAll('b').length).toEqual(0)
+  expect(eventEl.findAll('i').length).toEqual(1)
+
+  wrapper.vm.isBold = true
+  await Vue.nextTick()
+  expect(eventEl.findAll('b').length).toEqual(1)
+  expect(eventEl.findAll('i').length).toEqual(0)
+
+  calendarApi.next()
+  await Vue.nextTick()
+  expect(getRenderedEventEls(wrapper).length).toBe(0)
+
+  calendarApi.prev()
+  await Vue.nextTick()
+  eventEl = getRenderedEventEls(wrapper).at(0)
+  expect(eventEl.findAll('b').length).toEqual(1)
+  expect(eventEl.findAll('i').length).toEqual(0)
+})
 
 
 // FullCalendar options utils
 
-function buildEvents(length) {
+function buildEvents(length, timed) {
   let events = []
 
   for (let i = 0; i < length; i++) {
-    events.push(buildEvent(i))
+    events.push(buildEvent(i, timed))
   }
 
   return events
 }
 
-function buildEvent(i) {
-  return { title: 'event' + i, start: DEFAULT_OPTIONS.initialDate }
+function buildEvent(i, timed) {
+  return {
+    title: 'event' + i,
+    start: DEFAULT_OPTIONS.initialDate +
+      (timed ? 'T12:00:00' : '')
+  }
 }
 
 function buildToolbar() {
