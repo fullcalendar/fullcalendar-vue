@@ -1,7 +1,8 @@
+import { nextTick, defineAsyncComponent } from 'vue'
+import { createI18n } from 'vue-i18n'
 import { mount as _mount } from '@vue/test-utils'
-import FullCalendar from '../dist/main'
+import FullCalendar from '../dist/index.js'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import Vue from 'vue'
 
 
 const DEFAULT_OPTIONS = {
@@ -12,27 +13,36 @@ const DEFAULT_OPTIONS = {
 }
 
 let currentWrapper
+let currentContainerEl
 
 function mount(component, options = {}) {
   if (options.attachTo === undefined) {
-    let rootEl = document.body.appendChild(document.createElement('div')) // will be *replaced*
-    options = {...options, attachTo: rootEl}
+    currentContainerEl = document.body.appendChild(document.createElement('div'))
+    options = {
+      ...options,
+      attachTo: currentContainerEl
+    }
   }
+
   currentWrapper = _mount(component, options)
   return currentWrapper
 }
 
 afterEach(function() {
   if (currentWrapper) {
-    currentWrapper.destroy()
+    currentWrapper.unmount()
     currentWrapper = null
+  }
+  if (currentContainerEl) {
+    currentContainerEl.remove()
+    currentContainerEl = null
   }
 })
 
 
 it('renders', async () => {
   let wrapper = mount(FullCalendar, { propsData: { options: DEFAULT_OPTIONS } })
-  expect(isSkeletonRendered(wrapper)).toBe(true)
+  expect(isSkeletonRendered(wrapper)).toEqual(true)
 })
 
 it('unmounts and calls destroy', async () => {
@@ -45,20 +55,19 @@ it('unmounts and calls destroy', async () => {
   }
 
   let wrapper = mount(FullCalendar, { propsData: { options } })
-  wrapper.destroy()
+  wrapper.unmount()
   expect(unmounted).toBeTruthy()
 })
 
-it('handles a single prop change', (done) => {
+it('handles a single prop change', async () => {
   let options = {
     ...DEFAULT_OPTIONS,
     weekends: true
   }
-
   let wrapper = mount(FullCalendar, {
     propsData: { options }
   })
-  expect(isWeekendsRendered(wrapper)).toBe(true)
+  expect(isWeekendsRendered(wrapper)).toEqual(true)
 
   // it's easy for the component to detect this change because the whole options object changes.
   // a more difficult scenario is when a component updates its own nested prop.
@@ -69,11 +78,8 @@ it('handles a single prop change', (done) => {
       weekends: false // good idea to test a falsy prop
     }
   })
-
-  Vue.nextTick().then(() => {
-    expect(isWeekendsRendered(wrapper)).toBe(false)
-    done()
-  })
+  await nextTick()
+  expect(isWeekendsRendered(wrapper)).toEqual(false)
 })
 
 it('renders events with Date objects', async () => { // necessary to test copy util
@@ -89,10 +95,10 @@ it('renders events with Date objects', async () => { // necessary to test copy u
     }
   })
 
-  expect(getRenderedEventCount(wrapper)).toBe(2)
+  expect(getRenderedEventCount(wrapper)).toEqual(2)
 })
 
-it('handles multiple prop changes, include event reset', (done) => {
+it('handles multiple prop changes, include event reset', async () => {
   let viewMountCnt = 0
   let eventRenderCnt = 0
   let options = {
@@ -110,10 +116,10 @@ it('handles multiple prop changes, include event reset', (done) => {
     propsData: { options }
   })
 
-  expect(getRenderedEventCount(wrapper)).toBe(1)
-  expect(isWeekendsRendered(wrapper)).toBe(true)
-  expect(viewMountCnt).toBe(1)
-  expect(eventRenderCnt).toBe(1)
+  expect(getRenderedEventCount(wrapper)).toEqual(1)
+  expect(isWeekendsRendered(wrapper)).toEqual(true)
+  expect(viewMountCnt).toEqual(1)
+  expect(eventRenderCnt).toEqual(1)
 
   viewMountCnt = 0
   eventRenderCnt = 0
@@ -127,13 +133,11 @@ it('handles multiple prop changes, include event reset', (done) => {
     }
   })
 
-  Vue.nextTick().then(() => {
-    expect(getRenderedEventCount(wrapper)).toBe(2)
-    expect(isWeekendsRendered(wrapper)).toBe(false)
-    expect(viewMountCnt).toBe(0)
-    expect(eventRenderCnt).toBe(2) // TODO: get this down to 1 (only 1 new event rendered)
-    done()
-  })
+  await nextTick()
+  expect(getRenderedEventCount(wrapper)).toEqual(2)
+  expect(isWeekendsRendered(wrapper)).toEqual(false)
+  expect(viewMountCnt).toEqual(0)
+  expect(eventRenderCnt).toEqual(2) // TODO: get this down to 1 (only 1 new event rendered)
 })
 
 it('should expose an API', async () => {
@@ -143,7 +147,7 @@ it('should expose an API', async () => {
 
   let newDate = new Date(Date.UTC(2000, 0, 1))
   calendarApi.gotoDate(newDate)
-  expect(calendarApi.getDate().valueOf()).toBe(newDate.valueOf())
+  expect(calendarApi.getDate().valueOf()).toEqual(newDate.valueOf())
 })
 
 
@@ -178,7 +182,41 @@ it('should expose an API in $refs', async () => {
   let newDate = new Date(Date.UTC(2000, 0, 1))
 
   wrapper.vm.gotoDate(newDate)
-  expect(wrapper.vm.getDate().valueOf()).toBe(newDate.valueOf())
+  expect(wrapper.vm.getDate().valueOf()).toEqual(newDate.valueOf())
+})
+
+
+it('should handle multiple refs $refs', async () => {
+  let wrapper = mount({
+    components: {
+      FullCalendar
+    },
+    template: `
+      <div>
+        <FullCalendar :options='calendarOptions0' ref='fullCalendar0' />
+        <FullCalendar :options='calendarOptions1' ref='fullCalendar1' />
+        <FullCalendar :options='calendarOptions2' ref='fullCalendar2' />
+      </div>
+    `,
+    data() {
+      return {
+        calendarOptions0: DEFAULT_OPTIONS,
+        calendarOptions1: DEFAULT_OPTIONS,
+        calendarOptions2: DEFAULT_OPTIONS,
+      }
+    },
+    methods: {
+      check() {
+        let ref0 = this.$refs.fullCalendar0.getApi()
+        let ref1 = this.$refs.fullCalendar1.getApi()
+        let ref2 = this.$refs.fullCalendar2.getApi()
+        expect(ref0).not.toEqual(ref1)
+        expect(ref1).not.toEqual(ref2)
+        expect(ref2).not.toEqual(ref0)
+      }
+    }
+  })
+  wrapper.vm.check()
 })
 
 
@@ -218,16 +256,13 @@ const COMPONENT_FOR_OPTION_MANIP = {
   }
 }
 
-it('handles an object change when prop is reassigned', (done) => {
+it('handles an object change when prop is reassigned', async () => {
   let wrapper = mount(COMPONENT_FOR_OPTION_MANIP)
-  expect(isWeekendsRendered(wrapper)).toBe(true)
+  expect(isWeekendsRendered(wrapper)).toEqual(true)
 
   wrapper.vm.disableWeekends()
-
-  Vue.nextTick().then(() => {
-    expect(isWeekendsRendered(wrapper)).toBe(false)
-    done()
-  })
+  await nextTick()
+  expect(isWeekendsRendered(wrapper)).toEqual(false)
 })
 
 it('avoids rerendering unchanged toolbar/events', async () => {
@@ -245,15 +280,15 @@ it('avoids rerendering unchanged toolbar/events', async () => {
     }
   })
 
-  expect(viewMountCnt).toBe(1)
-  expect(eventRenderCnt).toBe(1)
+  expect(viewMountCnt).toEqual(1)
+  expect(eventRenderCnt).toEqual(1)
 
   viewMountCnt = 0
   eventRenderCnt = 0
 
   wrapper.vm.changeSomething()
-  expect(viewMountCnt).toBe(0)
-  expect(eventRenderCnt).toBe(0)
+  expect(viewMountCnt).toEqual(0)
+  expect(eventRenderCnt).toEqual(0)
 })
 
 
@@ -284,25 +319,22 @@ const COMPONENT_FOR_EVENT_MANIP = {
   }
 }
 
-it('reacts to event adding', (done) => {
+it('reacts to event adding', async () => {
   let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
-  expect(getRenderedEventCount(wrapper)).toBe(1)
+  expect(getRenderedEventCount(wrapper)).toEqual(1)
 
   wrapper.vm.addEvent()
-  Vue.nextTick().then(() => {
-    expect(getRenderedEventCount(wrapper)).toBe(2)
-    done()
-  })
+  await nextTick()
+  expect(getRenderedEventCount(wrapper)).toEqual(2)
 })
 
-it('reacts to event property changes', (done) => {
+it('reacts to event property changes', async () => {
   let wrapper = mount(COMPONENT_FOR_EVENT_MANIP)
-  expect(getFirstEventTitle(wrapper)).toBe('event0')
+  expect(getFirstEventTitle(wrapper)).toEqual('event0')
   wrapper.vm.updateTitle('another title')
-  Vue.nextTick().then(() => {
-    expect(getFirstEventTitle(wrapper)).toBe('another title')
-    done()
-  })
+
+  await nextTick()
+  expect(getFirstEventTitle(wrapper)).toEqual('another title')
 })
 
 
@@ -335,9 +367,9 @@ const EVENT_FUNC_COMPONENT = {
 it('can receive an async event function', function(done) {
   let wrapper = mount(EVENT_FUNC_COMPONENT)
   setTimeout(() => {
-    expect(getRenderedEventCount(wrapper)).toBe(2)
+    expect(getRenderedEventCount(wrapper)).toEqual(2)
     done()
-  }, 100)
+  }, 100) // more than event function's setTimeout
 })
 
 
@@ -370,15 +402,13 @@ const EVENT_COMP_PROP_COMPONENT = {
   }
 }
 
-it('reacts to computed events prop', (done) => {
+it('reacts to computed events prop', async () => {
   let wrapper = mount(EVENT_COMP_PROP_COMPONENT)
-  expect(getRenderedEventCount(wrapper)).toBe(0)
+  expect(getRenderedEventCount(wrapper)).toEqual(0)
 
   wrapper.vm.markNotFirst()
-  Vue.nextTick().then(() => {
-    expect(getRenderedEventCount(wrapper)).toBe(2)
-    done()
-  })
+  await nextTick()
+  expect(getRenderedEventCount(wrapper)).toEqual(2)
 })
 
 
@@ -411,23 +441,23 @@ const COMPONENT_WITH_SLOTS = {
   }
 }
 
-it('renders and rerenders a custom slot', (done) => {
+it('renders and rerenders a custom slot', async () => {
   let wrapper = mount(COMPONENT_WITH_SLOTS)
-  let eventEl = getRenderedEventEls(wrapper).at(0)
-  expect(eventEl.findAll('b').length).toBe(1)
+  await nextTick()
+
+  let eventEl = getRenderedEventEls(wrapper)[0]
+  expect(eventEl.findAll('i').length).toEqual(1)
 
   wrapper.vm.resetEvents()
-  Vue.nextTick().then(() => {
-    eventEl = getRenderedEventEls(wrapper).at(0)
-    expect(eventEl.findAll('b').length).toBe(1)
-    done()
-  })
+  await nextTick()
+  eventEl = getRenderedEventEls(wrapper)[0]
+  expect(eventEl.findAll('i').length).toEqual(1)
 })
 
-it('calls nested vue lifecycle methods when in custom content', (done) => {
-  let mountCalled = false
-  let beforeDestroyCalled = false
-  let destroyCalled = false
+it('calls nested vue lifecycle methods when in custom content', async () => {
+  let mountedCalled = false
+  let beforeUnmountCalled = false
+  let unmountedCalled = false
   let wrapper = mount({
     components: {
       FullCalendar,
@@ -439,13 +469,13 @@ it('calls nested vue lifecycle methods when in custom content', (done) => {
           <div>{{ event.title }}</div>
         `,
         mounted() {
-          mountCalled = true
+          mountedCalled = true
         },
-        beforeDestroy() {
-          beforeDestroyCalled = true
+        beforeUnmount() {
+          beforeUnmountCalled = true
         },
-        destroyed() {
-          destroyCalled = true
+        unmounted() {
+          unmountedCalled = true
         },
       }
     },
@@ -465,25 +495,29 @@ it('calls nested vue lifecycle methods when in custom content', (done) => {
       }
     }
   })
-  Vue.nextTick().then(() => {
-    expect(mountCalled).toBe(true)
-    wrapper.destroy()
+  await nextTick()
+  expect(mountedCalled).toEqual(true)
 
-    Vue.nextTick().then(() => {
-      expect(beforeDestroyCalled).toBe(true)
-      expect(destroyCalled).toBe(true)
-      done()
-    })
-  })
+  wrapper.unmount()
+  await nextTick()
+  expect(beforeUnmountCalled).toEqual(true)
+  expect(unmountedCalled).toEqual(true)
 })
+
+const OTHER_COMPONENT = {
+  template: '<i>other component</i>'
+}
 
 const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
   components: {
-    FullCalendar
+    FullCalendar,
+    OtherComponent: OTHER_COMPONENT
   },
   template: `
     <FullCalendar :options='calendarOptions'>
-      <template v-slot:eventContent="arg">this is an event</template>
+      <template v-slot:eventContent="arg">
+        <OtherComponent />
+      </template>
     </FullCalendar>
   `,
   data() {
@@ -496,21 +530,62 @@ const COMPONENT_USING_ROOT_OPTIONS_IN_SLOT = {
   },
 }
 
-/**
- * Ensures we can use plugins and emit events from within the slots just
- * like any other place.
- */
-it('adds slots as child components', async () => {
+it('can use component defined in higher contexts', async () => {
   let wrapper = mount(COMPONENT_USING_ROOT_OPTIONS_IN_SLOT)
-  let component = wrapper.findComponent(FullCalendar)
+  let eventEl = getRenderedEventEls(wrapper)[0]
 
-  expect(component.vm.$children.length).toBe(1);
-});
+  await nextTick()
+  expect(eventEl.findAll('i').length).toEqual(1)
+})
+
+
+it('allows plugin access for slots', async () => {
+  let helloJp = 'こんにちは、世界'
+  let i18n = createI18n({
+    locale: 'ja',
+    messages: {
+      ja: {
+        message: {
+          hello: helloJp
+        }
+      }
+    }
+  })
+  let Component = {
+    components: {
+      FullCalendar,
+    },
+    template: `
+      <FullCalendar :options='calendarOptions'>
+        <template v-slot:eventContent="arg">
+          <b>{{ $t("message.hello") }}</b>
+        </template>
+      </FullCalendar>
+    `,
+    data() {
+      return {
+        calendarOptions: {
+          ...DEFAULT_OPTIONS,
+          events: buildEvents(1)
+        }
+      }
+    },
+  }
+  let wrapper = mount(Component, {
+    global: {
+      plugins: [i18n]
+    }
+  })
+
+  await nextTick()
+  let eventEl = getRenderedEventEls(wrapper)[0]
+  expect(eventEl.text()).toEqual(helloJp)
+})
 
 
 // dynamic events
 
-const DynamicEvent = () => import('./DynamicEvent.vue')
+const DynamicEvent = defineAsyncComponent(() => import('./DynamicEvent.vue'))
 
 const COMPONENT_WITH_DYNAMIC_SLOTS = {
   components: {
@@ -520,7 +595,7 @@ const COMPONENT_WITH_DYNAMIC_SLOTS = {
   template: `
     <FullCalendar :options='calendarOptions'>
       <template v-slot:eventContent="arg">
-        <dynamic-event :event="arg.event" />
+        <DynamicEvent :event="arg.event" />
       </template>
     </FullCalendar>
   `,
@@ -535,12 +610,59 @@ const COMPONENT_WITH_DYNAMIC_SLOTS = {
 }
 
 // https://github.com/fullcalendar/fullcalendar-vue/issues/122
-xit('renders dynamically imported event', async () => {
+it('renders dynamically imported event', (done) => {
   let wrapper = mount(COMPONENT_WITH_DYNAMIC_SLOTS)
   let eventEl = getRenderedEventEls(wrapper).at(0)
-  expect(eventEl.findAll('.dynamic-event').length).toBe(1)
+
+  setTimeout(() => {
+    expect(eventEl.findAll('.dynamic-event').length).toEqual(1)
+    done()
+  }, 100)
 })
 
+
+// slots data binding
+
+it('slot rendering reacts to bound parent state', async () => {
+  let wrapper = mount({
+    components: {
+      FullCalendar,
+    },
+    template: `
+      <FullCalendar :options='calendarOptions'>
+        <template v-slot:eventContent="arg">
+          <b v-if="isBold">Event:</b>
+          <i v-else>Event:</i>
+          {{ arg.event.title }}
+        </template>
+      </FullCalendar>
+    `,
+    data() {
+      return {
+        isBold: false,
+        calendarOptions: {
+          ...DEFAULT_OPTIONS,
+          events: buildEvents(1)
+        }
+      }
+    },
+    methods: {
+      turnBold() {
+        this.isBold = true
+      }
+    }
+  })
+  let eventEl = getRenderedEventEls(wrapper).at(0)
+
+  await nextTick()
+  expect(eventEl.findAll('b').length).toEqual(0)
+  expect(eventEl.findAll('i').length).toEqual(1)
+  wrapper.vm.turnBold()
+
+  await nextTick()
+  expect(eventEl.findAll('b').length).toEqual(1)
+  expect(eventEl.findAll('i').length).toEqual(0)
+})
 
 
 // FullCalendar options utils

@@ -1,18 +1,15 @@
 {
   "compilerOptions": {
-    "jsx": "react",
-    "target": "es5",
-    "module": "es6",
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
     "rootDir": "src",
     "outDir": "dist"
   },
-  "files": [
-    "src/main.ts"
+  "include": [
+    "./src/**/*"
   ]
 }

@@ -1,4 +1,20 @@
 
+Rendering of custom events happens asynchronously
+TODO: write tests for custom templates working with binding
+
+
+v5.11.1 (2022-05-10)
+--------------------
+FIX: Cannot target calendar api with several instances (#155)
+
+
+v5.7.1 (2021-06-02)
+-------------------
+support for Vue 3
+KNOWN BUG: templates within slots do not inherit App's
+  mixins, directives, filters, and components (like #123)
+
+
 v5.4.0 (2020-11-11)
 -------------------
 

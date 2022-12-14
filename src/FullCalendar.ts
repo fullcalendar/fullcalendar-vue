@@ -1,86 +1,106 @@
-import Vue, { PropType } from 'vue'
-import { NormalizedScopedSlot } from 'vue/types/vnode'
+import { PropType, defineComponent, h, Fragment, Teleport, VNode } from 'vue'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
+import { CustomRenderingStore, CustomRendering } from '@fullcalendar/core/internal'
 import { OPTION_IS_COMPLEX } from './options'
-import { shallowCopy, mapHash } from './utils'
-import { wrapVDomGenerator, createVueContentTypePlugin } from './custom-content-type'
+import { shallowCopy } from './utils'
 
-
-interface FullCalendarInternal {
-  calendar: Calendar
-  scopedSlotOptions: { [name: string]: NormalizedScopedSlot }
-}
-
-
-const FullCalendar = Vue.extend({
-
+const FullCalendar = defineComponent({
   props: {
     options: Object as PropType<CalendarOptions>
   },
 
-  data: initData, // separate func b/c of type inferencing
+  data() {
+    return {
+      renderId: 0,
+      customRenderingMap: new Map<string, CustomRendering<any>>()
+    }
+  },
 
-  render(createElement) {
-    return createElement('div', {
+  methods: {
+    getApi(): Calendar {
+      return getSecret(this).calendar
+    },
+
+    buildOptions(suppliedOptions: CalendarOptions | undefined): CalendarOptions {
+      return {
+        ...suppliedOptions,
+        customRenderingMetaMap: this.$slots,
+        handleCustomRendering: getSecret(this).handleCustomRendering,
+      }
+    },
+  },
+
+  render() {
+    const teleportNodes: VNode[] = []
+
+    for (const customRendering of this.customRenderingMap.values()) {
+      teleportNodes.push(
+        h(Teleport, {
+          key: customRendering.id,
+          to: customRendering.containerEl
+        }, customRendering.generatorMeta( // a slot-render-function
+          customRendering.renderProps
+        ))
+      )
+    }
+
+    return h('div', {
       // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
       attrs: { 'data-fc-render-id': this.renderId }
-    })
+    }, h(Fragment, teleportNodes)) // for containing Teleport keys
   },
 
   mounted() {
-    let internal = this.$options as FullCalendarInternal
-    internal.scopedSlotOptions = mapHash(this.$scopedSlots, wrapVDomGenerator) // needed for buildOptions
+    const customRenderingStore = new CustomRenderingStore<any>()
+    getSecret(this).handleCustomRendering = customRenderingStore.handle.bind(customRenderingStore)
 
-    let calendar = new Calendar(this.$el as HTMLElement, this.buildOptions(this.options, this))
-    internal.calendar = calendar
+    const calendarOptions = this.buildOptions(this.options)
+    const calendar = new Calendar(this.$el as HTMLElement, calendarOptions)
+    getSecret(this).calendar = calendar
+
     calendar.render()
-  },
-
-  methods: { // separate funcs b/c of type inferencing
-    getApi,
-    buildOptions,
+    customRenderingStore.subscribe((customRenderingMap) => {
+      this.customRenderingMap = customRenderingMap // likely same reference, so won't rerender
+      this.renderId++ // force rerender
+      getSecret(this).needCustomRenderingResize = true
+    })
   },
 
   beforeUpdate() {
     this.getApi().resumeRendering() // the watcher handlers paused it
   },
 
-  beforeDestroy() {
+  updated() {
+    if (getSecret(this).needCustomRenderingResize) {
+      getSecret(this).needCustomRenderingResize = false
+      this.getApi().updateSize()
+    }
+  },
+
+  beforeUnmount() {
     this.getApi().destroy()
   },
 
   watch: buildWatchers()
 })
 
+export default FullCalendar
 
-function initData() {
-  return {
-    renderId: 0
-  }
-}
-
-
-function buildOptions(this: { $options: any }, suppliedOptions: CalendarOptions, parent: Vue): CalendarOptions {
-  let internal = this.$options as FullCalendarInternal
-  suppliedOptions = suppliedOptions || {}
-  return {
-    ...internal.scopedSlotOptions,
-    ...suppliedOptions, // spread will pull out the values from the options getter functions
-    plugins: (suppliedOptions.plugins || []).concat([
-      createVueContentTypePlugin(parent)
-    ])
-  }
-}
-
-
-function getApi(this: { $options: any }) {
-  let internal = this.$options as FullCalendarInternal
-  return internal.calendar
-}
-
+// Internals
 
 type FullCalendarInstance = InstanceType<typeof FullCalendar>
 
+interface FullCalendarSecret {
+  calendar: Calendar
+  handleCustomRendering: (customRendering: CustomRendering<any>) => void
+  needCustomRenderingResize?: boolean
+}
+
+// storing internal state:
+// https://github.com/vuejs/vue/issues/1988#issuecomment-163013818
+function getSecret(inst: FullCalendarInstance): FullCalendarSecret {
+  return inst as any as FullCalendarSecret
+}
 
 function buildWatchers() {
 
@@ -93,7 +113,10 @@ function buildWatchers() {
       handler(this: FullCalendarInstance, options: CalendarOptions) {
         let calendar = this.getApi()
         calendar.pauseRendering()
-        calendar.resetOptions(this.buildOptions(options, this))
+
+        let calendarOptions = this.buildOptions(options)
+        calendar.resetOptions(calendarOptions)
+
         this.renderId++ // will queue a rerender
       }
     }
@@ -125,6 +148,3 @@ function buildWatchers() {
 
   return watchers
 }
-
-
-export default FullCalendar
