@@ -62,11 +62,19 @@ const FullCalendar = defineComponent({
     customRenderingStore.subscribe((customRenderingMap) => {
       this.customRenderingMap = customRenderingMap // likely same reference, so won't rerender
       this.renderId++ // force rerender
+      getSecret(this).needCustomRenderingResize = true
     })
   },
 
   beforeUpdate() {
     this.getApi().resumeRendering() // the watcher handlers paused it
+  },
+
+  updated() {
+    if (getSecret(this).needCustomRenderingResize) {
+      getSecret(this).needCustomRenderingResize = false
+      this.getApi().updateSize()
+    }
   },
 
   beforeUnmount() {
@@ -85,6 +93,7 @@ type FullCalendarInstance = InstanceType<typeof FullCalendar>
 interface FullCalendarSecret {
   calendar: Calendar
   handleCustomRendering: (customRendering: CustomRendering<any>) => void
+  needCustomRenderingResize?: boolean
 }
 
 // storing internal state:
