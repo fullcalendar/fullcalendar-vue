@@ -1,16 +1,81 @@
 
-# FullCalendar Vue Component [![Build Status](https://travis-ci.com/fullcalendar/fullcalendar-vue.svg?branch=master)](https://travis-ci.com/fullcalendar/fullcalendar-vue)
+# FullCalendar Vue 3 Component
 
-This project provides an official Vue component for FullCalendar, with all the same setting.
+The official [Vue 3](https://vuejs.org/) component for [FullCalendar](https://fullcalendar.io)
 
-- [FullCalendar Vue Component Docs](https://fullcalendar.io/docs/vue)
-- [Example Project](https://github.com/fullcalendar/fullcalendar-example-projects/tree/master/vue)
-- [Contributor Guide](CONTRIBUTORS.md)
+## Installation
 
-This package supports Vue 3. It can be installed like this:
+Install the Vue 3 connector, the core package, and any plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
-```
-npm install @fullcalendar/vue3
+```sh
+npm install @fullcalendar/vue3 @fullcalendar/core @fullcalendar/daygrid
 ```
 
-For view Vue 2, visit the [master branch](https://github.com/fullcalendar/fullcalendar-vue).
+## Usage
+
+Render a `FullCalendar` component, supplying an [options](https://fullcalendar.io/docs#toc) object:
+
+```vue
+<script>
+import FullCalendar from '@fullcalendar/vue3'
+import dayGridPlugin from '@fullcalendar/daygrid'
+
+export default {
+  components: {
+    FullCalendar // make the <FullCalendar> tag available
+  },
+  data: function() {
+    return {
+      calendarOptions: {
+        plugins: [dayGridPlugin],
+        initialView: 'dayGridMonth',
+        weekends: false,
+        events: [
+          { title: 'Meeting', start: new Date() }
+        ]
+      }
+    }
+  }
+}
+</script>
+
+<template>
+  <h1>Demo App</h1>
+  <FullCalendar :options='calendarOptions' />
+</template>
+```
+
+You can even supply [named-slot](https://vuejs.org/guide/components/slots.html#named-slots) templates:
+
+```vue
+<template>
+  <h1>Demo App</h1>
+  <FullCalendar :options='calendarOptions'>
+    <template v-slot:eventContent='arg'>
+      <b>{{ arg.timeText }}</b>
+      <i>{{ arg.event.title }}</i>
+    </template>
+  </FullCalendar>
+</template>
+```
+
+## Links
+
+- [Documentation](https://fullcalendar.io/docs/vue)
+- [Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/vue3)
+
+## Development
+
+You must install this repo with [PNPM](https://pnpm.io/):
+
+```
+pnpm install
+```
+
+Available scripts (via `pnpm run <script>`):
+
+- `build` - build production-ready dist files
+- `dev` - build & watch development dist files
+- `test` - test headlessly
+- `test:dev` - test interactively
+- `clean`
