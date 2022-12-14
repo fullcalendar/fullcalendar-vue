@@ -4,8 +4,8 @@ importers:
 
   .:
     specifiers:
-      '@fullcalendar/core': 6.0.0-beta.4
-      '@fullcalendar/daygrid': 6.0.0-beta.4
+      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/daygrid': ~6.0.0
       '@vitejs/plugin-vue': ^3.2.0
       '@vue/test-utils': next
       concurrently: ^5.3.0
