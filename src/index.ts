@@ -1,3 +1,3 @@
-import FullCalendarComponent from './FullCalendar'
+import FullCalendarComponent from './FullCalendar.js'
 
 export default FullCalendarComponent

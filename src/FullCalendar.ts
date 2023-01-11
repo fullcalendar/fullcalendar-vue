@@ -1,8 +1,8 @@
 import { PropType, defineComponent, h, Fragment, Teleport, VNode } from 'vue'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { CustomRenderingStore, CustomRendering } from '@fullcalendar/core/internal'
-import { OPTION_IS_COMPLEX } from './options'
-import { shallowCopy } from './utils'
+import { OPTION_IS_COMPLEX } from './options.js'
+import { shallowCopy } from './utils.js'
 
 const FullCalendar = defineComponent({
   props: {
