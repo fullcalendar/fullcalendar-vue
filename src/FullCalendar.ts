@@ -2,7 +2,6 @@ import { PropType, defineComponent, h, Fragment, Teleport, VNode } from 'vue'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { CustomRenderingStore, CustomRendering } from '@fullcalendar/core/internal'
 import { OPTION_IS_COMPLEX } from './options.js'
-import { shallowCopy } from './utils.js'
 
 const FullCalendar = defineComponent({
   props: {
@@ -135,10 +134,8 @@ function buildWatchers() {
           let calendar = this.getApi()
           calendar.pauseRendering()
           calendar.resetOptions({
-            // the only reason we shallow-copy is to trick FC into knowing there's a nested change.
-            // TODO: future versions of FC will more gracefully handle event option-changes that are same-reference.
-            [complexOptionName]: shallowCopy(val)
-          }, true)
+            [complexOptionName]: val
+          }, [complexOptionName])
 
           this.renderId++ // will queue a rerender
         }
