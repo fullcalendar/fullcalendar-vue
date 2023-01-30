@@ -33,13 +33,15 @@ const FullCalendar = defineComponent({
     const teleportNodes: VNode[] = []
 
     for (const customRendering of this.customRenderingMap.values()) {
+      const innerContent = typeof customRendering.generatorMeta === 'function' ?
+        customRendering.generatorMeta(customRendering.renderProps) : // vue-normalized slot function
+        customRendering.generatorMeta // probably a vue JSX node returned from content-inject func
+
       teleportNodes.push(
         h(Teleport, {
           key: customRendering.id,
           to: customRendering.containerEl
-        }, customRendering.generatorMeta( // a slot-render-function
-          customRendering.renderProps
-        ))
+        }, innerContent)
       )
     }
 

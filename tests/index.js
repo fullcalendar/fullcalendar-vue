@@ -1,4 +1,4 @@
-import { nextTick, defineAsyncComponent } from 'vue'
+import { nextTick, defineAsyncComponent, h } from 'vue'
 import { createI18n } from 'vue-i18n'
 import { mount as _mount } from '@vue/test-utils'
 import FullCalendar from '../dist/index.js'
@@ -503,6 +503,43 @@ it('calls nested vue lifecycle methods when in custom content', async () => {
   expect(beforeUnmountCalled).toEqual(true)
   expect(unmountedCalled).toEqual(true)
 })
+
+// component with vue slots AND custom render func
+
+const COMPONENT_WITH_SLOTS2 = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <FullCalendar :options='calendarOptions'>
+      <template v-slot:eventContent="arg">
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </template>
+    </FullCalendar>
+  `,
+  data() {
+    return {
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        events: buildEvents(1),
+        eventContent: (eventArg) => {
+          return h('i', {}, eventArg.event.title)
+        }
+      }
+    }
+  }
+}
+
+it('render function can return jsx', async () => {
+  let wrapper = mount(COMPONENT_WITH_SLOTS2)
+  await nextTick()
+
+  let eventEl = getRenderedEventEls(wrapper)[0]
+  expect(eventEl.findAll('i').length).toEqual(1)
+})
+
+//
 
 const OTHER_COMPONENT = {
   template: '<i>other component</i>'
