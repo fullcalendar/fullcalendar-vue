@@ -1,5 +1,7 @@
+import pkgJson from './package.json'
 
-const EXTERNAL_GLOBALS = {
+const [ourPkgNames, otherPkgNames] = getDepNames()
+const externalGlobals = {
   vue: 'Vue',
   '@fullcalendar/core': 'FullCalendar',
   '@fullcalendar/core/internal': 'FullCalendar.Internal'
@@ -14,7 +16,10 @@ export default [
       format: 'cjs',
       exports: 'named'
     },
-    external: Object.keys(EXTERNAL_GLOBALS)
+    plugins: [
+      externalizePkgsPlugin(ourPkgNames, '.cjs'),
+      externalizePkgsPlugin(otherPkgNames),
+    ],
   },
 
   // IIFE
@@ -25,8 +30,60 @@ export default [
       format: 'iife',
       name: 'FullCalendar.Vue',
       exports: 'named',
-      globals: EXTERNAL_GLOBALS
+      globals: externalGlobals
     },
-    external: Object.keys(EXTERNAL_GLOBALS)
+    plugins: [
+      externalizePkgsPlugin(ourPkgNames),
+      externalizePkgsPlugin(otherPkgNames),
+    ],
   },
 ]
+
+// plugins & utils
+// -------------------------------------------------------------------------------------------------
+
+function getDepNames() {
+  const pkgNames = Object.keys({
+    ...pkgJson.dependencies,
+    ...pkgJson.peerDependencies,
+    ...pkgJson.optionalDependencies,
+  })
+  const ourPkgNames = []
+  const otherPkgNames = []
+
+  for (const pkgName of pkgNames) {
+    if (pkgName.match(/^@fullcalendar\//)) {
+      ourPkgNames.push(pkgName)
+    } else {
+      otherPkgNames.push(pkgName)
+    }
+  }
+
+  return [ourPkgNames, otherPkgNames]
+}
+
+function externalizePkgsPlugin(pkgNames, forceExtension) {
+  return {
+    name: 'externalize-pkgs',
+    resolveId(importId) {
+      if (!isImportRelative(importId)) {
+        for (const pkgName of pkgNames) {
+          if (importId === pkgName || importId.startsWith(pkgName + '/')) {
+            if (forceExtension) {
+              if (importId === pkgName) {
+                importId += '/index' + forceExtension
+              } else {
+                importId += forceExtension
+              }
+            }
+            return { id: importId, external: true }
+          }
+        }
+      }
+    },
+  }
+}
+
+function isImportRelative(importId) {
+  return importId.startsWith('./') || importId.startsWith('../')
+}
