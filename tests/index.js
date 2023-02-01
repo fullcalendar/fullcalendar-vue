@@ -539,6 +539,36 @@ it('render function can return jsx', async () => {
   expect(eventEl.findAll('i').length).toEqual(1)
 })
 
+// component with vue slots AND custom render func that returns vanilla-js-style objects
+
+const COMPONENT_WITH_SLOTS3 = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <FullCalendar :options='calendarOptions'></FullCalendar>
+  `,
+  data() {
+    return {
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        events: buildEvents(1),
+        eventContent: (eventArg) => {
+          return { html: `<i>${eventArg.event.title}</i>` }
+        }
+      }
+    }
+  }
+}
+
+it('render function can returns vanilla-js-style objects', async () => {
+  let wrapper = mount(COMPONENT_WITH_SLOTS3)
+  await nextTick()
+
+  let eventEl = getRenderedEventEls(wrapper)[0]
+  expect(eventEl.findAll('i').length).toEqual(1)
+})
+
 //
 
 const OTHER_COMPONENT = {
