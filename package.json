@@ -41,7 +41,7 @@
     "vue-i18n": "next"
   },
   "scripts": {
-    "build": "pnpm run tsc && pnpm run rollup && pnpm run vite && pnpm run minify && pnpm run meta",
+    "build": "pnpm run tsc && pnpm run rollup && pnpm run vite && pnpm run minify",
     "dev": "pnpm run tsc && concurrently 'npm:tsc:dev' 'npm:rollup:dev' 'npm:vite:dev'",
     "clean": "rm -rf dist tests/dist",
     "tsc": "tsc -p .",
@@ -53,7 +53,6 @@
     "test": "karma start karma.config.cjs --browsers ChromeHeadless --single-run --no-auto-watch",
     "test:dev": "karma start karma.config.cjs",
     "minify": "terser --compress --mangle --comments false --output dist/index.global.min.js -- dist/index.global.js",
-    "meta": "mkdir -p dist && cp README.md LICENSE.txt dist",
     "ci": "pnpm run clean && pnpm run build && pnpm run test"
   },
   "type": "module",
