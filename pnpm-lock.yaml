@@ -4,8 +4,8 @@ importers:
 
   .:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
-      '@fullcalendar/daygrid': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
+      '@fullcalendar/daygrid': ~6.1.1
       '@vitejs/plugin-vue': ^3.2.0
       '@vue/test-utils': next
       concurrently: ^5.3.0
@@ -22,8 +22,8 @@ importers:
       vue: ^3.2.41
       vue-i18n: next
     devDependencies:
-      '@fullcalendar/core': link:../../standard/packages/core/dist
-      '@fullcalendar/daygrid': link:../../standard/packages/daygrid/dist
+      '@fullcalendar/core': 6.1.1
+      '@fullcalendar/daygrid': 6.1.1_@fullcalendar+core@6.1.1
       '@vitejs/plugin-vue': 3.2.0_vite@3.2.4+vue@3.2.45
       '@vue/test-utils': 2.0.0-rc.18_vue@3.2.45
       concurrently: 5.3.0
@@ -38,7 +38,15 @@ importers:
       typescript: 4.9.3
       vite: 3.2.4_terser@5.15.1
       vue: 3.2.45
-      vue-i18n: 9.3.0-beta.10_vue@3.2.45
+      vue-i18n: 9.3.0-beta.16_vue@3.2.45
+
+  ../..:
+    specifiers:
+      '@fullcalendar/standard-scripts': '*'
+      '@fullcalendar/workspace-scripts': '*'
+    devDependencies:
+      '@fullcalendar/standard-scripts': 0.0.0
+      '@fullcalendar/workspace-scripts': 0.0.0
 
 packages:
 
@@ -92,42 +100,64 @@ packages:
     dev: true
     optional: true
 
-  /@intlify/core-base/9.3.0-beta.10:
-    resolution: {integrity: sha512-WJhjzR6fxoSSdOnQHEAqEAQiXsF38YXbw5asveAirjE2H+75CLZyNwEXaJzNBylrDgTrfWjoAyBuBde7TaooRA==}
-    engines: {node: '>= 14'}
+  /@fullcalendar/core/6.1.1:
+    resolution: {integrity: sha512-im5Dbgi/d7Q8DEUFuLaInL/TG+CrRH+zePq58LrKyFFoJKkx2CP+OS29ijVBnUiGyzCWtZ9lMIzLmWDzIMnJ0A==}
     dependencies:
-      '@intlify/devtools-if': 9.3.0-beta.10
-      '@intlify/message-compiler': 9.3.0-beta.10
-      '@intlify/shared': 9.3.0-beta.10
-      '@intlify/vue-devtools': 9.3.0-beta.10
+      preact: 10.11.3
     dev: true
 
-  /@intlify/devtools-if/9.3.0-beta.10:
-    resolution: {integrity: sha512-9kRiLK57MDogzjPElQhvd+K/s61MZE0TCHJAD+5zw+e3Vxie+xBCSa27mJB3jBuHC/QyMqIdrfyM6rmPtm22Rg==}
-    engines: {node: '>= 14'}
+  /@fullcalendar/daygrid/6.1.1_@fullcalendar+core@6.1.1:
+    resolution: {integrity: sha512-/yIrN3IZSdob/UvAaPqWzBqyaQf3+DdcGG7xocVpmt2MudFbTpstF+ffPdBAQWqoWoB18Q92s6fn9teva5nDwA==}
+    peerDependencies:
+      '@fullcalendar/core': ~6.1.1
     dependencies:
-      '@intlify/shared': 9.3.0-beta.10
+      '@fullcalendar/core': 6.1.1
     dev: true
 
-  /@intlify/message-compiler/9.3.0-beta.10:
-    resolution: {integrity: sha512-RoOC6yceOykLRhN0NlbkNOBUx1el6iphx3W8NfOx3jHVNtfT1FYokx14/5sU3F1F0uxeG4sp6q+ppKvaF8o+ww==}
+  /@fullcalendar/standard-scripts/0.0.0:
+    resolution: {integrity: sha512-vXE/ZYb/7ZhMgWLjfGa/mxUZ/VZlzYTy/AKlOpVk8CK0J7iZyoe6mzp4WJfzSKpk39HkNbeIPaKjTxEt2jlzHw==}
+    dev: true
+
+  /@fullcalendar/workspace-scripts/0.0.0:
+    resolution: {integrity: sha512-Jg5oNLF8M84uAEa3g1sDrVbE2ISO3JbOyxdPU27h07hFeqWRYfprR7gz6tOYwKAGFCeRObQa/X2HVdIhPIKW9A==}
+    dev: true
+
+  /@intlify/core-base/9.3.0-beta.16:
+    resolution: {integrity: sha512-BoAxVoPIJoPKCCMdsuNXKaaJxvetvHrW2KA43IpkwgPd2/w6zPebh/+v8e4zpXKjFVSgcF97zP87KeVcM/Lxwg==}
     engines: {node: '>= 14'}
     dependencies:
-      '@intlify/shared': 9.3.0-beta.10
+      '@intlify/devtools-if': 9.3.0-beta.16
+      '@intlify/message-compiler': 9.3.0-beta.16
+      '@intlify/shared': 9.3.0-beta.16
+      '@intlify/vue-devtools': 9.3.0-beta.16
+    dev: true
+
+  /@intlify/devtools-if/9.3.0-beta.16:
+    resolution: {integrity: sha512-9WXn8YMAnL/DHdoWqCy6yLTXcLFxd8eXB9UNsViQA5JJV7neR+yahr+23X1wP0prhG338MruxAu65khRf+AJCw==}
+    engines: {node: '>= 14'}
+    dependencies:
+      '@intlify/shared': 9.3.0-beta.16
+    dev: true
+
+  /@intlify/message-compiler/9.3.0-beta.16:
+    resolution: {integrity: sha512-CGQI3xRcs1ET75eDQ0DUy3MRYOqTauRIIgaMoISKiF83gqRWg93FqN8lGMKcpBqaF4tI0JhsfosCaGiBL9+dnw==}
+    engines: {node: '>= 14'}
+    dependencies:
+      '@intlify/shared': 9.3.0-beta.16
       source-map: 0.6.1
     dev: true
 
-  /@intlify/shared/9.3.0-beta.10:
-    resolution: {integrity: sha512-h93uAanbAt/XgjDHclrVB7xix6r7Uz11wx0iGNOCdHP7aA2LCJjUT3uNbekJjjbo+Fl5jzTSJZdm2SexzoqhRA==}
+  /@intlify/shared/9.3.0-beta.16:
+    resolution: {integrity: sha512-kXbm4svALe3lX+EjdJxfnabOphqS4yQ1Ge/iIlR8tvUiYRCoNz3hig1M4336iY++Dfx5ytEQJPNjIcknNIuvig==}
     engines: {node: '>= 14'}
     dev: true
 
-  /@intlify/vue-devtools/9.3.0-beta.10:
-    resolution: {integrity: sha512-SSA2zk+Mn+idJHaIaKeGmuvY3EwxDUUvniecZ7S66KkrUomMDyEq/+WJYlF3+aslLL7vxnRVN2y+sXB+0NI2WQ==}
+  /@intlify/vue-devtools/9.3.0-beta.16:
+    resolution: {integrity: sha512-rQ/jSW0gBciYLBBi+XN65r80B59Ypege9oqUi+EZ2QpOaK54wDcy1xq9w6Zbj6WpY1qgf34KtYawKIF10mMr6w==}
     engines: {node: '>= 14'}
     dependencies:
-      '@intlify/core-base': 9.3.0-beta.10
-      '@intlify/shared': 9.3.0-beta.10
+      '@intlify/core-base': 9.3.0-beta.16
+      '@intlify/shared': 9.3.0-beta.16
     dev: true
 
   /@jridgewell/gen-mapping/0.3.2:
@@ -1421,6 +1451,10 @@ packages:
       source-map-js: 1.0.2
     dev: true
 
+  /preact/10.11.3:
+    resolution: {integrity: sha512-eY93IVpod/zG3uMF22Unl8h9KkrcKIRs2EGar8hwLZZDU1lkjph303V9HZBwufh2s736U6VXuhD109LYqPoffg==}
+    dev: true
+
   /qjobs/1.2.0:
     resolution: {integrity: sha512-8YOJEHtxpySA3fFDyCRxA+UUV+fA+rTWnuWvylOK/NCjhY+b4ocCtmu8TtsWb+mYeU+GCHf/S66KZF/AsteKHg==}
     engines: {node: '>=0.9'}
@@ -1838,15 +1872,15 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /vue-i18n/9.3.0-beta.10_vue@3.2.45:
-    resolution: {integrity: sha512-w8ANcayAbF7ZxsSdnv0KwNViel1j6FqRJH3If+2gZgvERMOrKIz6oFQEQwEyiDl3W1DLITMvbgBQpwfUo7YU1Q==}
+  /vue-i18n/9.3.0-beta.16_vue@3.2.45:
+    resolution: {integrity: sha512-huhBeRB0SEvv2gIgCS7Zo06nb8AAhbPQCoB/vwDfbDNs8F+giv9QCmhEed+TkLTih/54JGnXkxN6tw1VZqVY/w==}
     engines: {node: '>= 14'}
     peerDependencies:
       vue: ^3.0.0
     dependencies:
-      '@intlify/core-base': 9.3.0-beta.10
-      '@intlify/shared': 9.3.0-beta.10
-      '@intlify/vue-devtools': 9.3.0-beta.10
+      '@intlify/core-base': 9.3.0-beta.16
+      '@intlify/shared': 9.3.0-beta.16
+      '@intlify/vue-devtools': 9.3.0-beta.16
       '@vue/devtools-api': 6.4.5
       vue: 3.2.45
     dev: true
