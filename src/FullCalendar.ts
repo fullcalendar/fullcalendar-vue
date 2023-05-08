@@ -30,25 +30,21 @@ const FullCalendar = defineComponent({
   },
 
   render() {
-    const teleportNodes: VNode[] = []
+    const customRenderingNodes: VNode[] = []
 
     for (const customRendering of this.customRenderingMap.values()) {
-      const innerContent = typeof customRendering.generatorMeta === 'function' ?
-        customRendering.generatorMeta(customRendering.renderProps) : // vue-normalized slot function
-        customRendering.generatorMeta // probably a vue JSX node returned from content-inject func
-
-      teleportNodes.push(
-        h(Teleport, {
+      customRenderingNodes.push(
+        h(CustomRenderingComponent, {
           key: customRendering.id,
-          to: customRendering.containerEl
-        }, innerContent)
+          customRendering,
+        })
       )
     }
 
     return h('div', {
       // when renderId is changed, Vue will trigger a real-DOM async rerender, calling beforeUpdate/updated
       attrs: { 'data-fc-render-id': this.renderId }
-    }, h(Fragment, teleportNodes)) // for containing Teleport keys
+    }, h(Fragment, customRenderingNodes)) // for containing CustomRendering keys
   },
 
   mounted() {
@@ -87,7 +83,26 @@ const FullCalendar = defineComponent({
 
 export default FullCalendar
 
+// Custom Rendering
+// -------------------------------------------------------------------------------------------------
+
+const CustomRenderingComponent = defineComponent({
+  props: {
+    customRendering: Object as PropType<CustomRendering<any>>
+  },
+
+  render() {
+    const customRendering = this.customRendering!
+    const innerContent = typeof customRendering.generatorMeta === 'function' ?
+      customRendering.generatorMeta(customRendering.renderProps) : // vue-normalized slot function
+      customRendering.generatorMeta // probably a vue JSX node returned from content-inject func
+
+    return h(Teleport, { to: customRendering.containerEl }, innerContent)
+  }
+})
+
 // Internals
+// -------------------------------------------------------------------------------------------------
 
 type FullCalendarInstance = InstanceType<typeof FullCalendar>
 
@@ -149,6 +164,7 @@ function buildWatchers() {
 }
 
 // General Utils
+// -------------------------------------------------------------------------------------------------
 
 function kebabToCamelKeys<V>(map: { [key: string]: V }): { [key: string]: V } {
   const newMap: { [key: string]: V } = {}
