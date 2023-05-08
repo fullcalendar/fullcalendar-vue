@@ -4,9 +4,10 @@ import { mount as _mount } from '@vue/test-utils'
 import FullCalendar from '../dist/index.js'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
+const INITIAL_DATE = '2019-05-15'
 
 const DEFAULT_OPTIONS = {
-  initialDate: '2019-05-15',
+  initialDate: INITIAL_DATE,
   initialView: 'dayGridMonth',
   timeZone: 'UTC',
   plugins: [ dayGridPlugin ]
@@ -88,8 +89,8 @@ it('renders events with Date objects', async () => { // necessary to test copy u
       options: {
         ...DEFAULT_OPTIONS,
         events: [
-          { title: 'event', start: new Date(DEFAULT_OPTIONS.initialDate) },
-          { title: 'event', start: new Date(DEFAULT_OPTIONS.initialDate) }
+          { title: 'event', start: new Date(INITIAL_DATE) },
+          { title: 'event', start: new Date(INITIAL_DATE) }
         ]
       }
     }
@@ -504,6 +505,78 @@ it('calls nested vue lifecycle methods when in custom content', async () => {
   expect(unmountedCalled).toEqual(true)
 })
 
+// component with eventContent (two multi-day event)
+
+const COMPONENT_WITH_SLOTS_MULTIDAY_EVENTS = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <FullCalendar :options='calendarOptions'>
+      <template v-slot:eventContent="arg">
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </template>
+    </FullCalendar>
+  `,
+  data() {
+    return {
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        events: [
+          { title: 'all-day 1', start: INITIAL_DATE, end: '2019-05-18' }, // 3 day
+          { title: 'all-day 2', start: INITIAL_DATE, end: '2019-05-17' }, // 2 day
+        ]
+      }
+    }
+  }
+}
+
+it('renders two multi-day events positioned correctly', async () => {
+  let wrapper = mount(COMPONENT_WITH_SLOTS_MULTIDAY_EVENTS)
+  await nextTick()
+
+  let eventEls = getRenderedEventEls(wrapper).map((wrapper) => wrapper.element)
+  expect(eventEls.length).toBe(2)
+  expect(anyElsIntersect(eventEls)).toBe(false)
+})
+
+// component with eventContent (multi-day & timed)
+
+const COMPONENT_WITH_SLOTS_MULTIDAY_AND_TIMED = {
+  components: {
+    FullCalendar
+  },
+  template: `
+    <FullCalendar :options='calendarOptions'>
+      <template v-slot:eventContent="arg">
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </template>
+    </FullCalendar>
+  `,
+  data() {
+    return {
+      calendarOptions: {
+        ...DEFAULT_OPTIONS,
+        events: [
+          { title: 'all-day 1', start: INITIAL_DATE, end: '2019-05-18' }, // 3 day
+          { title: 'all-day 2', start: INITIAL_DATE + 'T12:00:00' },
+        ]
+      }
+    }
+  }
+}
+
+it('renders a multi-day and timed event positioned correctly', async () => {
+  let wrapper = mount(COMPONENT_WITH_SLOTS_MULTIDAY_AND_TIMED)
+  await nextTick()
+
+  let eventEls = getRenderedEventEls(wrapper).map((wrapper) => wrapper.element)
+  expect(eventEls.length).toBe(2)
+  expect(anyElsIntersect(eventEls)).toBe(false)
+})
+
 // component with vue slots AND custom render func
 
 const COMPONENT_WITH_SLOTS2 = {
@@ -745,7 +818,7 @@ function buildEvents(length) {
 }
 
 function buildEvent(i) {
-  return { title: 'event' + i, start: DEFAULT_OPTIONS.initialDate }
+  return { title: 'event' + i, start: INITIAL_DATE }
 }
 
 function buildToolbar() {
@@ -777,4 +850,25 @@ function getRenderedEventCount(wrapper) {
 
 function getFirstEventTitle(wrapper) {
   return wrapper.find('.fc-event-title').text()
+}
+
+
+// DOM geometry utils
+
+function anyElsIntersect(els) {
+  let rects = els.map((el) => el.getBoundingClientRect())
+
+  for (let i = 0; i < rects.length; i += 1) {
+    for (let j = i + 1; j < rects.length; j += 1) {
+      if (rectsIntersect(rects[i], rects[j])) {
+        return [els[i], els[j]]
+      }
+    }
+  }
+
+  return false
+}
+
+function rectsIntersect(rect0, rect1) {
+  return rect0.left < rect1.right && rect0.right > rect1.left && rect0.top < rect1.bottom && rect0.bottom > rect1.top
 }
