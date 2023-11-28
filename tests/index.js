@@ -642,6 +642,48 @@ it('render function can returns vanilla-js-style objects', async () => {
   expect(eventEl.findAll('i').length).toEqual(1)
 })
 
+// event rendering and did-mount hooks
+
+;['auto', 'background'].forEach((eventDisplay) => {
+  it(`during ${eventDisplay} custom event rendering, receives el`, async () => {
+    let eventDidMountCalled = false
+
+    mount({
+      components: {
+        FullCalendar
+      },
+      template: `
+        <FullCalendar :options='calendarOptions'>
+          <template #eventContent='arg'>
+            <i>{{ arg.event.title }}</i>
+          </template>
+        </FullCalendar>
+      `,
+      data() {
+        return {
+          calendarOptions: {
+            ...DEFAULT_OPTIONS,
+            events: [
+              {
+                title: 'Event 1',
+                start: INITIAL_DATE,
+                display: eventDisplay,
+              },
+            ],
+            eventDidMount: (eventInfo) => {
+              expect(eventInfo.el).toBeTruthy()
+              eventDidMountCalled = true
+            }
+          }
+        }
+      }
+    })
+
+    await nextTick()
+    expect(eventDidMountCalled).toBe(true)
+  })
+})
+
 //
 
 const OTHER_COMPONENT = {
