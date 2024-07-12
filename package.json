@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/vue3",
-  "version": "6.1.14",
+  "version": "6.1.15",
   "title": "FullCalendar Vue 3 Component",
   "description": "The official Vue 3 component for FullCalendar",
   "keywords": [
@@ -18,12 +18,12 @@
     "url": "https://github.com/fullcalendar/fullcalendar-vue.git"
   },
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.14",
+    "@fullcalendar/core": "~6.1.15",
     "vue": "^3.0.11"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.14",
-    "@fullcalendar/daygrid": "~6.1.14",
+    "@fullcalendar/core": "~6.1.15",
+    "@fullcalendar/daygrid": "~6.1.15",
     "@vitejs/plugin-vue": "^3.2.0",
     "@vue/test-utils": "next",
     "concurrently": "^5.3.0",
