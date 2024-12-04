@@ -114,8 +114,8 @@ interface FullCalendarSecret {
 
 // storing internal state:
 // https://github.com/vuejs/vue/issues/1988#issuecomment-163013818
-function getSecret(inst: FullCalendarInstance): FullCalendarSecret {
-  return inst as any as FullCalendarSecret
+function getSecret(inst: any): FullCalendarSecret {
+  return inst as FullCalendarSecret
 }
 
 function buildWatchers() {
