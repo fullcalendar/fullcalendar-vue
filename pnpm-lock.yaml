@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^3.2.0
-        version: 3.2.0(vite@3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.89.2)(stylus@0.59.0)(terser@5.36.0))(vue@3.5.13(typescript@4.8.4))
+        version: 3.2.0(vite@3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.93.2)(stylus@0.59.0)(terser@5.36.0))(vue@3.5.13(typescript@4.8.4))
       '@vue/test-utils':
         specifier: next
         version: 2.4.0-alpha.2(@vue/compiler-dom@3.5.13)(@vue/server-renderer@3.5.13(vue@3.5.13(typescript@4.8.4)))(vue@3.5.13(typescript@4.8.4))
@@ -46,7 +46,7 @@ importers:
         version: 4.8.4
       vite:
         specifier: ^3.2.3
-        version: 3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.89.2)(stylus@0.59.0)(terser@5.36.0)
+        version: 3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.93.2)(stylus@0.59.0)(terser@5.36.0)
       vue:
         specifier: ^3.2.41
         version: 3.5.13(typescript@4.8.4)
@@ -852,6 +852,10 @@ packages:
     resolution: {integrity: sha512-z0vtXSwucUJtANQWldhbtbt7BnL0vxiFjIdDLAatwhDYty2bad6s+rijD6Ri4YuYJubLzIJLUidCh09e1djEVQ==}
     engines: {node: '>= 0.4'}
 
+  is-core-module@2.16.1:
+    resolution: {integrity: sha512-UfoeMA6fIJ8wTYFEUjelnaGI67v6+N7qXJEvQuIGa99l4xsCruSYOVSQ0uPANn4dAzm8lkYPaKLrrijLq7x23w==}
+    engines: {node: '>= 0.4'}
+
   is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
@@ -1145,6 +1149,11 @@ packages:
   requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
 
+  resolve@1.22.10:
+    resolution: {integrity: sha512-NPRy+/ncIMeDlTAsuqwKIiferiawhefFJtkNSW0qZJEqMEb+qBt/77B/jGeeek+F0uOeN05CDa6HXbbIgtVX4w==}
+    engines: {node: '>= 0.4'}
+    hasBin: true
+
   resolve@1.22.8:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}
     hasBin: true
@@ -1179,8 +1188,8 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sass@1.89.2:
-    resolution: {integrity: sha512-xCmtksBKd/jdJ9Bt9p7nPKiuqrlBMBuuGkQlkhZjjQk3Ty48lv93k5Dq6OPkKt4XwxDJ7tvlfrTa1MPA9bf+QA==}
+  sass@1.93.2:
+    resolution: {integrity: sha512-t+YPtOQHpGW1QWsh1CHQ5cPIr9lbbGZLZnbihP/D/qZj/yuV68m8qarcV17nvkOX81BCrvzAlq2klCQFZghyTg==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -1638,9 +1647,9 @@ snapshots:
       undici-types: 6.20.0
     optional: true
 
-  '@vitejs/plugin-vue@3.2.0(vite@3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.89.2)(stylus@0.59.0)(terser@5.36.0))(vue@3.5.13(typescript@4.8.4))':
+  '@vitejs/plugin-vue@3.2.0(vite@3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.93.2)(stylus@0.59.0)(terser@5.36.0))(vue@3.5.13(typescript@4.8.4))':
     dependencies:
-      vite: 3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.89.2)(stylus@0.59.0)(terser@5.36.0)
+      vite: 3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.93.2)(stylus@0.59.0)(terser@5.36.0)
       vue: 3.5.13(typescript@4.8.4)
 
   '@vue/compiler-core@3.5.13':
@@ -2231,6 +2240,10 @@ snapshots:
     dependencies:
       hasown: 2.0.2
 
+  is-core-module@2.16.1:
+    dependencies:
+      hasown: 2.0.2
+
   is-extglob@2.1.1: {}
 
   is-fullwidth-code-point@2.0.0: {}
@@ -2419,7 +2432,7 @@ snapshots:
   normalize-package-data@2.5.0:
     dependencies:
       hosted-git-info: 2.8.9
-      resolve: 1.22.8
+      resolve: 1.22.10
       semver: 5.7.2
       validate-npm-package-license: 3.0.4
 
@@ -2527,6 +2540,12 @@ snapshots:
 
   requires-port@1.0.0: {}
 
+  resolve@1.22.10:
+    dependencies:
+      is-core-module: 2.16.1
+      path-parse: 1.0.7
+      supports-preserve-symlinks-flag: 1.0.0
+
   resolve@1.22.8:
     dependencies:
       is-core-module: 2.15.1
@@ -2557,7 +2576,7 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sass@1.89.2:
+  sass@1.93.2:
     dependencies:
       chokidar: 4.0.1
       immutable: 5.0.3
@@ -2764,7 +2783,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite@3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.89.2)(stylus@0.59.0)(terser@5.36.0):
+  vite@3.2.11(@types/node@22.10.1)(less@4.2.1)(sass@1.93.2)(stylus@0.59.0)(terser@5.36.0):
     dependencies:
       esbuild: 0.15.18
       postcss: 8.4.49
@@ -2774,7 +2793,7 @@ snapshots:
       '@types/node': 22.10.1
       fsevents: 2.3.3
       less: 4.2.1
-      sass: 1.89.2
+      sass: 1.93.2
       stylus: 0.59.0
       terser: 5.36.0
 
