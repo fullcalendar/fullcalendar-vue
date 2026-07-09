@@ -4,6 +4,7 @@ import { CustomRenderingStore, CustomRendering } from '@fullcalendar/core/intern
 import { OPTION_IS_COMPLEX } from './options.js'
 
 const FullCalendar = defineComponent({
+  name: 'FullCalendar',
   props: {
     options: Object as PropType<CalendarOptions>
   },
