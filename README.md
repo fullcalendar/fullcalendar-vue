@@ -1,6 +1,11 @@
 
 # FullCalendar Vue 3 Component
 
+> [!IMPORTANT]
+> **This repo shows FullCalendar v6. The current version is v7**, which is developed in [fullcalendar-workspace](https://github.com/fullcalendar/fullcalendar-workspace/tree/main/standard/packages/vue3) for now. This repo's code is lagging behind and will be updated.
+>
+> In v7, plugins like dayGrid and timeGrid are no longer separate packages. Run `npm install @fullcalendar/vue3 temporal-polyfill` and import plugins from `@fullcalendar/vue3/daygrid`, etc. Don't install `@fullcalendar/core`, `@fullcalendar/daygrid` or the other v6 packages with v7. See the [v7 Vue docs](https://fullcalendar.io/docs/vue).
+
 The official [Vue 3](https://vuejs.org/) component for [FullCalendar](https://fullcalendar.io)
 
 ## Installation
